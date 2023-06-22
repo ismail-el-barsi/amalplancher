@@ -12,7 +12,7 @@ import path from "path";
 dotenv.config();
 //connect return a promess
 mongoose
-  .connect(process.env.MONGODB_URI)
+  .connect(process.env.MONGODB_URI2)
   .then(() => {
     console.log("connected to databases");
   })
