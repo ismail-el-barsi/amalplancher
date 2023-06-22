@@ -1,0 +1,38 @@
+[{
+  "_id": {
+    "$oid": "6490bf9c57878bf4932f07da"
+  },
+  "fullName": "nouha",
+  "image": "https://res.cloudinary.com/dlpfe2dd6/image/upload/v1687211865/vk2mm2watxzizcyckmj5.jpg",
+  "cin": "2345",
+  "email": "nouha@gmail.com",
+  "phoneNumber": "0767-555589",
+  "type": "comptable",
+  "salary": 200000,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-06-19T20:50:36.555Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-19T21:57:56.278Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6490c9c657878bf4932f0824"
+  },
+  "fullName": "safae",
+  "image": "https://res.cloudinary.com/dlpfe2dd6/image/upload/v1687210432/zmqca7qozze01npypmnm.jpg",
+  "cin": "2345",
+  "email": "nouha@gmail.com",
+  "phoneNumber": "0767-555589",
+  "type": "secretaire",
+  "salary": 10000,
+  "createdAt": {
+    "$date": "2023-06-19T21:33:58.308Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-19T21:33:58.308Z"
+  },
+  "__v": 0
+}]

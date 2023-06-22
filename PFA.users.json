@@ -1,0 +1,48 @@
+[{
+  "_id": {
+    "$oid": "642ec11bdaf3ff138eac7d90"
+  },
+  "name": "ismail",
+  "email": "ismail@gmail.com",
+  "password": "$2a$10$uXglf170ZloMzSI4cl.oHOdErYcoMhrz9J0IRYp6LXdAPHthSH3Ra",
+  "isAdmin": true,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-04-06T12:54:51.367Z"
+  },
+  "updatedAt": {
+    "$date": "2023-04-06T12:54:51.367Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "642ec11bdaf3ff138eac7d91"
+  },
+  "name": "nouha",
+  "email": "nouha@gmail.com",
+  "password": "$2a$08$p3VZKUsyu0ys9B5.jCVj4uAGGe1q1msPRqUcNZhGKGhyQSC3g9xvO",
+  "isAdmin": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-04-06T12:54:51.367Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-11T23:13:17.365Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "642ec11bdaf3ff138eac7d92"
+  },
+  "name": "safae",
+  "email": "safae@gmail.com",
+  "password": "$2a$08$QAD1obHomKgfko4rihcZ3.W9ghttTs1KVsRsP8QckxZOJ59/NI/J2",
+  "isAdmin": false,
+  "__v": 0,
+  "createdAt": {
+    "$date": "2023-04-06T12:54:51.367Z"
+  },
+  "updatedAt": {
+    "$date": "2023-06-11T23:14:44.127Z"
+  }
+}]

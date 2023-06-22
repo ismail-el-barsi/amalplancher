@@ -1,0 +1,50 @@
+[
+  {
+    "_id": {
+      "$oid": "642ec11bdaf3ff138eac7d90"
+    },
+    "name": "ismail",
+    "email": "ismail@gmail.com",
+    "password": "$2a$10$uXglf170ZloMzSI4cl.oHOdErYcoMhrz9J0IRYp6LXdAPHthSH3Ra",
+    "isAdmin": true,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2023-04-06T12:54:51.367Z"
+    },
+    "updatedAt": {
+      "$date": "2023-04-06T12:54:51.367Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "642ec11bdaf3ff138eac7d91"
+    },
+    "name": "nouha",
+    "email": "nouha@gmail.com",
+    "password": "$2a$10$OJ01eUVGAheCcbGyXqv9kux4Pi39Kp6YvKWMmEGk5q7j/jsdXayd6",
+    "isAdmin": false,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2023-04-06T12:54:51.367Z"
+    },
+    "updatedAt": {
+      "$date": "2023-04-06T12:54:51.367Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "642ec11bdaf3ff138eac7d92"
+    },
+    "name": "kawtar",
+    "email": "kawtar@gmail.com",
+    "password": "$2a$10$HG6htY1IdvajMPER/TRYGOdJ8nxv1MOYoDWX5rpPcIimYDlUKqjn.",
+    "isAdmin": false,
+    "__v": 0,
+    "createdAt": {
+      "$date": "2023-04-06T12:54:51.367Z"
+    },
+    "updatedAt": {
+      "$date": "2023-04-06T12:54:51.367Z"
+    }
+  }
+]
