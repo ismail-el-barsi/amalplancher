@@ -48,13 +48,11 @@ export default function EmployeeEditScreen() {
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
 
-  const [
-    { loading, error, loadingUpdate, loadingUpload },
-    dispatch,
-  ] = useReducer(reducer, {
-    loading: true,
-    error: "",
-  });
+  const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: "",
+    });
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -68,7 +66,9 @@ export default function EmployeeEditScreen() {
     const fetchEmployee = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/employees/${employeeId}`);
+        const { data } = await axios.get(
+          `http://localhost:4000/api/employees/${employeeId}`
+        );
         console.log(data);
         setFullName(data.fullName);
         setEmail(data.email);
@@ -93,7 +93,7 @@ export default function EmployeeEditScreen() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(
-        `/api/employees/${employeeId}`,
+        `http://localhost:4000/api/employees/${employeeId}`,
         {
           _id: employeeId,
           fullName,
@@ -125,12 +125,16 @@ export default function EmployeeEditScreen() {
     bodyFormData.append("file", file);
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
-      const { data } = await axios.post("/api/upload", bodyFormData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      });
+      const { data } = await axios.post(
+        "http://localhost:4000/api/upload",
+        bodyFormData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
       dispatch({ type: "UPLOAD_SUCCESS" });
       toast.success("Image uploaded successfully");
       setImage(data.secure_url);

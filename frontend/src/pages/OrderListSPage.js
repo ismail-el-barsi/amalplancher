@@ -41,19 +41,17 @@ export default function OrderListScreen() {
   const navigate = useNavigate();
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
-  const [
-    { loading, error, orders, loadingDelete, successDelete },
-    dispatch,
-  ] = useReducer(reducer, {
-    loading: true,
-    error: "",
-  });
+  const [{ loading, error, orders, loadingDelete, successDelete }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: "",
+    });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/orders`, {
+        const { data } = await axios.get(`http://localhost:4000/api/orders`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -75,7 +73,7 @@ export default function OrderListScreen() {
     if (window.confirm("Are you sure to delete?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
-        await axios.delete(`/api/orders/${order._id}`, {
+        await axios.delete(`http://localhost:4000/api/orders/${order._id}`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
         toast.success("order deleted successfully");

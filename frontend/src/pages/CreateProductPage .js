@@ -50,7 +50,7 @@ export default function CreateProductPage() {
       try {
         dispatch({ type: "CREATE_REQUEST" });
         const { data } = await axios.post(
-          "/api/products",
+          "http://localhost:4000/api/products",
           {
             name,
             slug,
@@ -87,12 +87,16 @@ export default function CreateProductPage() {
 
     try {
       setUploading(true);
-      const { data } = await axios.post("/api/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      });
+      const { data } = await axios.post(
+        "http://localhost:4000/api/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
       setImage(data.secure_url);
       setUploading(false);
     } catch (err) {

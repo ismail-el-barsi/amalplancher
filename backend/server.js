@@ -8,24 +8,30 @@ import orderRouter from "./routes/OrderRoutes.js";
 import uploadRouter from "./routes/uploadRoutes.js";
 import employeRouter from "./routes/EmployeRoute.js";
 import path from "path";
-//fetch variables in the .env file
+import cors from "cors";
+
 dotenv.config();
-//connect return a promess
+
 mongoose
   .connect(process.env.MONGODB_URI2)
   .then(() => {
-    console.log("connected to databases");
+    console.log("Connected to the database");
   })
   .catch((err) => {
     console.log(err.message);
   });
+
 const app = express();
-//the data in post request converted to json object inside req.body
+
+app.use(cors()); // Add the cors middleware here
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.get("/api/keys/paypal", (req, res) => {
   res.send(process.env.PAYPAL_CLIENT_ID || "sb");
 });
+
 app.use("/api/upload", uploadRouter);
 app.use("/api/seed", seedRouter);
 app.use("/api/products", productRouter);
@@ -40,10 +46,10 @@ app.get("*", (req, res) =>
 );
 
 app.use((err, req, res, next) => {
-  res.status(500).send({ message: err.message }); //status(500)=error in server
+  res.status(500).send({ message: err.message });
 });
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
-  console.log(`serve at http://localhost:${port}`);
+  console.log(`Server is running at http://localhost:${port}`);
 });

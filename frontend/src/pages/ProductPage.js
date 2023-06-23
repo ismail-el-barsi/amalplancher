@@ -62,14 +62,12 @@ function ProductPage() {
   const Navigate = useNavigate();
   const params = useParams(); //useparams  You can use it to retrieve route parameters from the component rendered by the matching route
   const { slug } = params;
-  const [
-    { loading, error, product, loadingCreateReview },
-    dispatch,
-  ] = useReducer(reducer, {
-    product: [],
-    loading: true,
-    error: "",
-  }); //use recucer accpte 2 parametre le reducer qui est la fonction qu on creer et l etat par defaut
+  const [{ loading, error, product, loadingCreateReview }, dispatch] =
+    useReducer(reducer, {
+      product: [],
+      loading: true,
+      error: "",
+    }); //use recucer accpte 2 parametre le reducer qui est la fonction qu on creer et l etat par defaut
   //use effect est une fontion qui accepte 2 parametre first parametre fonction et le dexieme est un tableau vide puisque on va utiliser useeffect une seule fois apres rendering du component
   useEffect(() => {
     //finddata async function qui accepte aucun parametre
@@ -77,7 +75,9 @@ function ProductPage() {
       //send ajax request
       dispatch({ type: "FETCH_REQUEST" });
       try {
-        const res = await axios.get(`/api/products/slug/${slug}`);
+        const res = await axios.get(
+          `http://localhost:4000/api/products/slug/${slug}`
+        );
         dispatch({ type: "FETCH_SUCCESS", payload: res.data });
       } catch (error) {
         dispatch({ type: "FETCH_FAIL", payload: getError(error) });
@@ -95,7 +95,9 @@ function ProductPage() {
     const existItem = panier.panierItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     //requete ajax for current product
-    const { data } = await axios.get(`/api/products/${product._id}`);
+    const { data } = await axios.get(
+      `http://localhost:4000/api/products/${product._id}`
+    );
     if (data.countInStock < quantity) {
       toast.error("Product is out of stock");
       return;
@@ -115,7 +117,7 @@ function ProductPage() {
     }
     try {
       const { data } = await axios.post(
-        `/api/products/${product._id}/reviews`,
+        `http://localhost:4000/api/products/${product._id}/reviews`,
         { rating, comment, name: userInfo.name },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
