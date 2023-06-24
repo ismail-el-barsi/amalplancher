@@ -136,13 +136,15 @@ export default function OrderListScreen() {
                     Details
                   </Button>
                   &nbsp;
-                  <Button
-                    type="button"
-                    variant="light"
-                    onClick={() => deleteHandler(order)}
-                  >
-                    Delete
-                  </Button>
+                  {userInfo.isAdmin && (
+                    <Button
+                      type="button"
+                      variant="light"
+                      onClick={() => deleteHandler(order)}
+                    >
+                      Delete
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}

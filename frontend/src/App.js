@@ -148,8 +148,8 @@ function App() {
                     </NavDropdown>
                   )}
                   {userInfo && userInfo.isConducteur && (
-                    <NavDropdown title="conducteur" id="admin-nav-dropdown">
-                      <LinkContainer to="/admin/orders">
+                    <NavDropdown title="conducteur" id="nav-dropdown">
+                      <LinkContainer to="/conducteur/orders">
                         <NavDropdown.Item>Orders</NavDropdown.Item>
                       </LinkContainer>
                     </NavDropdown>
@@ -219,6 +219,14 @@ function App() {
                   <AdminRoute>
                     <OrderListScreen />
                   </AdminRoute>
+                }
+              ></Route>
+              <Route
+                path="/conducteur/orders"
+                element={
+                  <ConducteurRoute>
+                    <OrderListScreen />
+                  </ConducteurRoute>
                 }
               ></Route>
               <Route
