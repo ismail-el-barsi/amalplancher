@@ -40,7 +40,7 @@ const data = {
       category: "Bricks",
       image: "/images/bricks.jpg",
       price: 50,
-      countInStock: 10,
+      countInStock: 50,
       brand: "Amal Plancher Bricks",
       rating: 0,
       numReviews: 0,
