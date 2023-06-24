@@ -64,7 +64,7 @@ export default function PlaceOrderPage() {
           },
         }
       );
-      ctxDispatch({ type: "panier_CLEAR" });
+      ctxDispatch({ type: "PANIER_CLEAR" });
       dispatch({ type: "CREATE_SUCCESS" });
       localStorage.removeItem("panierItems");
       navigate(`/order/${data.order._id}`);
