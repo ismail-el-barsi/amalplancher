@@ -1,26 +1,22 @@
 import bcrypt from "bcryptjs";
 
 const data = {
-  // users: [
-  //   {
-  //     name: "ismail",
-  //     email: "ismail@gmail.com",
-  //     password: bcrypt.hashSync("teste"),
-  //     isAdmin: true,
-  //   },
-  //   {
-  //     name: "nouha",
-  //     email: "nouha@gmail.com",
-  //     password: bcrypt.hashSync("123456"),
-  //     isAdmin: false,
-  //   },
-  //   {
-  //     name: "kawtar",
-  //     email: "kawtar@gmail.com",
-  //     password: bcrypt.hashSync("teste123"),
-  //     isAdmin: false,
-  //   },
-  // ],
+  users: [
+    {
+      name: "ismail",
+      email: "ismail@gmail.com",
+      password: bcrypt.hashSync("teste"),
+      isAdmin: true,
+      isConducteur: false,
+    },
+    {
+      name: "nouha",
+      email: "nouha@gmail.com",
+      password: bcrypt.hashSync("teste"),
+      isAdmin: false,
+      isConducteur: false,
+    },
+  ],
   employees: [
     {
       fullName: "John Doe",

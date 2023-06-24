@@ -11,22 +11,22 @@ import MessageBox from "../component/MessageError";
 import { Shop } from "../Shop";
 import { getError } from "../Utils";
 
-const reducer = (etat, action) => {
+const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
-      return { ...etat, loading: true };
+      return { ...state, loading: true };
     case "FETCH_SUCCESS":
-      return { ...etat, loading: false };
+      return { ...state, loading: false };
     case "FETCH_FAIL":
-      return { ...etat, loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload };
     case "UPDATE_REQUEST":
-      return { ...etat, loadingUpdate: true };
+      return { ...state, loadingUpdate: true };
     case "UPDATE_SUCCESS":
-      return { ...etat, loadingUpdate: false };
+      return { ...state, loadingUpdate: false };
     case "UPDATE_FAIL":
-      return { ...etat, loadingUpdate: false };
+      return { ...state, loadingUpdate: false };
     default:
-      return etat;
+      return state;
   }
 };
 
@@ -46,6 +46,7 @@ export default function UserEditScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isConducteur, setIsConducteur] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,6 +61,7 @@ export default function UserEditScreen() {
         setName(data.name);
         setEmail(data.email);
         setIsAdmin(data.isAdmin);
+        setIsConducteur(data.isConducteur); // Set isConducteur state
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -77,7 +79,7 @@ export default function UserEditScreen() {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(
         `http://localhost:4000/api/users/${userId}`,
-        { _id: userId, name, email, isAdmin },
+        { _id: userId, name, email, isAdmin, isConducteur }, // Include isConducteur in the request
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         }
@@ -92,10 +94,11 @@ export default function UserEditScreen() {
       dispatch({ type: "UPDATE_FAIL" });
     }
   };
+
   return (
     <Container className="small-container">
       <Helmet>
-        <title>Edit User ${userId}</title>
+        <title>Edit User {userId}</title>
       </Helmet>
       <h1>Edit User {userId}</h1>
 
@@ -130,6 +133,15 @@ export default function UserEditScreen() {
             label="isAdmin"
             checked={isAdmin}
             onChange={(e) => setIsAdmin(e.target.checked)}
+          />
+
+          <Form.Check
+            className="mb-3"
+            type="checkbox"
+            id="isConducteur"
+            label="isConducteur"
+            checked={isConducteur}
+            onChange={(e) => setIsConducteur(e.target.checked)}
           />
 
           <div className="mb-3">

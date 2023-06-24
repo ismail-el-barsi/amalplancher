@@ -45,6 +45,7 @@ userRouter.put(
         name: updatedUser.name,
         email: updatedUser.email,
         isAdmin: updatedUser.isAdmin,
+        isConducteur: updatedUser.isConducteur,
         token: generateToken(updatedUser),
       });
     } else {
@@ -62,6 +63,7 @@ userRouter.put(
       user.name = req.body.name || user.name;
       user.email = req.body.email || user.email;
       user.isAdmin = Boolean(req.body.isAdmin);
+      user.isConducteur = Boolean(req.body.isConducteur);
       const updatedUser = await user.save();
       res.send({ message: "User Updated", user: updatedUser });
     } else {
@@ -102,6 +104,7 @@ userRouter.post(
           name: user.name,
           email: user.email,
           isAdmin: user.isAdmin,
+          isConducteur: user.isConducteur,
           token: generateToken(user),
         });
         return; //cause i am going to continue running the code after sending data
@@ -124,6 +127,7 @@ userRouter.post(
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      isConducteur: user.isConducteur,
       token: generateToken(user),
     });
     return;
@@ -147,6 +151,7 @@ userRouter.put(
         name: updatedUser.name,
         email: updatedUser.email,
         isAdmin: updatedUser.isAdmin,
+        isConducteur: updatedUser.isConducteur,
         token: generateToken(updatedUser),
       });
     } else {

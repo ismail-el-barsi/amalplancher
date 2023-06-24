@@ -37,3 +37,10 @@ export const isAdmin = (req, res, next) => {
     res.status(401).send({ message: "Invalid Admin Token" });
   }
 };
+export const isConducteur = (req, res, next) => {
+  if (req.user && req.user.isConducteur) {
+    next();
+  } else {
+    res.status(401).send({ message: "Invalid Conducteur Token" });
+  }
+};

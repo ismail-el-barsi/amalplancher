@@ -38,6 +38,7 @@ const reducer = (etat, action) => {
       return etat;
   }
 };
+
 export default function UserListScreen() {
   const navigate = useNavigate();
   const [{ loading, error, users, loadingDelete, successDelete }, dispatch] =
@@ -72,13 +73,13 @@ export default function UserListScreen() {
   }, [userInfo, successDelete]);
 
   const deleteHandler = async (user) => {
-    if (window.confirm("Are you sure to delete?")) {
+    if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
         await axios.delete(`http://localhost:4000/api/users/${user._id}`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
-        toast.success("user deleted successfully");
+        toast.success("User deleted successfully");
         dispatch({ type: "DELETE_SUCCESS" });
       } catch (error) {
         toast.error(getError(error));
@@ -88,6 +89,7 @@ export default function UserListScreen() {
       }
     }
   };
+
   return (
     <div>
       <Helmet>
@@ -107,6 +109,7 @@ export default function UserListScreen() {
               <th>NAME</th>
               <th>EMAIL</th>
               <th>IS ADMIN</th>
+              <th>IS CONDUCTEUR</th>
               <th>ACTIONS</th>
             </tr>
           </thead>
@@ -117,6 +120,7 @@ export default function UserListScreen() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.isAdmin ? "YES" : "NO"}</td>
+                <td>{user.isConducteur ? "YES" : "NO"}</td>
                 <td>
                   <Button
                     type="button"

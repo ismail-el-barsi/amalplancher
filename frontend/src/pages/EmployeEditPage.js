@@ -205,10 +205,20 @@ export default function EmployeeEditScreen() {
           <Form.Group className="mb-3" controlId="type">
             <Form.Label>Type</Form.Label>
             <Form.Control
+              as="select"
               value={type}
               onChange={(e) => setType(e.target.value)}
               required
-            />
+            >
+              <option value="">Select Type</option>
+              <option value="agent commercial">Agent Commercial</option>
+              <option value="secretaire/comptable">Secrétaire/Comptable</option>
+              <option value="conducteur PL">Conducteur PL</option>
+              <option value="conducteur VL">Conducteur VL</option>
+              <option value="chef de chantier">Chef de Chantier</option>
+              <option value="ouvrier">Ouvrier</option>
+              <option value="gardien de nuit">Gardien de Nuit</option>
+            </Form.Control>
           </Form.Group>
           <Form.Group className="mb-3" controlId="salary">
             <Form.Label>Salary</Form.Label>
