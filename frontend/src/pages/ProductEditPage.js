@@ -11,34 +11,31 @@ import MessageBox from "../component/MessageError";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 
-const reducer = (etat, action) => {
+const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
-      return { ...etat, loading: true };
+      return { ...state, loading: true };
     case "FETCH_SUCCESS":
-      return { ...etat, loading: false };
+      return { ...state, loading: false };
     case "FETCH_FAIL":
-      return { ...etat, loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload };
     case "UPDATE_REQUEST":
-      return { ...etat, loadingUpdate: true };
+      return { ...state, loadingUpdate: true };
     case "UPDATE_SUCCESS":
-      return { ...etat, loadingUpdate: false };
+      return { ...state, loadingUpdate: false };
     case "UPDATE_FAIL":
-      return { ...etat, loadingUpdate: false };
+      return { ...state, loadingUpdate: false };
     case "UPLOAD_REQUEST":
-      return { ...etat, loadingUpload: true, errorUpload: "" };
+      return { ...state, loadingUpload: true, errorUpload: "" };
     case "UPLOAD_SUCCESS":
-      return {
-        ...etat,
-        loadingUpload: false,
-        errorUpload: "",
-      };
+      return { ...state, loadingUpload: false, errorUpload: "" };
     case "UPLOAD_FAIL":
-      return { ...etat, loadingUpload: false, errorUpload: action.payload };
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
     default:
-      return etat;
+      return state;
   }
 };
+
 export default function ProductEditScreen() {
   const navigate = useNavigate();
   const params = useParams(); // /product/:id
@@ -60,6 +57,7 @@ export default function ProductEditScreen() {
   const [countInStock, setCountInStock] = useState("");
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
+  const [type, setType] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,6 +74,7 @@ export default function ProductEditScreen() {
         setCountInStock(data.countInStock);
         setBrand(data.brand);
         setDescription(data.description);
+        setType(data.type);
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -86,6 +85,7 @@ export default function ProductEditScreen() {
     };
     fetchData();
   }, [productId]);
+
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -102,14 +102,13 @@ export default function ProductEditScreen() {
           brand,
           countInStock,
           description,
+          type,
         },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         }
       );
-      dispatch({
-        type: "UPDATE_SUCCESS",
-      });
+      dispatch({ type: "UPDATE_SUCCESS" });
       toast.success("Product updated successfully");
       navigate("/admin/products");
     } catch (err) {
@@ -117,6 +116,7 @@ export default function ProductEditScreen() {
       dispatch({ type: "UPDATE_FAIL" });
     }
   };
+
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
     const bodyFormData = new FormData();
@@ -134,7 +134,6 @@ export default function ProductEditScreen() {
         }
       );
       dispatch({ type: "UPLOAD_SUCCESS" });
-
       toast.success("Image uploaded successfully");
       setImage(data.secure_url);
     } catch (err) {
@@ -151,7 +150,7 @@ export default function ProductEditScreen() {
       <h1>Edit Product {productId}</h1>
 
       {loading ? (
-        <LoadingBox></LoadingBox>
+        <LoadingBox />
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
@@ -172,7 +171,7 @@ export default function ProductEditScreen() {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="name">
+          <Form.Group className="mb-3" controlId="price">
             <Form.Label>Price</Form.Label>
             <Form.Control
               value={price}
@@ -191,7 +190,7 @@ export default function ProductEditScreen() {
           <Form.Group className="mb-3" controlId="imageFile">
             <Form.Label>Upload File</Form.Label>
             <Form.Control type="file" onChange={uploadFileHandler} />
-            {loadingUpload && <LoadingBox></LoadingBox>}
+            {loadingUpload && <LoadingBox />}
           </Form.Group>
           <Form.Group className="mb-3" controlId="category">
             <Form.Label>Category</Form.Label>
@@ -225,11 +224,19 @@ export default function ProductEditScreen() {
               required
             />
           </Form.Group>
+          <Form.Group className="mb-3" controlId="type">
+            <Form.Label>Type</Form.Label>
+            <Form.Control
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              required
+            />
+          </Form.Group>
           <div className="mb-3">
             <Button disabled={loadingUpdate} type="submit">
               Update
             </Button>
-            {loadingUpdate && <LoadingBox></LoadingBox>}
+            {loadingUpdate && <LoadingBox />}
           </div>
         </Form>
       )}

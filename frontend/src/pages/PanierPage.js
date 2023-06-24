@@ -1,5 +1,4 @@
-import React from "react";
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Shop } from "../Shop";
 import { Helmet } from "react-helmet-async";
 import Row from "react-bootstrap/Row";
@@ -15,13 +14,14 @@ export default function PanierPage() {
   const { etat, dispatch: contextDispatch } = useContext(Shop);
   const navigate = useNavigate();
   const {
-    panier: { panierItems }, //from etat we constuct panier to list panieritems in this screen
+    panier: { panierItems },
   } = etat;
 
   const checkoutHandler = () => {
     navigate("/login?redirect=/livraison");
   };
-  const updatePaniertHandler = async (item, quantity) => {
+
+  const updatePanierHandler = async (item, quantity) => {
     const { data } = await axios.get(
       `http://localhost:4000/api/products/${item._id}`
     );
@@ -34,21 +34,29 @@ export default function PanierPage() {
       payload: { ...item, quantity },
     });
   };
+
   const removeItemHandler = (item) => {
     contextDispatch({ type: "PANIER_REMOVE_ITEM", payload: item });
+  };
+
+  const handleQuantityChange = (e, item) => {
+    const quantity = parseInt(e.target.value, 10);
+    if (!isNaN(quantity) && quantity >= 1 && quantity <= item.countInStock) {
+      updatePanierHandler(item, quantity);
+    }
   };
 
   return (
     <div>
       <Helmet>
-        <title>panier</title>
+        <title>Panier</title>
       </Helmet>
-      <h1>panier</h1>
+      <h1>Panier</h1>
       <Row>
         <Col md={8}>
           {panierItems.length === 0 ? (
             <MessageError>
-              panier is empty. <Link to="/">Go Shopping</Link>
+              Panier is empty. <Link to="/">Go Shopping</Link>
             </MessageError>
           ) : (
             <ListGroup>
@@ -60,31 +68,37 @@ export default function PanierPage() {
                         src={item.image}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
-                      ></img>{" "}
+                      />
                       <Link to={`/product/${item.slug}`}>{item.name}</Link>
                     </Col>
                     <Col md={3}>
                       <Button
                         onClick={() =>
-                          updatePaniertHandler(item, item.quantity - 1)
+                          updatePanierHandler(item, item.quantity - 1)
                         }
                         variant="light"
                         disabled={item.quantity === 1}
                       >
                         <i className="fas fa-minus-circle"></i>
-                      </Button>{" "}
-                      <span>{item.quantity}</span>{" "}
+                      </Button>
+                      <input
+                        type="number"
+                        value={item.quantity}
+                        min={1}
+                        max={item.countInStock}
+                        onChange={(e) => handleQuantityChange(e, item)}
+                      />
                       <Button
                         variant="light"
                         onClick={() =>
-                          updatePaniertHandler(item, item.quantity + 1)
+                          updatePanierHandler(item, item.quantity + 1)
                         }
                         disabled={item.quantity === item.countInStock}
                       >
                         <i className="fas fa-plus-circle"></i>
                       </Button>
                     </Col>
-                    <Col md={3}>{item.price}MAD</Col>
+                    <Col md={3}>{item.price} MAD</Col>
                     <Col md={2}>
                       <Button
                         onClick={() => removeItemHandler(item)}
@@ -106,8 +120,8 @@ export default function PanierPage() {
                 <ListGroup.Item>
                   <h3>
                     Subtotal ({panierItems.reduce((a, c) => a + c.quantity, 0)}{" "}
-                    items) :
-                    {panierItems.reduce((a, c) => a + c.price * c.quantity, 0)}
+                    items):{" "}
+                    {panierItems.reduce((a, c) => a + c.price * c.quantity, 0)}{" "}
                     MAD
                   </h3>
                 </ListGroup.Item>

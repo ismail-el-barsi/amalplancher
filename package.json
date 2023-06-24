@@ -14,11 +14,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/el-barsi-ismail/Shopnow.git"
+    "url": "git+https://github.com/el-barsi-ismail/amalplancher.git"
   },
   "bugs": {
-    "url": "https://github.com/el-barsi-ismail/Shopnow/issues"
+    "url": "https://github.com/el-barsi-ismail/amalplancher/issues"
   },
-  "homepage": "https://github.com/el-barsi-ismail/Shopnow#readme",
+  "homepage": "https://github.com/el-barsi-ismail/amalplancher#readme",
   "description": ""
 }
