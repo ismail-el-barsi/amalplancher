@@ -28,6 +28,7 @@ import OrderScreen from "./pages/OrderPage";
 import ProtectedRoute from "./component/ProtectedRoute";
 import DashboardScreen from "./pages/DashboardPage";
 import AdminRoute from "./component/AdminRoute";
+import ConducteurRoute from "./component/ConducteurRoute";
 import ProductListScreen from "./pages/ProductListPage";
 import OrderListScreen from "./pages/OrderListSPage";
 import UserListScreen from "./pages/UserListPage";
@@ -143,6 +144,13 @@ function App() {
                       </LinkContainer>
                       <LinkContainer to="/admin/employees">
                         <NavDropdown.Item>employees</NavDropdown.Item>
+                      </LinkContainer>
+                    </NavDropdown>
+                  )}
+                  {userInfo && userInfo.isConducteur && (
+                    <NavDropdown title="conducteur" id="admin-nav-dropdown">
+                      <LinkContainer to="/admin/orders">
+                        <NavDropdown.Item>Orders</NavDropdown.Item>
                       </LinkContainer>
                     </NavDropdown>
                   )}
