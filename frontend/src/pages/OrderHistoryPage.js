@@ -50,7 +50,7 @@ export default function OrderHistoryScreen() {
     fetchData();
   }, [userInfo]);
   return (
-    <div>
+    <div className="table-responsive">
       <Helmet>
         <title>Order History</title>
       </Helmet>
@@ -61,7 +61,7 @@ export default function OrderHistoryScreen() {
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <table className="table">
+        <table className="table table-striped">
           <thead>
             <tr>
               <th>ID</th>
@@ -85,15 +85,17 @@ export default function OrderHistoryScreen() {
                     : "No"}
                 </td>
                 <td>
-                  <Button
-                    type="button"
-                    variant="light"
-                    onClick={() => {
-                      navigate(`/order/${order._id}`);
-                    }}
-                  >
-                    Details
-                  </Button>
+                  <div className="d-grid gap-2">
+                    <Button
+                      type="button"
+                      variant="light"
+                      onClick={() => {
+                        navigate(`/order/${order._id}`);
+                      }}
+                    >
+                      Details
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}

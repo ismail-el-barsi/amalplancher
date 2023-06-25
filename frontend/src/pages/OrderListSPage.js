@@ -90,7 +90,7 @@ export default function OrderListScreen() {
   };
 
   return (
-    <div>
+    <div className="table-responsive">
       <Helmet>
         <title>Orders</title>
       </Helmet>
@@ -101,7 +101,7 @@ export default function OrderListScreen() {
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <table className="table">
+        <table className="table table-striped">
           <thead>
             <tr>
               <th>ID</th>
@@ -133,24 +133,26 @@ export default function OrderListScreen() {
                       : "No"}
                   </td>
                   <td>
-                    <Button
-                      type="button"
-                      variant="light"
-                      onClick={() => {
-                        navigate(`/order/${order._id}`);
-                      }}
-                    >
-                      Details
-                    </Button>{" "}
-                    {userInfo.isAdmin && (
+                    <div className="d-grid gap-2">
                       <Button
                         type="button"
                         variant="light"
-                        onClick={() => deleteHandler(order)}
+                        onClick={() => {
+                          navigate(`/order/${order._id}`);
+                        }}
                       >
-                        Delete
+                        Details
                       </Button>
-                    )}
+                      {userInfo.isAdmin && (
+                        <Button
+                          type="button"
+                          variant="light"
+                          onClick={() => deleteHandler(order)}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
