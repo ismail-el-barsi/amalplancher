@@ -94,6 +94,10 @@ main {
 .text-bold {
   font-weight: bold;
 }
+.carousel-caption {
+  background-color: rgba(221, 217, 217, 0.6);
+  padding: 10px;
+}
 
 .product-name {
   color: blueviolet;

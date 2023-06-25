@@ -52,9 +52,6 @@ const HomePage = () => {
       <header className="bg-dark text-light text-center py-5">
         <h1>Welcome to Amal Plancher</h1>
         <p>Your reliable source for quality Building materials</p>
-        {/* <Button variant="primary" size="lg">
-          Shop Now
-        </Button> */}
       </header>
 
       <section className="py-5">
@@ -66,9 +63,9 @@ const HomePage = () => {
           ) : (
             <Row>
               {products.map((product, index) => (
-                <React.Fragment key={product.id}>
+                <React.Fragment key={index}>
                   {index % 2 === 0 ? (
-                    <React.Fragment>
+                    <>
                       <Col md={6}>
                         <Link to={`/product/${product.slug}`}>
                           <img
@@ -93,9 +90,9 @@ const HomePage = () => {
                           </Link>
                         )}
                       </Col>
-                    </React.Fragment>
+                    </>
                   ) : (
-                    <React.Fragment>
+                    <>
                       <Col md={6}>
                         <h2>{product.name}</h2>
                         <p>{product.description}</p>
@@ -120,7 +117,7 @@ const HomePage = () => {
                           />
                         </Link>
                       </Col>
-                    </React.Fragment>
+                    </>
                   )}
                 </React.Fragment>
               ))}
