@@ -85,8 +85,23 @@ orderRouter.get(
         },
       },
     ]);
+    const employeeTypes = await Employee.aggregate([
+      {
+        $group: {
+          _id: "$type",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
 
-    res.send({ users, orders, dailyOrders, productCategories, employees });
+    res.send({
+      users,
+      orders,
+      dailyOrders,
+      productCategories,
+      employees,
+      employeeTypes,
+    });
   })
 );
 

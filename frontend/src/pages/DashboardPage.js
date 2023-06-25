@@ -127,6 +127,23 @@ export default function DashboardScreen() {
             </Col>
           </Row>
           <div className="my-3">
+            <h2>Employee Types</h2>
+            {summary.employeeTypes.length === 0 ? (
+              <MessageBox>No type of employees</MessageBox>
+            ) : (
+              <Chart
+                width="100%"
+                height="400px"
+                chartType="PieChart" // Change chartType to "BarChart"
+                loader={<div>Loading Chart...</div>}
+                data={[
+                  ["Category", "Employees"],
+                  ...summary.employeeTypes.map((x) => [x._id, x.count]),
+                ]}
+              ></Chart>
+            )}
+          </div>
+          <div className="my-3">
             <h2>Sales</h2>
             {summary.dailyOrders.length === 0 ? (
               <MessageBox>No Sale</MessageBox>
@@ -143,8 +160,8 @@ export default function DashboardScreen() {
               ></Chart>
             )}
           </div>
-          {/* <div className="my-3">
-            <h2>Categories</h2>
+          <div className="my-3">
+            <h2>Categories of product</h2>
             {summary.productCategories.length === 0 ? (
               <MessageBox>No Category</MessageBox>
             ) : (
@@ -159,7 +176,7 @@ export default function DashboardScreen() {
                 ]}
               ></Chart>
             )}
-          </div> */}
+          </div>
         </>
       )}
     </div>
