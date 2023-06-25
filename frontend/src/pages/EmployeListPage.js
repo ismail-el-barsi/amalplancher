@@ -56,12 +56,9 @@ export default function EmployeeListScreen() {
     const fetchEmployees = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          "http://localhost:4000/api/employees",
-          {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-          }
-        );
+        const { data } = await axios.get("/api/employees", {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({
@@ -82,12 +79,9 @@ export default function EmployeeListScreen() {
     if (window.confirm("Are you sure you want to delete this employee?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
-        await axios.delete(
-          `http://localhost:4000/api/employees/${employee._id}`,
-          {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-          }
-        );
+        await axios.delete(`/api/employees/${employee._id}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
         toast.success("Employee deleted successfully");
         dispatch({ type: "DELETE_SUCCESS" });
       } catch (error) {

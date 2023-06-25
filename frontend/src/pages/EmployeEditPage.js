@@ -66,9 +66,7 @@ export default function EmployeeEditScreen() {
     const fetchEmployee = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          `http://localhost:4000/api/employees/${employeeId}`
-        );
+        const { data } = await axios.get(`/api/employees/${employeeId}`);
         console.log(data);
         setFullName(data.fullName);
         setEmail(data.email);

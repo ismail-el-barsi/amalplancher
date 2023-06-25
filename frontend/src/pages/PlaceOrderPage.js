@@ -48,7 +48,7 @@ export default function PlaceOrderPage() {
       dispatch({ type: "CREATE_REQUEST" });
 
       const { data } = await Axios.post(
-        "http://localhost:4000/api/orders",
+        "/api/orders",
         {
           orderItems: panier.panierItems,
           shippingAddress: panier.livraisonAddress,

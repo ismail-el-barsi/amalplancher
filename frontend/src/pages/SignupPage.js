@@ -29,14 +29,11 @@ export default function SignupPage() {
       return;
     }
     try {
-      const { data } = await Axios.post(
-        "http://localhost:4000/api/users/signup",
-        {
-          name,
-          email,
-          password,
-        }
-      );
+      const { data } = await Axios.post("/api/users/signup", {
+        name,
+        email,
+        password,
+      });
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data));
       navigate(redirect || "/");

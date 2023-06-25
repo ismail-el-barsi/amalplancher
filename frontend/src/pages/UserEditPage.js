@@ -52,12 +52,9 @@ export default function UserEditScreen() {
     const fetchData = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(
-          `http://localhost:4000/api/users/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-          }
-        );
+        const { data } = await axios.get(`/api/users/${userId}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
         setName(data.name);
         setEmail(data.email);
         setIsAdmin(data.isAdmin);
@@ -78,7 +75,7 @@ export default function UserEditScreen() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(
-        `http://localhost:4000/api/users/${userId}`,
+        `/api/users/${userId}`,
         { _id: userId, name, email, isAdmin, isConducteur }, // Include isConducteur in the request
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },

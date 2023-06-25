@@ -25,14 +25,11 @@ export default function Login() {
     e.preventDefault(); //prevent refresshing page
     try {
       //send ajax request to backend to get login api
-      const { data } = await Axios.post(
-        "http://localhost:4000/api/users/login",
-        {
-          //pass email and password as a post request to this api
-          email,
-          password,
-        }
-      );
+      const { data } = await Axios.post("/api/users/login", {
+        //pass email and password as a post request to this api
+        email,
+        password,
+      });
       ctxDispatch({ type: "USER_LOGIN", payload: data });
       localStorage.setItem("userInfo", JSON.stringify(data)); //localstrorage to save userinfo in browser storage
       //json.stringify convert data to string cause local storage accept string type
