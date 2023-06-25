@@ -119,6 +119,11 @@ export default function OrderScreen() {
         const { data } = await axios.get(`/api/orders/${orderId}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
+        if (userInfo.isConducteur && !data.isPaid) {
+          // Navigate to a different route or display an error message
+          navigate("/conducteur/orders");
+          return;
+        }
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
