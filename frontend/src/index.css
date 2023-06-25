@@ -94,35 +94,13 @@ main {
 .text-bold {
   font-weight: bold;
 }
-.carousel-caption {
-  background-color: rgba(221, 217, 217, 0.6);
-  padding: 10px;
-}
 
 .product-name {
   color: blueviolet;
   font-size: 18px;
   font-weight: bold;
 }
-.carousel-arrow {
-  color: black;
-  font-size: 24px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 10;
-}
 
-.carousel-arrow.left {
-  left: 10px;
-}
-
-.carousel-arrow.right {
-  right: 10px;
-}
 .img-large {
   width: 100%;
   max-height: 400px;
@@ -136,38 +114,6 @@ main {
   cursor: pointer;
 }
 
-.carousel-indicators {
-  bottom: -25px;
-}
-.carousel-images .carousel-item {
-  display: flex;
-  justify-content: center;
-}
-
-.carousel-item-img {
-  width: 100%;
-  max-height: 200px;
-  object-fit: contain;
-}
-.img-carousel {
-  max-width: 100px;
-  max-height: 100px;
-}
-.carousel {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-}
-
-.carousel .slide {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-}
-
-.carousel .slider-wrapper {
-  display: flex;
-  align-items: flex-start;
-}
 .logo-img {
   width: 50px; /* Adjust the width to your desired size */
   height: auto;
