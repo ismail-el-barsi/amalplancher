@@ -92,7 +92,7 @@ export default function EmployeeListScreen() {
   };
 
   return (
-    <div>
+    <div className="table-responsive">
       <Helmet>
         <title>Employees</title>
       </Helmet>
@@ -111,7 +111,7 @@ export default function EmployeeListScreen() {
           >
             Create
           </Button>
-          <table className="table">
+          <table className="table table-striped">
             <thead>
               <tr>
                 <th>Image</th>
@@ -141,23 +141,24 @@ export default function EmployeeListScreen() {
                   <td>{employee.type}</td>
                   <td>{employee.salary}</td>
                   <td>
-                    <Button
-                      type="button"
-                      variant="light"
-                      onClick={() =>
-                        navigate(`/admin/employees/${employee._id}`)
-                      }
-                    >
-                      Edit
-                    </Button>
-                    &nbsp;
-                    <Button
-                      type="button"
-                      variant="light"
-                      onClick={() => deleteHandler(employee)}
-                    >
-                      Delete
-                    </Button>
+                    <div className="d-grid gap-2">
+                      <Button
+                        type="button"
+                        variant="light"
+                        onClick={() =>
+                          navigate(`/admin/employees/${employee._id}`)
+                        }
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="light"
+                        onClick={() => deleteHandler(employee)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -51,7 +51,7 @@ export default function PanierPage() {
       </Helmet>
       <h1>Panier</h1>
       <Row>
-        <Col md={8}>
+        <Col xs={12} md={8}>
           {panierItems.length === 0 ? (
             <MessageError>
               Panier is empty. <Link to="/">Go Shopping</Link>
@@ -61,7 +61,7 @@ export default function PanierPage() {
               {panierItems.map((item) => (
                 <ListGroup.Item key={item._id}>
                   <Row className="align-items-center">
-                    <Col md={4}>
+                    <Col xs={4} md={3}>
                       <img
                         src={item.image}
                         alt={item.name}
@@ -69,41 +69,47 @@ export default function PanierPage() {
                       />
                       <Link to={`/product/${item.slug}`}>{item.name}</Link>
                     </Col>
-                    <Col md={3}>
-                      <Button
-                        onClick={() =>
-                          updatePanierHandler(item, item.quantity - 1)
-                        }
-                        variant="light"
-                        disabled={item.quantity === 1}
-                      >
-                        <i className="fas fa-minus-circle"></i>
-                      </Button>
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        min={1}
-                        max={item.countInStock}
-                        onChange={(e) => handleQuantityChange(e, item)}
-                      />
-                      <Button
-                        variant="light"
-                        onClick={() =>
-                          updatePanierHandler(item, item.quantity + 1)
-                        }
-                        disabled={item.quantity === item.countInStock}
-                      >
-                        <i className="fas fa-plus-circle"></i>
-                      </Button>
-                    </Col>
-                    <Col md={3}>{item.price} MAD</Col>
-                    <Col md={2}>
-                      <Button
-                        onClick={() => removeItemHandler(item)}
-                        variant="light"
-                      >
-                        <i className="fas fa-trash"></i>
-                      </Button>
+                    <Col xs={8} md={9}>
+                      <Row className="align-items-center">
+                        <Col xs={12} md={4}>
+                          <Button
+                            onClick={() =>
+                              updatePanierHandler(item, item.quantity - 1)
+                            }
+                            variant="light"
+                            disabled={item.quantity === 1}
+                          >
+                            <i className="fas fa-minus-circle"></i>
+                          </Button>
+                          <input
+                            type="number"
+                            value={item.quantity}
+                            min={1}
+                            max={item.countInStock}
+                            onChange={(e) => handleQuantityChange(e, item)}
+                          />
+                          <Button
+                            variant="light"
+                            onClick={() =>
+                              updatePanierHandler(item, item.quantity + 1)
+                            }
+                            disabled={item.quantity === item.countInStock}
+                          >
+                            <i className="fas fa-plus-circle"></i>
+                          </Button>
+                        </Col>
+                        <Col xs={12} md={3}>
+                          {item.price} MAD
+                        </Col>
+                        <Col xs={12} md={2}>
+                          <Button
+                            onClick={() => removeItemHandler(item)}
+                            variant="light"
+                          >
+                            <i className="fas fa-trash"></i>
+                          </Button>
+                        </Col>
+                      </Row>
                     </Col>
                   </Row>
                 </ListGroup.Item>
@@ -111,7 +117,7 @@ export default function PanierPage() {
             </ListGroup>
           )}
         </Col>
-        <Col md={4}>
+        <Col xs={12} md={4}>
           <Card>
             <Card.Body>
               <ListGroup variant="flush">
