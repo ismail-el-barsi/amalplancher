@@ -340,13 +340,8 @@ export default function OrderScreen() {
                           Deliver Order
                         </Button>
                       </div>
-                    ) : (
-                      <div className="d-grid">
-                        <Button type="button" disabled>
-                          Deliver Order
-                        </Button>
-                      </div>
-                    )}
+                    ) : // Render null when the button should be disabled
+                    null}
                   </ListGroup.Item>
                 ) : null}
               </ListGroup>
