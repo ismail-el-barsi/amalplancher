@@ -29,6 +29,7 @@ import ProtectedRoute from "./component/ProtectedRoute";
 import DashboardScreen from "./pages/DashboardPage";
 import AdminRoute from "./component/AdminRoute";
 import ConducteurRoute from "./component/ConducteurRoute";
+import SecretaireRoute from "./component/SecretaireRoute";
 import ProductListScreen from "./pages/ProductListPage";
 import OrderListScreen from "./pages/OrderListSPage";
 import UserListScreen from "./pages/UserListPage";
@@ -148,8 +149,21 @@ function App() {
                     </NavDropdown>
                   )}
                   {userInfo && userInfo.isConducteur && (
-                    <NavDropdown title="conducteur" id="nav-dropdown">
+                    <NavDropdown
+                      title="conducteur"
+                      id="conducteur nav-dropdown"
+                    >
                       <LinkContainer to="/conducteur/orders">
+                        <NavDropdown.Item>Orders</NavDropdown.Item>
+                      </LinkContainer>
+                    </NavDropdown>
+                  )}
+                  {userInfo && userInfo.isSecretaire && (
+                    <NavDropdown
+                      title="sécretaire"
+                      id="sécretaire nav-dropdown"
+                    >
+                      <LinkContainer to="/secretaire/orders">
                         <NavDropdown.Item>Orders</NavDropdown.Item>
                       </LinkContainer>
                     </NavDropdown>
@@ -227,6 +241,14 @@ function App() {
                   <ConducteurRoute>
                     <OrderListScreen />
                   </ConducteurRoute>
+                }
+              ></Route>
+              <Route
+                path="/secretaire/orders"
+                element={
+                  <SecretaireRoute>
+                    <OrderListScreen />
+                  </SecretaireRoute>
                 }
               ></Route>
               <Route

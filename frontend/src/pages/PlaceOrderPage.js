@@ -57,6 +57,7 @@ export default function PlaceOrderPage() {
           shippingPrice: panier.livraisonPrice,
           taxPrice: panier.taxPrice,
           totalPrice: panier.totalPrice,
+          pendingPayment: panier.paymentMethod === "PaidOnDelivery",
         },
         {
           headers: {

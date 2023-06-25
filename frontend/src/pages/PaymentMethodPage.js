@@ -22,12 +22,14 @@ export default function PaymentMethodPage() {
       navigate("/livraison");
     }
   }, [livraisonAddress, navigate]);
+
   const submitHandler = (e) => {
     e.preventDefault();
     ctxDispatch({ type: "SAVE_PAYMENT_METHOD", payload: paymentMethodName });
     localStorage.setItem("paymentMethod", paymentMethodName);
     navigate("/placeorder");
   };
+
   return (
     <div>
       <CheckoutSteps step1 step2 step3></CheckoutSteps>
@@ -54,6 +56,16 @@ export default function PaymentMethodPage() {
               label="Stripe"
               value="Stripe"
               checked={paymentMethodName === "Stripe"}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <Form.Check
+              type="radio"
+              id="PaidOnDelivery"
+              label="Paid on Delivery"
+              value="PaidOnDelivery"
+              checked={paymentMethodName === "PaidOnDelivery"}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
           </div>

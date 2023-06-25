@@ -9,33 +9,32 @@ import { getError } from "../Utils";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const reducer = (etat, action) => {
+const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
-      return { ...etat, loading: true };
+      return { ...state, loading: true };
     case "FETCH_SUCCESS":
       return {
-        ...etat,
+        ...state,
         users: action.payload,
         loading: false,
       };
     case "FETCH_FAIL":
-      return { ...etat, loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload };
     case "DELETE_REQUEST":
-      return { ...etat, loadingDelete: true, successDelete: false };
+      return { ...state, loadingDelete: true, successDelete: false };
     case "DELETE_SUCCESS":
       return {
-        ...etat,
+        ...state,
         loadingDelete: false,
         successDelete: true,
       };
     case "DELETE_FAIL":
-      return { ...etat, loadingDelete: false };
+      return { ...state, loadingDelete: false };
     case "DELETE_RESET":
-      return { ...etat, loadingDelete: false, successDelete: false };
-
+      return { ...state, loadingDelete: false, successDelete: false };
     default:
-      return etat;
+      return state;
   }
 };
 
@@ -45,6 +44,8 @@ export default function UserListScreen() {
     useReducer(reducer, {
       loading: true,
       error: "",
+      loadingDelete: false,
+      successDelete: false,
     });
 
   const { etat } = useContext(Shop);
@@ -111,6 +112,7 @@ export default function UserListScreen() {
                 <th>EMAIL</th>
                 <th>IS ADMIN</th>
                 <th>IS CONDUCTEUR</th>
+                <th>IS SECRETAIRE</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
@@ -122,6 +124,7 @@ export default function UserListScreen() {
                   <td>{user.email}</td>
                   <td>{user.isAdmin ? "YES" : "NO"}</td>
                   <td>{user.isConducteur ? "YES" : "NO"}</td>
+                  <td>{user.isSecretaire ? "YES" : "NO"}</td>
                   <td>
                     <Button
                       type="button"
@@ -130,7 +133,7 @@ export default function UserListScreen() {
                     >
                       Edit
                     </Button>
-                    <br /> {/* Added line break */}
+                    <br />
                     <Button
                       type="button"
                       variant="light"

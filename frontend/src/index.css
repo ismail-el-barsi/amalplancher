@@ -152,6 +152,10 @@ main {
   align-items: center;
   text-align: center;
 }
+.waiting-confirmation {
+  background-color: yellow;
+  /* Add any other styles for the waiting confirmation message */
+}
 
 .employee-image {
   max-width: 80px;

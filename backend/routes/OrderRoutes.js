@@ -29,6 +29,7 @@ orderRouter.post(
       shippingPrice: req.body.shippingPrice,
       taxPrice: req.body.taxPrice,
       totalPrice: req.body.totalPrice,
+      pendingPayment: req.body.paymentMethod === "PaidOnDelivery",
       user: req.user._id,
     });
 
@@ -36,6 +37,7 @@ orderRouter.post(
     res.status(201).send({ message: "New Order Created", order });
   })
 );
+
 orderRouter.get(
   "/summary",
   isAuth,
@@ -148,6 +150,9 @@ orderRouter.put(
     if (order) {
       order.isPaid = true;
       order.paidAt = Date.now();
+      order.pendingPayment = false; // Set pendingPayment to false when payment is made
+
+      // Update the payment result
       order.paymentResult = {
         id: req.body.id,
         status: req.body.status,
@@ -162,6 +167,7 @@ orderRouter.put(
     }
   })
 );
+
 orderRouter.delete(
   "/:id",
   isAuth,

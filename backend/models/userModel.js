@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     isAdmin: { type: Boolean, default: false, required: true },
     isConducteur: { type: Boolean, default: false, required: true },
+    isSecretaire: { type: Boolean, default: false, required: true },
   },
   {
     //If you set timestamps: true, Mongoose will add two properties of type Date to your schema:

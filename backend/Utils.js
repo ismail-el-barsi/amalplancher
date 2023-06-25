@@ -8,6 +8,7 @@ export const generateToken = (user) => {
       email: user.email,
       isAdmin: user.isAdmin,
       isConducteur: user.isConducteur,
+      isSecretaire: user.isSecretaire,
     },
     process.env.JWT_SECRET, //secret string to encrypt data
     {
@@ -32,7 +33,10 @@ export const isAuth = (req, res, next) => {
   }
 };
 export const isAdmin = (req, res, next) => {
-  if (req.user && (req.user.isAdmin || req.user.isConducteur)) {
+  if (
+    req.user &&
+    (req.user.isAdmin || req.user.isSecretaire || req.user.isConducteur)
+  ) {
     next();
   } else {
     res.status(401).send({ message: "Invalid Admin Token" });

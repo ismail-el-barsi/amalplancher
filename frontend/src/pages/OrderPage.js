@@ -43,6 +43,9 @@ function reducer(etat, action) {
         loadingDeliver: false,
         successDeliver: false,
       };
+    case "SET_PENDING_PAYMENT":
+      return { ...etat, pendingPayement: action.payload };
+
     default:
       return etat;
   }
@@ -172,22 +175,29 @@ export default function OrderScreen() {
   ]);
 
   async function deliverOrderHandler() {
+    // Check if the order is paid before delivering
+    if (!order.isPaid) {
+      return; // Return early if the order is not paid
+    }
+
     try {
       dispatch({ type: "DELIVER_REQUEST" });
-      const { data } = await axios.put(
-        `http://localhost:4000/api/orders/${order._id}/deliver`,
+      await axios.put(
+        `/api/orders/${order._id}/deliver`,
         {},
         {
           headers: { authorization: `Bearer ${userInfo.token}` },
         }
       );
-      dispatch({ type: "DELIVER_SUCCESS", payload: data });
+      dispatch({ type: "DELIVER_SUCCESS" });
+      dispatch({ type: "SET_PENDING_PAYMENT", payload: false }); // Add this line
       toast.success("Order is delivered");
     } catch (err) {
       toast.error(getError(err));
       dispatch({ type: "DELIVER_FAIL" });
     }
   }
+
   return loading ? (
     <LoadingBox></LoadingBox>
   ) : error ? (
@@ -224,7 +234,11 @@ export default function OrderScreen() {
               <Card.Text>
                 <strong>Method:</strong> {order.paymentMethod}
               </Card.Text>
-              {order.isPaid ? (
+              {!order.isPaid && order.paymentMethod === "PaidOnDelivery" ? (
+                <MessageBox variant="alert alert-warning">
+                  Waiting for Confirmation
+                </MessageBox>
+              ) : order.isPaid ? (
                 <MessageBox variant="success">
                   Paid at {order.paidAt}
                 </MessageBox>
@@ -293,35 +307,48 @@ export default function OrderScreen() {
                     </Col>
                   </Row>
                 </ListGroup.Item>
-                {!order.isPaid && (
+                {userInfo.isAdmin &&
+                  !order.isPaid &&
+                  order.paymentMethod !== "PaidOnDelivery" && (
+                    <ListGroup.Item>
+                      {isPending ? (
+                        <LoadingBox />
+                      ) : (
+                        <div>
+                          <PayPalButtons
+                            createOrder={createOrder}
+                            onApprove={onApprove}
+                            onError={onError}
+                          ></PayPalButtons>
+                        </div>
+                      )}
+                      {loadingPay && <LoadingBox></LoadingBox>}
+                    </ListGroup.Item>
+                  )}
+
+                {userInfo.isAdmin ||
+                (userInfo.isConducteur &&
+                  order.isPaid &&
+                  !order.isDelivered &&
+                  (order.paymentMethod === "PaidOnDelivery" ||
+                    order.isPaid)) ? (
                   <ListGroup.Item>
-                    {isPending ? (
-                      <LoadingBox />
+                    {loadingDeliver && <LoadingBox></LoadingBox>}
+                    {!etat.pendingPayement && order.isPaid ? (
+                      <div className="d-grid">
+                        <Button type="button" onClick={deliverOrderHandler}>
+                          Deliver Order
+                        </Button>
+                      </div>
                     ) : (
-                      <div>
-                        <PayPalButtons
-                          createOrder={createOrder}
-                          onApprove={onApprove}
-                          onError={onError}
-                        ></PayPalButtons>
+                      <div className="d-grid">
+                        <Button type="button" disabled>
+                          Deliver Order
+                        </Button>
                       </div>
                     )}
-                    {loadingPay && <LoadingBox></LoadingBox>}
                   </ListGroup.Item>
-                )}
-                {userInfo.isAdmin ||
-                  (userInfo.isConducteur &&
-                    order.isPaid &&
-                    !order.isDelivered && (
-                      <ListGroup.Item>
-                        {loadingDeliver && <LoadingBox></LoadingBox>}
-                        <div className="d-grid">
-                          <Button type="button" onClick={deliverOrderHandler}>
-                            Deliver Order
-                          </Button>
-                        </div>
-                      </ListGroup.Item>
-                    ))}
+                ) : null}
               </ListGroup>
             </Card.Body>
           </Card>
