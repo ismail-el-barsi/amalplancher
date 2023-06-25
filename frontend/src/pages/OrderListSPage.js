@@ -9,34 +9,35 @@ import { Shop } from "../Shop";
 import { getError } from "../Utils";
 import { toast } from "react-toastify";
 
-const reducer = (etat, action) => {
+const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
-      return { ...etat, loading: true };
+      return { ...state, loading: true };
     case "FETCH_SUCCESS":
       return {
-        ...etat,
+        ...state,
         orders: action.payload,
         loading: false,
       };
     case "FETCH_FAIL":
-      return { ...etat, loading: false, error: action.payload };
+      return { ...state, loading: false, error: action.payload };
     case "DELETE_REQUEST":
-      return { ...etat, loadingDelete: true, successDelete: false };
+      return { ...state, loadingDelete: true, successDelete: false };
     case "DELETE_SUCCESS":
       return {
-        ...etat,
+        ...state,
         loadingDelete: false,
         successDelete: true,
       };
     case "DELETE_FAIL":
-      return { ...etat, loadingDelete: false };
+      return { ...state, loadingDelete: false };
     case "DELETE_RESET":
-      return { ...etat, loadingDelete: false, successDelete: false };
+      return { ...state, loadingDelete: false, successDelete: false };
     default:
-      return etat;
+      return state;
   }
 };
+
 export default function OrderListScreen() {
   const navigate = useNavigate();
   const { etat } = useContext(Shop);
@@ -51,7 +52,7 @@ export default function OrderListScreen() {
     const fetchData = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`http://localhost:4000/api/orders`, {
+        const { data } = await axios.get(`/api/orders`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -62,6 +63,7 @@ export default function OrderListScreen() {
         });
       }
     };
+
     if (successDelete) {
       dispatch({ type: "DELETE_RESET" });
     } else {
@@ -73,13 +75,13 @@ export default function OrderListScreen() {
     if (window.confirm("Are you sure to delete?")) {
       try {
         dispatch({ type: "DELETE_REQUEST" });
-        await axios.delete(`http://localhost:4000/api/orders/${order._id}`, {
+        await axios.delete(`/api/orders/${order._id}`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
-        toast.success("order deleted successfully");
+        toast.success("Order deleted successfully");
         dispatch({ type: "DELETE_SUCCESS" });
       } catch (err) {
-        toast.error(getError(error));
+        toast.error(getError(err));
         dispatch({
           type: "DELETE_FAIL",
         });
@@ -112,42 +114,47 @@ export default function OrderListScreen() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
-              <tr key={order._id}>
-                <td>{order._id}</td>
-                <td>{order.user ? order.user.name : "DELETED USER"}</td>
-                <td>{order.createdAt.substring(0, 10)}</td>
-                <td>{order.totalPrice.toFixed(2)}</td>
-                <td>{order.isPaid ? order.paidAt.substring(0, 10) : "No"}</td>
-
-                <td>
-                  {order.isDelivered
-                    ? order.deliveredAt.substring(0, 10)
-                    : "No"}
-                </td>
-                <td>
-                  <Button
-                    type="button"
-                    variant="light"
-                    onClick={() => {
-                      navigate(`/order/${order._id}`);
-                    }}
-                  >
-                    Details
-                  </Button>
-                  &nbsp;
-                  {userInfo.isAdmin && (
+            {orders.map((order) => {
+              const isPaid = order.isPaid;
+              const isConducteur = userInfo.isConducteur;
+              if (isConducteur && !isPaid) {
+                return null;
+              }
+              return (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>{order.user ? order.user.name : "DELETED USER"}</td>
+                  <td>{order.createdAt.substring(0, 10)}</td>
+                  <td>{order.totalPrice.toFixed(2)}</td>
+                  <td>{order.isPaid ? order.paidAt.substring(0, 10) : "No"}</td>
+                  <td>
+                    {order.isDelivered
+                      ? order.deliveredAt.substring(0, 10)
+                      : "No"}
+                  </td>
+                  <td>
                     <Button
                       type="button"
                       variant="light"
-                      onClick={() => deleteHandler(order)}
+                      onClick={() => {
+                        navigate(`/order/${order._id}`);
+                      }}
                     >
-                      Delete
-                    </Button>
-                  )}
-                </td>
-              </tr>
-            ))}
+                      Details
+                    </Button>{" "}
+                    {userInfo.isAdmin && (
+                      <Button
+                        type="button"
+                        variant="light"
+                        onClick={() => deleteHandler(order)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

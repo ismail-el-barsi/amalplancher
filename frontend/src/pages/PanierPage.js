@@ -22,9 +22,7 @@ export default function PanierPage() {
   };
 
   const updatePanierHandler = async (item, quantity) => {
-    const { data } = await axios.get(
-      `http://localhost:4000/api/products/${item._id}`
-    );
+    const { data } = await axios.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
       window.alert("Sorry. Product is out of stock");
       return;
