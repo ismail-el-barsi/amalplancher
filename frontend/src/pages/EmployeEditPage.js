@@ -91,7 +91,7 @@ export default function EmployeeEditScreen() {
     try {
       dispatch({ type: "UPDATE_REQUEST" });
       await axios.put(
-        `http://localhost:4000/api/employees/${employeeId}`,
+        `/api/employees/${employeeId}`,
         {
           _id: employeeId,
           fullName,
@@ -123,16 +123,12 @@ export default function EmployeeEditScreen() {
     bodyFormData.append("file", file);
     try {
       dispatch({ type: "UPLOAD_REQUEST" });
-      const { data } = await axios.post(
-        "http://localhost:4000/api/upload",
-        bodyFormData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${userInfo.token}`,
-          },
-        }
-      );
+      const { data } = await axios.post("/api/upload", bodyFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      });
       dispatch({ type: "UPLOAD_SUCCESS" });
       toast.success("Image uploaded successfully");
       setImage(data.secure_url);

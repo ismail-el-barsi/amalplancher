@@ -17,7 +17,7 @@ seedRouter.get("/", async (req, res) => {
 
   // const createdUSers = await User.insertMany(data.users);
 
-  res.send({ createdProducts, createdUSers });
+  res.send({ createdProducts });
 });
 
 export default seedRouter;
