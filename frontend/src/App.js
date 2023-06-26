@@ -160,8 +160,8 @@ function App() {
                   )}
                   {userInfo && userInfo.isSecretaire && (
                     <NavDropdown
-                      title="sécretaire"
-                      id="sécretaire nav-dropdown"
+                      title="secretaire"
+                      id="secretaire nav-dropdown"
                     >
                       <LinkContainer to="/secretaire/orders">
                         <NavDropdown.Item>Orders</NavDropdown.Item>

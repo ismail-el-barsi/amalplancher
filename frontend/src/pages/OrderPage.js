@@ -127,6 +127,11 @@ export default function OrderScreen() {
           navigate("/conducteur/orders");
           return;
         }
+        if (userInfo.isSecretaire && !data.pendingPayment) {
+          // Navigate to a different route or display an error message
+          navigate("/secretaire/orders");
+          return;
+        }
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({ type: "FETCH_FAIL", payload: getError(err) });
