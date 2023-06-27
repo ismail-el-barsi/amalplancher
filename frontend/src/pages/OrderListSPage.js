@@ -99,13 +99,9 @@ const OrderListScreen = () => {
     } else if (filter === "delivered") {
       return order.isDelivered;
     } else if (filter === "date" && dateFilter) {
-      const orderDate = new Date(order.createdAt.substring(0, 10));
-      const selectedDate = new Date(dateFilter);
-      return (
-        orderDate.getFullYear() === selectedDate.getFullYear() &&
-        orderDate.getMonth() === selectedDate.getMonth() &&
-        orderDate.getDate() === selectedDate.getDate()
-      );
+      // Date filter logic
+    } else if (filter === "pending") {
+      return order.pendingPayment;
     } else {
       return true;
     }
@@ -162,6 +158,7 @@ const OrderListScreen = () => {
               >
                 <option value="">All</option>
                 <option value="paid">Paid</option>
+                <option value="pending">Pending Payment</option>
                 <option value="delivered">Delivered</option>
                 <option value="date">Search by Date</option>
                 <option value="newest">Newest</option>
