@@ -76,37 +76,41 @@ const HomePage = () => {
                         </Link>
                       </Col>
                       <Col md={6}>
-                        <h2>{product.name}</h2>
-                        <p>{product.description}</p>
-                        {product.countInStock === 0 ? (
-                          <Button variant="light" disabled>
-                            Out of stock
-                          </Button>
-                        ) : (
-                          <Link to={`/product/${product.slug}`}>
-                            <Button variant="secondary">
-                              View {product.name}
+                        <div className="bg-light p-4">
+                          <h2>{product.name}</h2>
+                          <p>{product.description}</p>
+                          {product.countInStock === 0 ? (
+                            <Button variant="light" disabled>
+                              Out of stock
                             </Button>
-                          </Link>
-                        )}
+                          ) : (
+                            <Link to={`/product/${product.slug}`}>
+                              <Button variant="secondary">
+                                View {product.name}
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
                       </Col>
                     </>
                   ) : (
                     <>
                       <Col md={6}>
-                        <h2>{product.name}</h2>
-                        <p>{product.description}</p>
-                        {product.countInStock === 0 ? (
-                          <Button variant="light" disabled>
-                            Out of stock
-                          </Button>
-                        ) : (
-                          <Link to={`/product/${product.slug}`}>
-                            <Button variant="secondary">
-                              View {product.name}
+                        <div className="bg-light p-4">
+                          <h2>{product.name}</h2>
+                          <p>{product.description}</p>
+                          {product.countInStock === 0 ? (
+                            <Button variant="light" disabled>
+                              Out of stock
                             </Button>
-                          </Link>
-                        )}
+                          ) : (
+                            <Link to={`/product/${product.slug}`}>
+                              <Button variant="secondary">
+                                View {product.name}
+                              </Button>
+                            </Link>
+                          )}
+                        </div>
                       </Col>
                       <Col md={6}>
                         <Link to={`/product/${product.slug}`}>
@@ -128,10 +132,10 @@ const HomePage = () => {
 
       <section className="py-5">
         <Container>
-          <h2>Why Choose Us?</h2>
+          <h2 className="text-center2">Why Choose Us?</h2>
           <Row>
             <Col md={4}>
-              <div className="text-center">
+              <div className="text-center2">
                 <i className="bi bi-shield-check icon-lg"></i>
                 <h5>Quality Products</h5>
                 <p>
@@ -141,7 +145,7 @@ const HomePage = () => {
               </div>
             </Col>
             <Col md={4}>
-              <div className="text-center">
+              <div className="text-center2">
                 <i className="bi bi-truck icon-lg"></i>
                 <h5>Fast Delivery</h5>
                 <p>
@@ -151,7 +155,7 @@ const HomePage = () => {
               </div>
             </Col>
             <Col md={4}>
-              <div className="text-center">
+              <div className="text-center2">
                 <i className="bi bi-cash icon-lg"></i>
                 <h5>Competitive Prices</h5>
                 <p>
