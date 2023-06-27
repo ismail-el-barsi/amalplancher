@@ -183,6 +183,7 @@ const OrderListScreen = () => {
                 <th>TOTAL</th>
                 <th>PAID</th>
                 <th>DELIVERED</th>
+                <th>PENDING PAYMENT</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
@@ -296,6 +297,7 @@ const OrderListScreen = () => {
                             ? order.deliveredAt.substring(0, 10)
                             : "No"}
                         </td>
+                        <td>{order.pendingPayment ? "yes" : "no"}</td>
                         <td>
                           <div className="d-grid gap-2">
                             <Button

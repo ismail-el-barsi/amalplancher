@@ -85,7 +85,7 @@ const HomePage = () => {
                             </Button>
                           ) : (
                             <Link to={`/product/${product.slug}`}>
-                              <Button variant="secondary">
+                              <Button variant="primary">
                                 View {product.name}
                               </Button>
                             </Link>
@@ -105,7 +105,7 @@ const HomePage = () => {
                             </Button>
                           ) : (
                             <Link to={`/product/${product.slug}`}>
-                              <Button variant="secondary">
+                              <Button variant="primary">
                                 View {product.name}
                               </Button>
                             </Link>

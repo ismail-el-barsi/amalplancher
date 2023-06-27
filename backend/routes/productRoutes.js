@@ -23,6 +23,7 @@ productRouter.post(
       brand: req.body.brand,
       countInStock: req.body.countInStock,
       description: req.body.description,
+      material: req.body.material,
     });
     const createdProduct = await product.save();
     res
@@ -47,6 +48,7 @@ productRouter.put(
       product.brand = req.body.brand;
       product.countInStock = req.body.countInStock;
       product.description = req.body.description;
+      product.material = req.body.material;
       await product.save();
       res.send({ message: "Product Updated" });
     } else {

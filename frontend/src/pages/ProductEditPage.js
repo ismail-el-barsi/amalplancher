@@ -58,6 +58,7 @@ export default function ProductEditScreen() {
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState("");
+  const [material, setMaterial] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,6 +74,7 @@ export default function ProductEditScreen() {
         setBrand(data.brand);
         setDescription(data.description);
         setType(data.type);
+        setMaterial(data.material);
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -101,6 +103,7 @@ export default function ProductEditScreen() {
           countInStock,
           description,
           type,
+          material,
         },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -223,6 +226,14 @@ export default function ProductEditScreen() {
             <Form.Control
               value={type}
               onChange={(e) => setType(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="type">
+            <Form.Label>Material</Form.Label>
+            <Form.Control
+              value={material}
+              onChange={(e) => setMaterial(e.target.value)}
               required
             />
           </Form.Group>

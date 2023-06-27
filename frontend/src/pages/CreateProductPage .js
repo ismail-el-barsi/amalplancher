@@ -43,6 +43,7 @@ export default function CreateProductPage() {
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState(""); // Added "type" state
+  const [material, setMaterial] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const createProductHandler = async (e) => {
@@ -62,6 +63,7 @@ export default function CreateProductPage() {
             brand,
             description,
             type, // Include "type" in the request payload
+            material,
             rating: 0,
             numReviews: 0,
           },
@@ -192,6 +194,14 @@ export default function CreateProductPage() {
               onChange={(e) => setType(e.target.value)}
               required
             />
+            <Form.Group className="mb-3" controlId="material">
+              <Form.Label>Material</Form.Label>
+              <Form.Control
+                value={material}
+                onChange={(e) => setMaterial(e.target.value)}
+                required
+              />
+            </Form.Group>
           </Form.Group>
           <div className="mb-3">
             <Button type="submit">Create</Button>
