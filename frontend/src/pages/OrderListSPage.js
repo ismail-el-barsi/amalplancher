@@ -102,9 +102,8 @@ const OrderListScreen = () => {
       // Date filter logic
     } else if (filter === "pending") {
       return order.pendingPayment;
-    } else {
-      return true;
     }
+    return true; // Add a default return statement
   });
 
   // Function to sort orders by newest
