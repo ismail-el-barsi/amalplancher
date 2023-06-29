@@ -40,10 +40,12 @@ import CreateProductPage from "./pages/CreateProductPage ";
 import EmployeeListPage from "./pages/EmployeListPage";
 import EmployeeEditPage from "./pages/EmployeEditPage";
 import CreateEmployeePage from "./pages/CreateEmployePage";
+import Form from "react-bootstrap/Form";
 
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { panier, userInfo } = etat;
+  const [nightMode, setNightMode] = useState(false);
 
   const signoutHandler = () => {
     ctxDispatch({ type: "USER_SIGNOUT" });
@@ -53,6 +55,16 @@ function App() {
   };
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const handleModeSwitch = () => {
+    setNightMode(!nightMode);
+
+    // Update night mode settings
+    if (!nightMode) {
+      document.body.classList.add("night-mode");
+    } else {
+      document.body.classList.remove("night-mode");
+    }
+  };
 
   // useEffect(() => {
   //   const fetchCategories = async () => {
@@ -98,7 +110,14 @@ function App() {
               <Navbar.Toggle aria-controls="basic-navbar-nav" />
               <Navbar.Collapse id="basic-navbar-nav">
                 {/* <SearchBox /> */}
-                <Nav className="me-auto  w-100  justify-content-end">
+                <Nav className="me-auto w-100 justify-content-end">
+                  <Form.Switch
+                    id="mode-switch"
+                    label="Night Mode"
+                    checked={nightMode}
+                    onChange={handleModeSwitch}
+                    className="ms-2"
+                  />
                   <Link to="/panier" className="nav-link">
                     panier
                     {panier.panierItems.length > 0 && (
