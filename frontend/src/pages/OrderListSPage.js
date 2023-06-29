@@ -204,6 +204,7 @@ const OrderListScreen = () => {
                             ? order.deliveredAt.substring(0, 10)
                             : "No"}
                         </td>
+                        <td>{order.pendingPayment ? "yes" : "no"}</td>
                         <td>
                           <div className="d-grid gap-2">
                             <Button
@@ -246,6 +247,7 @@ const OrderListScreen = () => {
                             ? order.deliveredAt.substring(0, 10)
                             : "No"}
                         </td>
+                        <td>{order.pendingPayment ? "yes" : "no"}</td>
                         <td>
                           <div className="d-grid gap-2">
                             <Button

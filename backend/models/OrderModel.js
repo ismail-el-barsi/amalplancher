@@ -39,6 +39,7 @@ const orderSchema = new mongoose.Schema(
     paidAt: { type: Date },
     isDelivered: { type: Boolean, default: false },
     pendingPayment: { type: Boolean, default: false },
+    confimerCommande: { type: Boolean, default: false },
     deliveredAt: { type: Date },
   },
   {

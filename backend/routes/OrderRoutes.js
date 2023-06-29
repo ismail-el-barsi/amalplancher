@@ -30,6 +30,7 @@ orderRouter.post(
       taxPrice: req.body.taxPrice,
       totalPrice: req.body.totalPrice,
       pendingPayment: req.body.paymentMethod === "PaidOnDelivery",
+      confimerCommande: req.body.confimerCommande,
       user: req.user._id,
     });
 
@@ -128,12 +129,28 @@ orderRouter.get(
   })
 );
 orderRouter.put(
+  "/:id/confirmer",
+  isAuth,
+  expressAsyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      order.confimerCommande = true; // Set confimerCommande to true
+      await order.save();
+      res.send({ message: "Order Confirmed" });
+    } else {
+      res.status(404).send({ message: "Order Not Found" });
+    }
+  })
+);
+
+orderRouter.put(
   "/:id/deliver",
   isAuth,
   expressAsyncHandler(async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (order) {
       order.isDelivered = true;
+      order.isPaid = true;
       order.deliveredAt = Date.now();
       await order.save();
       res.send({ message: "Order Delivered" });
@@ -142,6 +159,7 @@ orderRouter.put(
     }
   })
 );
+
 orderRouter.put(
   "/:id/pay",
   isAuth,
@@ -151,6 +169,7 @@ orderRouter.put(
       order.isPaid = true;
       order.paidAt = Date.now();
       order.pendingPayment = false; // Set pendingPayment to false when payment is made
+      order.confimerCommande = false;
 
       // Update the payment result
       order.paymentResult = {

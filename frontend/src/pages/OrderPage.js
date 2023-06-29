@@ -45,6 +45,14 @@ function reducer(etat, action) {
       };
     case "SET_PENDING_PAYMENT":
       return { ...etat, pendingPayement: action.payload };
+    case "CONFIRM_REQUEST":
+      return { ...etat, loadingConfirm: true };
+    case "CONFIRM_SUCCESS":
+      return { ...etat, loadingConfirm: false, successConfirm: true };
+    case "CONFIRM_FAIL":
+      return { ...etat, loadingConfirm: false };
+    case "CONFIRM_RESET":
+      return { ...etat, loadingConfirm: false, successConfirm: false };
 
     default:
       return etat;
@@ -127,6 +135,7 @@ export default function OrderScreen() {
           navigate("/conducteur/orders");
           return;
         }
+
         if (userInfo.isSecretaire && !data.pendingPayment) {
           // Navigate to a different route or display an error message
           navigate("/secretaire/orders");
@@ -180,11 +189,6 @@ export default function OrderScreen() {
   ]);
 
   async function deliverOrderHandler() {
-    // Check if the order is paid before delivering
-    if (!order.isPaid) {
-      return; // Return early if the order is not paid
-    }
-
     try {
       dispatch({ type: "DELIVER_REQUEST" });
       await axios.put(
@@ -201,6 +205,30 @@ export default function OrderScreen() {
       toast.error(getError(err));
       dispatch({ type: "DELIVER_FAIL" });
     }
+  }
+  function confirmOrderHandler() {
+    dispatch({ type: "CONFIRM_REQUEST" });
+
+    axios
+      .put(
+        `/api/orders/${order._id}/confirmer`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      )
+      .then(() => {
+        dispatch({ type: "CONFIRM_SUCCESS" });
+        toast.success("Order is confirmed");
+
+        // Update the order state with the confirmation status
+        const updatedOrder = { ...order, confimerCommande: true };
+        dispatch({ type: "FETCH_SUCCESS", payload: updatedOrder });
+      })
+      .catch((err) => {
+        toast.error(getError(err));
+        dispatch({ type: "CONFIRM_FAIL" });
+      });
   }
 
   return loading ? (
@@ -241,7 +269,9 @@ export default function OrderScreen() {
               </Card.Text>
               {!order.isPaid && order.paymentMethod === "PaidOnDelivery" ? (
                 <MessageBox variant="alert alert-warning">
-                  Waiting for Confirmation
+                  {order.confimerCommande
+                    ? "Waiting for Delivery"
+                    : "Waiting for Confirmation"}
                 </MessageBox>
               ) : order.isPaid ? (
                 <MessageBox variant="success">
@@ -338,17 +368,51 @@ export default function OrderScreen() {
                   (order.paymentMethod === "PaidOnDelivery" ||
                     order.isPaid)) ? (
                   <ListGroup.Item>
-                    {loadingDeliver && <LoadingBox></LoadingBox>}
-                    {!etat.pendingPayement && order.isPaid ? (
+                    {loadingDeliver && <LoadingBox />}
+                    {(!order.pendingPayement &&
+                      order.isPaid &&
+                      !order.isDelivered &&
+                      !order.confimerCommande) ||
+                    order.confimerCommande ? (
                       <div className="d-grid">
                         <Button type="button" onClick={deliverOrderHandler}>
                           Deliver Order
                         </Button>
                       </div>
-                    ) : // Render null when the button should be disabled
-                    null}
+                    ) : order.confimerCommande ? (
+                      <div className="text-center2">Order is confirmed</div>
+                    ) : null}
                   </ListGroup.Item>
                 ) : null}
+
+                {userInfo.isAdmin ||
+                (userInfo.isSecretaire &&
+                  order.pendingPayment &&
+                  !order.isPaid &&
+                  !order.isDelivered) ? (
+                  <ListGroup.Item>
+                    {loadingDeliver && <LoadingBox></LoadingBox>}
+                    {order.isPaid ||
+                      (!order.isDelivered && !order.confimerCommande && (
+                        <div className="d-grid">
+                          <Button type="button" onClick={confirmOrderHandler}>
+                            Confirmer commande
+                          </Button>
+                        </div>
+                      ))}
+                  </ListGroup.Item>
+                ) : null}
+
+                {console.log("userInfo.isSecretaire:", userInfo.isSecretaire)}
+                {console.log("order.isPendingPayment:", order.pendingPayment)}
+                {console.log("order.isadmin:", userInfo.isAdmin)}
+                {console.log("order.payementmethod:", order.paymentMethod)}
+                {console.log("order.ispaid:", order.isPaid)}
+                {console.log(
+                  "order.confirmercomannde:",
+                  order.confimerCommande
+                )}
+                {console.log("order.isdelivered:", order.isDelivered)}
               </ListGroup>
             </Card.Body>
           </Card>
