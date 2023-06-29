@@ -393,13 +393,15 @@ export default function OrderScreen() {
                   <ListGroup.Item>
                     {loadingDeliver && <LoadingBox></LoadingBox>}
                     {order.isPaid ||
-                      (!order.isDelivered && !order.confimerCommande && (
-                        <div className="d-grid">
-                          <Button type="button" onClick={confirmOrderHandler}>
-                            Confirmer commande
-                          </Button>
-                        </div>
-                      ))}
+                      (!order.isDelivered &&
+                        !order.confimerCommande &&
+                        order.paymentMethod === "PaidOnDelivery" && (
+                          <div className="d-grid">
+                            <Button type="button" onClick={confirmOrderHandler}>
+                              Confirmer commande
+                            </Button>
+                          </div>
+                        ))}
                   </ListGroup.Item>
                 ) : null}
 
