@@ -11,6 +11,7 @@ export default function LivraisonAdressPage() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   //get shiping adress from painier in etat
   const {
+    fullBox,
     userInfo,
     panier: { livraisonAddress },
   } = etat;
@@ -37,6 +38,7 @@ export default function LivraisonAdressPage() {
         city,
         postalCode,
         country,
+        location: livraisonAddress.location,
       },
     });
     //on refreh don t loose data that user entered
@@ -48,10 +50,14 @@ export default function LivraisonAdressPage() {
         city,
         postalCode,
         country,
+        location: livraisonAddress.location,
       })
     );
     navigate("/payment");
   };
+  useEffect(() => {
+    ctxDispatch({ type: "SET_FULLBOX_OFF" });
+  }, [ctxDispatch, fullBox]);
   return (
     <div>
       <Helmet>
@@ -102,6 +108,24 @@ export default function LivraisonAdressPage() {
               required
             />
           </Form.Group>
+          <div className="mb-3">
+            <Button
+              id="chooseOnMap"
+              type="button"
+              variant="light"
+              onClick={() => navigate("/map")}
+            >
+              Choose Location On Map
+            </Button>
+            {livraisonAddress.location && livraisonAddress.location.lat ? (
+              <div>
+                LAT: {livraisonAddress.location.lat}
+                LNG:{livraisonAddress.location.lng}
+              </div>
+            ) : (
+              <div>No location</div>
+            )}
+          </div>
           <div className="mb-3">
             <Button variant="primary" type="submit">
               Continue

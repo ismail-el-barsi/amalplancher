@@ -23,7 +23,7 @@ export function ShopProvider(props) {
         : [],
       livraisonAddress: localStorage.getItem("livraisonAddress")
         ? JSON.parse(localStorage.getItem("livraisonAddress"))
-        : {},
+        : { location: {} },
       paymentMethod: localStorage.getItem("paymentMethod")
         ? localStorage.getItem("paymentMethod")
         : "",
@@ -31,6 +31,10 @@ export function ShopProvider(props) {
   };
   function reducer(etat, action) {
     switch (action.type) {
+      case "SET_FULLBOX_ON":
+        return { ...etat, fullBox: true };
+      case "SET_FULLBOX_OFF":
+        return { ...etat, fullBox: false };
       //add to panier
       case "PANIER_ADD_ITEM":
         const newItem = action.payload;
@@ -69,6 +73,17 @@ export function ShopProvider(props) {
           panier: {
             ...etat.panier,
             livraisonAddress: action.payload,
+          },
+        };
+      case "SAVE_LIVRAISON_ADDRESS_MAP_LOCATION":
+        return {
+          ...etat,
+          panier: {
+            ...etat.panier,
+            livraisonAddress: {
+              ...etat.panier.livraisonAddress,
+              location: action.payload,
+            },
           },
         };
       case "SAVE_PAYMENT_METHOD":

@@ -40,11 +40,12 @@ import CreateProductPage from "./pages/CreateProductPage ";
 import EmployeeListPage from "./pages/EmployeListPage";
 import EmployeeEditPage from "./pages/EmployeEditPage";
 import CreateEmployeePage from "./pages/CreateEmployePage";
+import MapPage from "./pages/MapPage";
 import Form from "react-bootstrap/Form";
 
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
-  const { panier, userInfo } = etat;
+  const { fullBox, panier, userInfo } = etat;
   const [nightMode, setNightMode] = useState(false);
 
   const signoutHandler = () => {
@@ -82,8 +83,12 @@ function App() {
       <div
         className={
           sidebarIsOpen
-            ? "d-flex flex-column site-container active-cont"
-            : "d-flex flex-column site-container"
+            ? fullBox
+              ? "site-container active-cont d-flex flex-column full-box"
+              : "site-container active-cont d-flex flex-column"
+            : fullBox
+            ? "site-container d-flex flex-column full-box"
+            : "site-container d-flex flex-column"
         }
       >
         <ToastContainer position="bottom-center" limit={1} />
@@ -352,6 +357,14 @@ function App() {
                   </AdminRoute>
                 }
               ></Route>
+              <Route
+                path="/map"
+                element={
+                  <ProtectedRoute>
+                    <MapPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </Container>
         </main>
