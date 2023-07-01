@@ -405,6 +405,9 @@ export default function OrderScreen() {
                         <Button type="button" onClick={deliverOrderHandler}>
                           Deliver Order
                         </Button>
+                        <Button type="button" onClick={showRouteHandler}>
+                          Show Route
+                        </Button>
                       </div>
                     ) : order.confimerCommande ? (
                       <div className="text-center2">Order is confirmed</div>
@@ -434,9 +437,6 @@ export default function OrderScreen() {
                 {console.log(order.shippingAddress.location.lat)}
                 {console.log(order.shippingAddress.location.lng)}
               </ListGroup>
-              <Button type="button" onClick={showRouteHandler}>
-                Show Route
-              </Button>
             </Card.Body>
           </Card>
         </Col>
