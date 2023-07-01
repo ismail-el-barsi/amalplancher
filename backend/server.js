@@ -13,7 +13,7 @@ import cors from "cors";
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGODB_URI2)
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to the database");
   })

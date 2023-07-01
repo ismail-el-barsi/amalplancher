@@ -230,6 +230,18 @@ export default function OrderScreen() {
         dispatch({ type: "CONFIRM_FAIL" });
       });
   }
+  function showRouteHandler() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const myLocation = `${position.coords.latitude},${position.coords.longitude}`;
+        const googleMapsUrl = `https://www.google.com/maps/dir/${myLocation}/${order.shippingAddress.location.lat},${order.shippingAddress.location.lng}`;
+        window.open(googleMapsUrl, "_blank");
+      },
+      (error) => {
+        console.error("Error retrieving location:", error);
+      }
+    );
+  }
 
   return loading ? (
     <LoadingBox></LoadingBox>
@@ -414,18 +426,12 @@ export default function OrderScreen() {
                         ))}
                   </ListGroup.Item>
                 ) : null}
-
-                {console.log("userInfo.isSecretaire:", userInfo.isSecretaire)}
-                {console.log("order.isPendingPayment:", order.pendingPayment)}
-                {console.log("order.isadmin:", userInfo.isAdmin)}
-                {console.log("order.payementmethod:", order.paymentMethod)}
-                {console.log("order.ispaid:", order.isPaid)}
-                {console.log(
-                  "order.confirmercomannde:",
-                  order.confimerCommande
-                )}
-                {console.log("order.isdelivered:", order.isDelivered)}
+                {console.log(order.shippingAddress.location.lat)}
+                {console.log(order.shippingAddress.location.lng)}
               </ListGroup>
+              <Button type="button" onClick={showRouteHandler}>
+                Show Route
+              </Button>
             </Card.Body>
           </Card>
         </Col>
