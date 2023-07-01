@@ -231,16 +231,21 @@ export default function OrderScreen() {
       });
   }
   function showRouteHandler() {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const myLocation = `${position.coords.latitude},${position.coords.longitude}`;
-        const googleMapsUrl = `https://www.google.com/maps/dir/${myLocation}/${order.shippingAddress.location.lat},${order.shippingAddress.location.lng}`;
-        window.open(googleMapsUrl, "_blank");
-      },
-      (error) => {
-        console.error("Error retrieving location:", error);
-      }
-    );
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const myLocation = `${position.coords.latitude},${position.coords.longitude}`;
+          const shippingLocation = `${order.shippingAddress.location.lat},${order.shippingAddress.location.lng}`;
+          const googleMapsUrl = `https://www.google.com/maps/dir/${myLocation}/${shippingLocation}`;
+          window.open(googleMapsUrl, "_blank");
+        },
+        (error) => {
+          console.error("Error retrieving location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
   }
 
   return loading ? (
