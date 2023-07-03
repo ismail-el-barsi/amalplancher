@@ -396,18 +396,22 @@ export default function OrderScreen() {
                     order.isPaid)) ? (
                   <ListGroup.Item>
                     {loadingDeliver && <LoadingBox />}
-                    {(!order.pendingPayement &&
+                    {(!order.pendingPayment &&
                       order.isPaid &&
                       !order.isDelivered &&
                       !order.confimerCommande) ||
                     order.confimerCommande ? (
                       <div className="d-grid">
-                        <Button type="button" onClick={deliverOrderHandler}>
-                          Deliver Order
-                        </Button>
-                        <Button type="button" onClick={showRouteHandler}>
-                          Show Route
-                        </Button>
+                        {!order.isDelivered && (
+                          <Button type="button" onClick={deliverOrderHandler}>
+                            Deliver Order
+                          </Button>
+                        )}
+                        {!order.isDelivered && (
+                          <Button type="button" onClick={showRouteHandler}>
+                            Show Route
+                          </Button>
+                        )}
                       </div>
                     ) : order.confimerCommande ? (
                       <div className="text-center2">Order is confirmed</div>
