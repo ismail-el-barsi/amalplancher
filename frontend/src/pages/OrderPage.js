@@ -296,8 +296,10 @@ export default function OrderScreen() {
               </Card.Text>
               {!order.isPaid && order.paymentMethod === "PaidOnDelivery" ? (
                 <MessageBox variant="alert alert-warning">
-                  {order.confimerCommande
+                  {order.confimerCommande && !order.isDelivered
                     ? "Waiting for Delivery"
+                    : order.confimerCommande && order.isDelivered
+                    ? "Order Paid at delivery"
                     : "Waiting for Confirmation"}
                 </MessageBox>
               ) : order.isPaid ? (
