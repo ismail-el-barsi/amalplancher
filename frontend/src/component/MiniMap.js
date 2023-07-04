@@ -33,7 +33,7 @@ export default function MapScreen({ destination }) {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by this browser");
     } else {
-      navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         (position) => {
           const origin = {
             lat: position.coords.latitude,
@@ -113,6 +113,7 @@ export default function MapScreen({ destination }) {
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
     getUserCurrentLocation();
+    setZoom(15);
   };
 
   if (loading) {
@@ -151,7 +152,9 @@ export default function MapScreen({ destination }) {
           <p>Duration: {duration}</p>
         </div>
       )}
-      <button onClick={handleStartNavigation}>Start Navigation</button>
+      {!isNavigationStarted && (
+        <button onClick={handleStartNavigation}>Start Navigation</button>
+      )}
     </div>
   );
 }
