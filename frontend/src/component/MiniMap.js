@@ -135,7 +135,7 @@ export default function MapScreen({ destination }) {
             <DirectionsRenderer
               options={{
                 directions: directions,
-                markerOptions: { visible: false },
+                markerOptions: { visible: true },
                 polylineOptions: {
                   strokeColor: "#0000FF",
                   strokeOpacity: 0.7,
