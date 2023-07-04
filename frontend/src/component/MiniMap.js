@@ -113,7 +113,6 @@ export default function MapScreen({ destination }) {
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
     getUserCurrentLocation();
-    setZoom(15);
   };
 
   if (loading) {
