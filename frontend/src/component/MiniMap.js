@@ -91,7 +91,23 @@ export default function MapScreen() {
 
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
-    mapRef.current.setZoom(15); // Zoom to level 15 when navigation starts
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const updatedCenter = { lat: latitude, lng: longitude };
+          setCenter(updatedCenter);
+          setLocation(updatedCenter);
+          mapRef.current.panTo(updatedCenter);
+          mapRef.current.setZoom(15); // Zoom to level 15 when navigation starts
+        },
+        (error) => {
+          console.error("Error retrieving user's current location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser");
+    }
   };
 
   if (loading) {
