@@ -24,11 +24,12 @@ export default function MapScreen({ destination }) {
   const [zoom, setZoom] = useState(13);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
-  const [destinationChanged, setDestinationChanged] = useState(false);
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   const mapRef = useRef(null);
+  const directionsServiceRef = useRef(null);
 
-  const getUserCurrentLocation = (destination) => {
+  const getUserCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by this browser");
     } else {
@@ -39,27 +40,7 @@ export default function MapScreen({ destination }) {
             lng: position.coords.longitude,
           };
 
-          const directionsService = new window.google.maps.DirectionsService();
-          directionsService.route(
-            {
-              origin,
-              destination,
-              travelMode: window.google.maps.TravelMode.DRIVING,
-            },
-            (response, status) => {
-              if (status === window.google.maps.DirectionsStatus.OK) {
-                setDirections(response);
-                const { distance, duration } = response.routes[0].legs[0];
-                setDistance(distance.text);
-                setDuration(duration.text);
-              } else {
-                toast.error("Failed to get directions");
-              }
-            }
-          );
-
-          setCenter(origin);
-          setLocation(origin);
+          setCurrentLocation(origin);
         },
         (error) => {
           console.error("Error getting current location:", error);
@@ -69,13 +50,12 @@ export default function MapScreen({ destination }) {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchGoogleApiKey = async () => {
       try {
         const { data } = await axios("/api/keys/google", {
           headers: { Authorization: `BEARER ${userInfo.token}` },
         });
         setGoogleApiKey(data.key);
-        getUserCurrentLocation(destination);
       } catch (error) {
         console.error("Error fetching Google API key:", error);
       } finally {
@@ -83,16 +63,41 @@ export default function MapScreen({ destination }) {
       }
     };
 
-    fetchData();
+    fetchGoogleApiKey();
     ctxDispatch({
       type: "SET_FULLBOX_ON",
     });
+  }, [ctxDispatch, userInfo.token]);
 
-    setDestinationChanged(false);
-  }, [ctxDispatch, destination, userInfo.token]);
+  useEffect(() => {
+    if (currentLocation) {
+      directionsServiceRef.current.route(
+        {
+          origin: currentLocation,
+          destination,
+          travelMode: window.google.maps.TravelMode.DRIVING,
+        },
+        (response, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK) {
+            setDirections(response);
+            const { distance, duration } = response.routes[0].legs[0];
+            setDistance(distance.text);
+            setDuration(duration.text);
+            setZoom(15); // Set the zoom level here
+          } else {
+            toast.error("Failed to get directions");
+          }
+        }
+      );
+
+      setCenter(currentLocation);
+      setLocation(currentLocation);
+    }
+  }, [currentLocation, destination]);
 
   const onLoad = (map) => {
     mapRef.current = map;
+    directionsServiceRef.current = new window.google.maps.DirectionsService();
   };
 
   const onIdle = () => {
@@ -107,7 +112,7 @@ export default function MapScreen({ destination }) {
 
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
-    getUserCurrentLocation(destination);
+    getUserCurrentLocation();
     setZoom(15);
   };
 
@@ -126,7 +131,7 @@ export default function MapScreen({ destination }) {
           onLoad={onLoad}
           onIdle={onIdle}
         >
-          {directions && isNavigationStarted && destinationChanged && (
+          {directions && isNavigationStarted && (
             <DirectionsRenderer
               options={{
                 directions: directions,
