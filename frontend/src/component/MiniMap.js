@@ -91,6 +91,7 @@ export default function MapScreen() {
 
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
+    mapRef.current.setZoom(15); // Zoom to level 15 when navigation starts
   };
 
   if (loading) {
@@ -105,7 +106,7 @@ export default function MapScreen() {
           id="sample-map"
           mapContainerStyle={{ height: "50vh", width: "100%" }}
           center={center}
-          zoom={15}
+          zoom={13} // Initial zoom level
           onLoad={onLoad}
           onIdle={onIdle}
         >
