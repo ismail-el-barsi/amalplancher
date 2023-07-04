@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   LoadScript,
   GoogleMap,
-  Marker,
   DirectionsService,
   DirectionsRenderer,
 } from "@react-google-maps/api";
@@ -24,7 +23,6 @@ export default function MapScreen() {
   const [isNavigationStarted, setIsNavigationStarted] = useState(false);
 
   const mapRef = useRef(null);
-  const markerRef = useRef(null);
 
   const getUserCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -91,10 +89,6 @@ export default function MapScreen() {
     });
   };
 
-  const onMarkerLoad = (marker) => {
-    markerRef.current = marker;
-  };
-
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
   };
@@ -128,7 +122,6 @@ export default function MapScreen() {
               }}
             />
           )}
-          <Marker position={location} onLoad={onMarkerLoad}></Marker>
         </GoogleMap>
       </LoadScript>
       <button onClick={handleStartNavigation}>Start Navigation</button>
