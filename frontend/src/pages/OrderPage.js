@@ -448,7 +448,12 @@ export default function OrderScreen() {
           </Card>
         </Col>
       </Row>
-      <MiniMap />
+      <MiniMap
+        destination={{
+          lat: order.shippingAddress.location.lat,
+          lng: order.shippingAddress.location.lng,
+        }}
+      />
     </div>
   );
 }

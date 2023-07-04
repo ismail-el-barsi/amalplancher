@@ -12,48 +12,59 @@ import { toast } from "react-toastify";
 const defaultLocation = { lat: 45.516, lng: -73.56 };
 const libs = ["places"];
 
-export default function MapScreen() {
+export default function MapScreen({ destination }) {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { userInfo } = etat;
   const [googleApiKey, setGoogleApiKey] = useState("");
   const [center, setCenter] = useState(defaultLocation);
   const [location, setLocation] = useState(center);
-  const [loading, setLoading] = useState(true); // New state variable for loading status
+  const [loading, setLoading] = useState(true);
   const [directions, setDirections] = useState(null);
   const [isNavigationStarted, setIsNavigationStarted] = useState(false);
+  const [zoom, setZoom] = useState(13);
+  const [distance, setDistance] = useState("");
+  const [duration, setDuration] = useState("");
+  const [destinationChanged, setDestinationChanged] = useState(false);
 
   const mapRef = useRef(null);
 
-  const getUserCurrentLocation = () => {
+  const getUserCurrentLocation = (destination) => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by this browser");
     } else {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const origin = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        const destination = { lat: 35.7596, lng: -5.833 };
+      navigator.geolocation.watchPosition(
+        (position) => {
+          const origin = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
 
-        const directionsService = new window.google.maps.DirectionsService();
-        directionsService.route(
-          {
-            origin,
-            destination,
-            travelMode: window.google.maps.TravelMode.DRIVING,
-          },
-          (response, status) => {
-            if (status === window.google.maps.DirectionsStatus.OK) {
-              setDirections(response);
-            } else {
-              toast.error("Failed to get directions");
+          const directionsService = new window.google.maps.DirectionsService();
+          directionsService.route(
+            {
+              origin,
+              destination,
+              travelMode: window.google.maps.TravelMode.DRIVING,
+            },
+            (response, status) => {
+              if (status === window.google.maps.DirectionsStatus.OK) {
+                setDirections(response);
+                const { distance, duration } = response.routes[0].legs[0];
+                setDistance(distance.text);
+                setDuration(duration.text);
+              } else {
+                toast.error("Failed to get directions");
+              }
             }
-          }
-        );
+          );
 
-        setCenter(origin);
-        setLocation(origin);
-      });
+          setCenter(origin);
+          setLocation(origin);
+        },
+        (error) => {
+          console.error("Error getting current location:", error);
+        }
+      );
     }
   };
 
@@ -64,7 +75,7 @@ export default function MapScreen() {
           headers: { Authorization: `BEARER ${userInfo.token}` },
         });
         setGoogleApiKey(data.key);
-        getUserCurrentLocation();
+        getUserCurrentLocation(destination);
       } catch (error) {
         console.error("Error fetching Google API key:", error);
       } finally {
@@ -76,43 +87,31 @@ export default function MapScreen() {
     ctxDispatch({
       type: "SET_FULLBOX_ON",
     });
-  }, [ctxDispatch]);
+
+    setDestinationChanged(false);
+  }, [ctxDispatch, destination, userInfo.token]);
 
   const onLoad = (map) => {
     mapRef.current = map;
-
-    if (navigator.geolocation && isNavigationStarted) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const updatedCenter = { lat: latitude, lng: longitude };
-          setCenter(updatedCenter);
-          setLocation(updatedCenter);
-          map.panTo(updatedCenter);
-          map.setZoom(15); // Zoom to level 15 when navigation starts
-        },
-        (error) => {
-          console.error("Error retrieving user's current location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser");
-    }
   };
 
   const onIdle = () => {
-    setLocation({
-      lat: mapRef.current.center.lat(),
-      lng: mapRef.current.center.lng(),
-    });
+    if (!isNavigationStarted) {
+      setLocation({
+        lat: mapRef.current.center.lat(),
+        lng: mapRef.current.center.lng(),
+      });
+      setZoom(mapRef.current.zoom);
+    }
   };
 
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
+    getUserCurrentLocation(destination);
+    setZoom(15);
   };
 
   if (loading) {
-    // Render a loading indicator while fetching the API key
     return <div>Loading...</div>;
   }
 
@@ -122,11 +121,12 @@ export default function MapScreen() {
         <GoogleMap
           id="sample-map"
           mapContainerStyle={{ height: "50vh", width: "100%" }}
-          center={center}
+          center={isNavigationStarted ? center : location}
+          zoom={zoom}
           onLoad={onLoad}
           onIdle={onIdle}
         >
-          {directions && isNavigationStarted && (
+          {directions && isNavigationStarted && destinationChanged && (
             <DirectionsRenderer
               options={{
                 directions: directions,
@@ -141,6 +141,12 @@ export default function MapScreen() {
           )}
         </GoogleMap>
       </LoadScript>
+      {isNavigationStarted && (
+        <div>
+          <p>Distance: {distance}</p>
+          <p>Duration: {duration}</p>
+        </div>
+      )}
       <button onClick={handleStartNavigation}>Start Navigation</button>
     </div>
   );
