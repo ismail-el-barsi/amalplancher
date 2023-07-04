@@ -122,7 +122,7 @@ export default function MapScreen() {
           id="sample-map"
           mapContainerStyle={{ height: "50vh", width: "100%" }}
           center={center}
-          zoom={13} // Initial zoom level
+          zoom={13} // Initial zoom level set to 13
           onLoad={onLoad}
           onIdle={onIdle}
         >
