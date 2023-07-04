@@ -3,12 +3,11 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   LoadScript,
   GoogleMap,
-  StandaloneSearchBox,
   Marker,
+  DirectionsService,
+  DirectionsRenderer,
 } from "@react-google-maps/api";
-import { useNavigate } from "react-router-dom";
 import { Shop } from "../Shop";
-import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
 
 const defaultLocation = { lat: 45.516, lng: -73.56 };
@@ -17,14 +16,14 @@ const libs = ["places"];
 export default function MapScreen() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { userInfo } = etat;
-  const navigate = useNavigate();
   const [googleApiKey, setGoogleApiKey] = useState("");
   const [center, setCenter] = useState(defaultLocation);
   const [location, setLocation] = useState(center);
   const [loading, setLoading] = useState(true); // New state variable for loading status
+  const [directions, setDirections] = useState(null);
+  const [isNavigationStarted, setIsNavigationStarted] = useState(false);
 
   const mapRef = useRef(null);
-  const placeRef = useRef(null);
   const markerRef = useRef(null);
 
   const getUserCurrentLocation = () => {
@@ -32,14 +31,30 @@ export default function MapScreen() {
       alert("Geolocation is not supported by this browser");
     } else {
       navigator.geolocation.getCurrentPosition((position) => {
-        setCenter({
+        const origin = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-        });
-        setLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
+        };
+        const destination = { lat: 35.7596, lng: -5.833 };
+
+        const directionsService = new window.google.maps.DirectionsService();
+        directionsService.route(
+          {
+            origin,
+            destination,
+            travelMode: window.google.maps.TravelMode.DRIVING,
+          },
+          (response, status) => {
+            if (status === window.google.maps.DirectionsStatus.OK) {
+              setDirections(response);
+            } else {
+              toast.error("Failed to get directions");
+            }
+          }
+        );
+
+        setCenter(origin);
+        setLocation(origin);
       });
     }
   };
@@ -76,35 +91,12 @@ export default function MapScreen() {
     });
   };
 
-  const onLoadPlaces = (place) => {
-    placeRef.current = place;
-  };
-
-  const onPlacesChanged = () => {
-    const place = placeRef.current.getPlaces()[0].geometry.location;
-    setCenter({ lat: place.lat(), lng: place.lng() });
-    setLocation({ lat: place.lat(), lng: place.lng() });
-  };
-
   const onMarkerLoad = (marker) => {
     markerRef.current = marker;
   };
 
-  const onConfirm = () => {
-    const places = placeRef.current.getPlaces() || [{}];
-    ctxDispatch({
-      type: "SAVE_LIVRAISON_ADDRESS_MAP_LOCATION",
-      payload: {
-        lat: location.lat,
-        lng: location.lng,
-        address: places[0].formatted_address,
-        name: places[0].name,
-        vicinity: places[0].vicinity,
-        googleAddressId: places[0].id,
-      },
-    });
-    toast.success("Location selected successfully.");
-    navigate("/livraison");
+  const handleStartNavigation = () => {
+    setIsNavigationStarted(true);
   };
 
   if (loading) {
@@ -113,30 +105,33 @@ export default function MapScreen() {
   }
 
   return (
-    <div className="full-box">
+    <div className="mini-map">
       <LoadScript libraries={libs} googleMapsApiKey={googleApiKey}>
         <GoogleMap
           id="sample-map"
-          mapContainerStyle={{ height: "100%", width: "100%" }}
+          mapContainerStyle={{ height: "50vh", width: "100%" }}
           center={center}
           zoom={15}
           onLoad={onLoad}
           onIdle={onIdle}
         >
-          <StandaloneSearchBox
-            onLoad={onLoadPlaces}
-            onPlacesChanged={onPlacesChanged}
-          >
-            <div className="map-input-box">
-              <input type="text" placeholder="Enter your address"></input>
-              <Button type="button" onClick={onConfirm}>
-                Confirm
-              </Button>
-            </div>
-          </StandaloneSearchBox>
+          {directions && isNavigationStarted && (
+            <DirectionsRenderer
+              options={{
+                directions: directions,
+                markerOptions: { visible: false },
+                polylineOptions: {
+                  strokeColor: "#0000FF",
+                  strokeOpacity: 0.7,
+                  strokeWeight: 5,
+                },
+              }}
+            />
+          )}
           <Marker position={location} onLoad={onMarkerLoad}></Marker>
         </GoogleMap>
       </LoadScript>
+      <button onClick={handleStartNavigation}>Start Navigation</button>
     </div>
   );
 }

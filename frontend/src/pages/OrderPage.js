@@ -14,6 +14,7 @@ import { getError } from "../Utils";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
+import MiniMap from "../component/MiniMap";
 
 function reducer(etat, action) {
   switch (action.type) {
@@ -447,6 +448,7 @@ export default function OrderScreen() {
           </Card>
         </Col>
       </Row>
+      <MiniMap />
     </div>
   );
 }
