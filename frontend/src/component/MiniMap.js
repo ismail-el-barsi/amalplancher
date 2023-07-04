@@ -80,6 +80,24 @@ export default function MapScreen() {
 
   const onLoad = (map) => {
     mapRef.current = map;
+
+    if (navigator.geolocation && isNavigationStarted) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const updatedCenter = { lat: latitude, lng: longitude };
+          setCenter(updatedCenter);
+          setLocation(updatedCenter);
+          map.panTo(updatedCenter);
+          map.setZoom(15); // Zoom to level 15 when navigation starts
+        },
+        (error) => {
+          console.error("Error retrieving user's current location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser");
+    }
   };
 
   const onIdle = () => {
@@ -91,23 +109,6 @@ export default function MapScreen() {
 
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const updatedCenter = { lat: latitude, lng: longitude };
-          setCenter(updatedCenter);
-          setLocation(updatedCenter);
-          mapRef.current.panTo(updatedCenter);
-          mapRef.current.setZoom(15); // Zoom to level 15 when navigation starts
-        },
-        (error) => {
-          console.error("Error retrieving user's current location:", error);
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser");
-    }
   };
 
   if (loading) {
@@ -122,7 +123,6 @@ export default function MapScreen() {
           id="sample-map"
           mapContainerStyle={{ height: "50vh", width: "100%" }}
           center={center}
-          zoom={13} // Initial zoom level set to 13
           onLoad={onLoad}
           onIdle={onIdle}
         >
