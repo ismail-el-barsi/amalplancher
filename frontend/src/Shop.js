@@ -28,6 +28,12 @@ export function ShopProvider(props) {
         ? localStorage.getItem("paymentMethod")
         : "",
     },
+    mode: localStorage.getItem("mode")
+      ? localStorage.getItem("mode")
+      : window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light",
   };
   function reducer(etat, action) {
     switch (action.type) {
@@ -91,6 +97,10 @@ export function ShopProvider(props) {
           ...etat,
           panier: { ...etat.panier, paymentMethod: action.payload },
         };
+      case "SWITCH_MODE":
+        const mode = etat.mode === "dark" ? "light" : "dark";
+        localStorage.setItem("mode", mode);
+        return { ...etat, mode };
       default:
         return etat;
     }

@@ -41,12 +41,10 @@ import EmployeeListPage from "./pages/EmployeListPage";
 import EmployeeEditPage from "./pages/EmployeEditPage";
 import CreateEmployeePage from "./pages/CreateEmployePage";
 import MapPage from "./pages/MapPage";
-import Form from "react-bootstrap/Form";
 
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { fullBox, panier, userInfo } = etat;
-  const [nightMode, setNightMode] = useState(false);
 
   const signoutHandler = () => {
     ctxDispatch({ type: "USER_SIGNOUT" });
@@ -56,15 +54,17 @@ function App() {
   };
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const handleModeSwitch = () => {
-    setNightMode(!nightMode);
+  const {
+    etat: { mode },
+    dispatch,
+  } = useContext(Shop);
 
-    // Update night mode settings
-    if (!nightMode) {
-      document.body.classList.add("night-mode");
-    } else {
-      document.body.classList.remove("night-mode");
-    }
+  useEffect(() => {
+    document.body.setAttribute("data-bs-theme", mode);
+  }, [mode]);
+
+  const switchModeHandler = () => {
+    dispatch({ type: "SWITCH_MODE" });
   };
 
   // useEffect(() => {
@@ -116,13 +116,11 @@ function App() {
               <Navbar.Collapse id="basic-navbar-nav">
                 {/* <SearchBox /> */}
                 <Nav className="me-auto w-100 justify-content-end">
-                  <Form.Switch
-                    id="mode-switch"
-                    label="Night Mode"
-                    checked={nightMode}
-                    onChange={handleModeSwitch}
-                    className="ms-2"
-                  />
+                  <Button variant={mode} onClick={switchModeHandler}>
+                    <i
+                      className={mode === "light" ? "fa fa-sun" : "fa fa-moon"}
+                    ></i>
+                  </Button>
                   <Link to="/panier" className="nav-link">
                     panier
                     {panier.panierItems.length > 0 && (
