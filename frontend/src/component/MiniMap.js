@@ -24,11 +24,11 @@ export default function MapScreen({ destination }) {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [hasArrived, setHasArrived] = useState(false); // New state for arrival message
+  const [hasArrived, setHasArrived] = useState(false);
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
-  const geocoder = useRef(null); // Reference to Geocoder API
+  const geocoder = useRef(null);
 
   const getUserCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -81,7 +81,7 @@ export default function MapScreen({ destination }) {
             const { distance, duration } = response.routes[0].legs[0];
             setDistance(distance.text);
             setDuration(duration.text);
-            setZoom(15); // Set the zoom level here
+            setZoom(15);
           } else {
             toast.error("Failed to get directions");
           }
@@ -176,8 +176,7 @@ export default function MapScreen({ destination }) {
             <p>Distance: {distance}</p>
             <p>Duration: {duration}</p>
           </div>
-          {hasArrived && <p>Arrived at destination!</p>}{" "}
-          {/* Display arrival message */}
+          {hasArrived && <p>Arrived at destination!</p>}
         </>
       )}
       {!isNavigationStarted && (
