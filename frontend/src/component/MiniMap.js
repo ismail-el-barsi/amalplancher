@@ -24,7 +24,6 @@ export default function MapScreen({ destination }) {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [hasArrived, setHasArrived] = useState(false);
   const [hasReachedDestination, setHasReachedDestination] = useState(false);
 
   const mapRef = useRef(null);
@@ -114,7 +113,6 @@ export default function MapScreen({ destination }) {
 
               if (currentDistance <= threshold) {
                 setHasReachedDestination(true);
-                setHasArrived(true);
                 clearInterval(checkArrival);
               }
             }
@@ -183,7 +181,7 @@ export default function MapScreen({ destination }) {
             <p>Distance: {distance}</p>
             <p>Duration: {duration}</p>
           </div>
-          {hasArrived && <p>Arrived at destination!</p>}
+          {hasReachedDestination && <p>Arrived at destination!</p>}
         </>
       )}
       {!isNavigationStarted && (
