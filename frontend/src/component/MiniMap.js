@@ -103,6 +103,7 @@ export default function MapScreen({ destination }) {
           );
 
         if (currentDistance <= 100) {
+          // Set the threshold distance in meters
           setHasReachedDestination(true);
           clearInterval(checkArrival);
         }
@@ -152,7 +153,7 @@ export default function MapScreen({ destination }) {
           onLoad={onLoad}
           onIdle={onIdle}
         >
-          {directions && isNavigationStarted && (
+          {directions && isNavigationStarted && !hasReachedDestination && (
             <DirectionsRenderer
               directions={directions}
               options={{
