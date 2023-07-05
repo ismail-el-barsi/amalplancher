@@ -25,6 +25,7 @@ export default function MapScreen({ destination }) {
   const [duration, setDuration] = useState("");
   const [currentLocation, setCurrentLocation] = useState(null);
   const [hasArrived, setHasArrived] = useState(false);
+  const [hasReachedDestination, setHasReachedDestination] = useState(false);
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
@@ -112,6 +113,7 @@ export default function MapScreen({ destination }) {
                 );
 
               if (currentDistance <= threshold) {
+                setHasReachedDestination(true);
                 setHasArrived(true);
                 clearInterval(checkArrival);
               }
