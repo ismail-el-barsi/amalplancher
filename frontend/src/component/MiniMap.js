@@ -118,8 +118,8 @@ export default function MapScreen({ destination }) {
     directionsServiceRef.current = new window.google.maps.DirectionsService();
     directionsRendererRef.current = new window.google.maps.DirectionsRenderer({
       suppressMarkers: true,
+      map,
     });
-    directionsRendererRef.current.setMap(mapRef.current);
   };
 
   const onIdle = () => {
@@ -176,7 +176,11 @@ export default function MapScreen({ destination }) {
             <p>Distance: {distance}</p>
             <p>Duration: {duration}</p>
           </div>
-          {hasReachedDestination && <p>Arrived at destination!</p>}
+          {hasReachedDestination ? (
+            <p>Arrived at destination!</p>
+          ) : (
+            <p>Following the route...</p>
+          )}
         </>
       )}
       {!isNavigationStarted && (
