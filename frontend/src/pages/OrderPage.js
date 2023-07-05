@@ -192,21 +192,69 @@ export default function OrderScreen() {
   async function deliverOrderHandler() {
     try {
       dispatch({ type: "DELIVER_REQUEST" });
-      await axios.put(
-        `/api/orders/${order._id}/deliver`,
-        {},
-        {
-          headers: { authorization: `Bearer ${userInfo.token}` },
-        }
-      );
-      dispatch({ type: "DELIVER_SUCCESS" });
-      dispatch({ type: "SET_PENDING_PAYMENT", payload: false }); // Add this line
-      toast.success("Order is delivered");
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const myLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            };
+            const shippingLocation = {
+              lat: order.shippingAddress.location.lat,
+              lng: order.shippingAddress.location.lng,
+            };
+            const distance = calculateDistance(myLocation, shippingLocation);
+            const threshold = 100;
+            if (distance <= threshold) {
+              // User is within the threshold distance, proceed with the delivery
+              await axios.put(
+                `/api/orders/${order._id}/deliver`,
+                {},
+                {
+                  headers: { authorization: `Bearer ${userInfo.token}` },
+                }
+              );
+              dispatch({ type: "DELIVER_SUCCESS" });
+              dispatch({ type: "SET_PENDING_PAYMENT", payload: false });
+              toast.success("Order is delivered");
+            } else {
+              // User is outside the threshold distance, display an error message
+              toast.error("You haven't reached the delivery location yet.");
+            }
+          },
+          (error) => {
+            console.error("Error retrieving location:", error);
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
     } catch (err) {
       toast.error(getError(err));
       dispatch({ type: "DELIVER_FAIL" });
     }
   }
+  function calculateDistance(location1, location2) {
+    const earthRadius = 6371; // Radius of the Earth in kilometers
+    const latDiff = degreesToRadians(location2.lat - location1.lat);
+    const lngDiff = degreesToRadians(location2.lng - location1.lng);
+
+    const a =
+      Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+      Math.cos(degreesToRadians(location1.lat)) *
+        Math.cos(degreesToRadians(location2.lat)) *
+        Math.sin(lngDiff / 2) *
+        Math.sin(lngDiff / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = earthRadius * c * 1000; // Convert to meters
+
+    return distance;
+  }
+  function degreesToRadians(degrees) {
+    return (degrees * Math.PI) / 180;
+  }
+
   function confirmOrderHandler() {
     dispatch({ type: "CONFIRM_REQUEST" });
 
