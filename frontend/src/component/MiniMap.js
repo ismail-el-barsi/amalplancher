@@ -103,19 +103,24 @@ export default function MapScreen({ destination }) {
           { location: currentLocation },
           (results, status) => {
             if (status === "OK" && results[0]) {
-              const currentAddress = results[0].formatted_address;
-              const destinationAddress = destination;
+              const threshold = 100; // Set the threshold distance in meters
 
-              if (currentAddress.includes(destinationAddress)) {
+              const currentDistance =
+                window.google.maps.geometry.spherical.computeDistanceBetween(
+                  currentLocation,
+                  destination
+                );
+
+              if (currentDistance <= threshold) {
                 setHasArrived(true);
                 clearInterval(checkArrival);
               }
             }
           }
         );
-      }, 5000); // Check arrival every 5 seconds
+      }, 5000);
 
-      return () => clearInterval(checkArrival); // Cleanup interval on component unmount
+      return () => clearInterval(checkArrival);
     }
   }, [isNavigationStarted, currentLocation, destination]);
 
