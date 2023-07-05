@@ -497,12 +497,33 @@ export default function OrderScreen() {
           </Card>
         </Col>
       </Row>
-      <MiniMap
-        destination={{
-          lat: order.shippingAddress.location.lat,
-          lng: order.shippingAddress.location.lng,
-        }}
-      />
+      {userInfo.isAdmin ||
+      (userInfo.isConducteur &&
+        order.isPaid &&
+        !order.isDelivered &&
+        (order.paymentMethod === "PaidOnDelivery" || order.isPaid)) ? (
+        <ListGroup.Item>
+          {loadingDeliver && <LoadingBox />}
+          {(!order.pendingPayment &&
+            order.isPaid &&
+            !order.isDelivered &&
+            !order.confimerCommande) ||
+          order.confimerCommande ? (
+            <div className="d-grid">
+              {!order.isDelivered && (
+                <MiniMap
+                  destination={{
+                    lat: order.shippingAddress.location.lat,
+                    lng: order.shippingAddress.location.lng,
+                  }}
+                />
+              )}
+            </div>
+          ) : order.confimerCommande ? (
+            <div className="text-center2"></div>
+          ) : null}
+        </ListGroup.Item>
+      ) : null}
     </div>
   );
 }

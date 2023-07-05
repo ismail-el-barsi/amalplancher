@@ -63,9 +63,9 @@ export default function MapScreen({ destination }) {
     };
 
     fetchGoogleApiKey();
-    ctxDispatch({
-      type: "SET_FULLBOX_ON",
-    });
+    // ctxDispatch({
+    //   type: "SET_FULLBOX_ON",
+    // });
   }, [ctxDispatch, userInfo.token]);
 
   useEffect(() => {
