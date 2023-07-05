@@ -454,14 +454,15 @@ export default function OrderScreen() {
                     order.confimerCommande ? (
                       <div className="d-grid">
                         {!order.isDelivered && (
-                          <Button type="button" onClick={deliverOrderHandler}>
-                            Deliver Order
-                          </Button>
-                        )}
-                        {!order.isDelivered && (
-                          <Button type="button" onClick={showRouteHandler}>
-                            Show Route
-                          </Button>
+                          <div className="d-flex justify-content-between">
+                            <Button type="button" onClick={deliverOrderHandler}>
+                              Deliver Order
+                            </Button>
+                            <span className="mx-2"></span> {/* Add a space */}
+                            <Button type="button" onClick={showRouteHandler}>
+                              Show Route
+                            </Button>
+                          </div>
                         )}
                       </div>
                     ) : order.confimerCommande ? (

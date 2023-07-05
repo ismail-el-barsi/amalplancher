@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   LoadScript,
   GoogleMap,
-  DirectionsService,
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { Shop } from "../Shop";
@@ -153,7 +152,11 @@ export default function MapScreen({ destination }) {
         </div>
       )}
       {!isNavigationStarted && (
-        <button onClick={handleStartNavigation}>Start Navigation</button>
+        <div className="text-center2 mt-3">
+          <button className="btn btn-primary" onClick={handleStartNavigation}>
+            Start Navigation
+          </button>
+        </div>
       )}
     </div>
   );
