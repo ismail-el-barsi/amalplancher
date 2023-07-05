@@ -24,9 +24,11 @@ export default function MapScreen({ destination }) {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [currentLocation, setCurrentLocation] = useState(null);
+  const [hasArrived, setHasArrived] = useState(false); // New state for arrival message
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
+  const geocoder = useRef(null); // Reference to Geocoder API
 
   const getUserCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -63,10 +65,7 @@ export default function MapScreen({ destination }) {
     };
 
     fetchGoogleApiKey();
-    // ctxDispatch({
-    //   type: "SET_FULLBOX_ON",
-    // });
-  }, [ctxDispatch, userInfo.token]);
+  }, [userInfo.token]);
 
   useEffect(() => {
     if (currentLocation) {
@@ -93,6 +92,32 @@ export default function MapScreen({ destination }) {
       setLocation(currentLocation);
     }
   }, [currentLocation, destination]);
+
+  useEffect(() => {
+    if (isNavigationStarted && currentLocation) {
+      const geocoderService = new window.google.maps.Geocoder();
+      geocoder.current = geocoderService;
+
+      const checkArrival = setInterval(() => {
+        geocoderService.geocode(
+          { location: currentLocation },
+          (results, status) => {
+            if (status === "OK" && results[0]) {
+              const currentAddress = results[0].formatted_address;
+              const destinationAddress = destination;
+
+              if (currentAddress.includes(destinationAddress)) {
+                setHasArrived(true);
+                clearInterval(checkArrival);
+              }
+            }
+          }
+        );
+      }, 5000); // Check arrival every 5 seconds
+
+      return () => clearInterval(checkArrival); // Cleanup interval on component unmount
+    }
+  }, [isNavigationStarted, currentLocation, destination]);
 
   const onLoad = (map) => {
     mapRef.current = map;
@@ -146,10 +171,14 @@ export default function MapScreen({ destination }) {
         </GoogleMap>
       </LoadScript>
       {isNavigationStarted && (
-        <div>
-          <p>Distance: {distance}</p>
-          <p>Duration: {duration}</p>
-        </div>
+        <>
+          <div>
+            <p>Distance: {distance}</p>
+            <p>Duration: {duration}</p>
+          </div>
+          {hasArrived && <p>Arrived at destination!</p>}{" "}
+          {/* Display arrival message */}
+        </>
       )}
       {!isNavigationStarted && (
         <div className="text-center2 mt-3">
