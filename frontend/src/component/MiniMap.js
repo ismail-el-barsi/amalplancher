@@ -28,7 +28,7 @@ export default function MapScreen({ destination }) {
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
-  const geocoder = useRef(null);
+  const directionsRendererRef = useRef(null);
 
   const getUserCurrentLocation = () => {
     if (!navigator.geolocation) {
@@ -95,29 +95,17 @@ export default function MapScreen({ destination }) {
 
   useEffect(() => {
     if (isNavigationStarted && currentLocation) {
-      const geocoderService = new window.google.maps.Geocoder();
-      geocoder.current = geocoderService;
-
       const checkArrival = setInterval(() => {
-        geocoderService.geocode(
-          { location: currentLocation },
-          (results, status) => {
-            if (status === "OK" && results[0]) {
-              const threshold = 100; // Set the threshold distance in meters
+        const currentDistance =
+          window.google.maps.geometry.spherical.computeDistanceBetween(
+            currentLocation,
+            destination
+          );
 
-              const currentDistance =
-                window.google.maps.geometry.spherical.computeDistanceBetween(
-                  currentLocation,
-                  destination
-                );
-
-              if (currentDistance <= threshold) {
-                setHasReachedDestination(true);
-                clearInterval(checkArrival);
-              }
-            }
-          }
-        );
+        if (currentDistance <= 100) {
+          setHasReachedDestination(true);
+          clearInterval(checkArrival);
+        }
       }, 5000);
 
       return () => clearInterval(checkArrival);
@@ -127,6 +115,10 @@ export default function MapScreen({ destination }) {
   const onLoad = (map) => {
     mapRef.current = map;
     directionsServiceRef.current = new window.google.maps.DirectionsService();
+    directionsRendererRef.current = new window.google.maps.DirectionsRenderer({
+      suppressMarkers: true,
+    });
+    directionsRendererRef.current.setMap(mapRef.current);
   };
 
   const onIdle = () => {
@@ -162,14 +154,16 @@ export default function MapScreen({ destination }) {
         >
           {directions && isNavigationStarted && (
             <DirectionsRenderer
+              directions={directions}
               options={{
-                directions: directions,
-                markerOptions: { visible: true },
                 polylineOptions: {
                   strokeColor: "#0000FF",
                   strokeOpacity: 0.7,
                   strokeWeight: 5,
                 },
+              }}
+              onLoad={(directionsRenderer) => {
+                directionsRendererRef.current = directionsRenderer;
               }}
             />
           )}
