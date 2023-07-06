@@ -42,7 +42,7 @@ const data = {
       numReviews: 0,
       description:
         "High-quality red bricks for construction purposes. These bricks are durable and provide excellent strength for your building projects.",
-      types: "",
+      type: "teste",
       material: "Clay",
       reviews: [],
     },
@@ -58,7 +58,7 @@ const data = {
       numReviews: 0,
       description:
         "Grade 53 cement suitable for various construction applications. This cement offers high compressive strength and ensures long-lasting durability.",
-      types: "",
+      type: "teste",
       material: "Limestone",
       reviews: [],
     },

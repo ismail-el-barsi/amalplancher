@@ -229,7 +229,7 @@ export default function ProductEditScreen() {
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="type">
+          <Form.Group className="mb-3" controlId="material">
             <Form.Label>Material</Form.Label>
             <Form.Control
               value={material}
