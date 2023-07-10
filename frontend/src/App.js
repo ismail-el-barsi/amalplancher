@@ -45,6 +45,7 @@ import MapPage from "./pages/MapPage";
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { fullBox, panier, userInfo } = etat;
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const signoutHandler = () => {
     ctxDispatch({ type: "USER_SIGNOUT" });
@@ -78,6 +79,18 @@ function App() {
     };
     fetchCategories();
   }, []);
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <BrowserRouter>
       <div
@@ -96,12 +109,15 @@ function App() {
           <Link to="/"></Link>
           <Navbar bg="dark" variant="dark" expand="lg">
             <Container>
-              {/* <Button
-                variant="dark"
-                onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
-              >
-                <i className="fas fa-bars"></i>
-              </Button> */}
+              {userInfo && userInfo.isAdmin && windowWidth > 768 && (
+                <Button
+                  variant="dark"
+                  onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
+                >
+                  <i className="fas fa-bars"></i>
+                </Button>
+              )}
+
               <LinkContainer to="/">
                 <Navbar.Brand>
                   <img
@@ -209,28 +225,47 @@ function App() {
           </Navbar>
         </header>
         <div
-        // className={
-        //   sidebarIsOpen
-        //     ? "active-nav side-navbar d-flex justify-content-between flex-wrap flex-column"
-        //     : "side-navbar d-flex justify-content-between flex-wrap flex-column"
-        // }
+          className={
+            sidebarIsOpen && userInfo && userInfo.isAdmin && windowWidth > 768
+              ? "active-nav side-navbar d-flex justify-content-between flex-wrap flex-column"
+              : "side-navbar d-flex justify-content-between flex-wrap flex-column d-none"
+          }
         >
-          {/* <Nav className="flex-column text-white w-100 p-2">
+          <Nav className="flex-column text-white w-100 p-2">
             <Nav.Item>
-              <strong>Categories</strong>
+              <div className="text-center2">
+                <strong>ADMIN MENU</strong>
+              </div>
+              <LinkContainer to="/admin/dashboard">
+                <Nav.Link>
+                  <p>Dashboard</p>
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/products">
+                <Nav.Link>
+                  <p>Products</p>
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/orders">
+                <Nav.Link>
+                  <p>Orders</p>
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/users">
+                <Nav.Link>
+                  <p>Users</p>
+                </Nav.Link>
+              </LinkContainer>
+              <LinkContainer to="/admin/employees">
+                <Nav.Link>
+                  <p>Employees</p>
+                </Nav.Link>
+              </LinkContainer>
             </Nav.Item>
-            {categories.map((category) => (
-              <Nav.Item key={category}>
-                <LinkContainer
-                  to={{ pathname: "/search", search: `category=${category}` }}
-                  onClick={() => setSidebarIsOpen(false)}
-                >
-                  <Nav.Link>{category}</Nav.Link>
-                </LinkContainer>
-              </Nav.Item>
-            ))}
-          </Nav> */}
+            {/* Add more sidebar menu items here */}
+          </Nav>
         </div>
+
         <main>
           <Container className="mt-3">
             <Routes>

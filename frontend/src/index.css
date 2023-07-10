@@ -231,3 +231,25 @@ main {
   margin: 0 auto; /* Center the text container horizontally */
   padding: 0 20px; /* Add some padding to the sides */
 }
+.menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  margin-bottom: 10px;
+}
+
+.menu li a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #000;
+  background-color: #eee;
+  border-radius: 4px;
+}
+
+.menu li a:hover {
+  background-color: #ccc;
+}
