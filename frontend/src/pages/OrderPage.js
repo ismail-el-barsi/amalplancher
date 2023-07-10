@@ -131,7 +131,7 @@ export default function OrderScreen() {
         const { data } = await axios.get(`/api/orders/${orderId}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
-        if (userInfo.isConducteur && !data.isPaid) {
+        if (userInfo.isConducteur && !data.isPaid && !data.confimerCommande) {
           // Navigate to a different route or display an error message
           navigate("/conducteur/orders");
           return;
@@ -490,8 +490,6 @@ export default function OrderScreen() {
                         ))}
                   </ListGroup.Item>
                 ) : null}
-                {console.log(order.shippingAddress.location.lat)}
-                {console.log(order.shippingAddress.location.lng)}
               </ListGroup>
             </Card.Body>
           </Card>

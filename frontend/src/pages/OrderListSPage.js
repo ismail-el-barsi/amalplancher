@@ -94,6 +94,19 @@ const OrderListScreen = () => {
 
   // Filter orders based on filter and dateFilter states
   const filteredOrders = orders?.filter((order) => {
+    const isPaid = order.isPaid;
+    const isConducteur = userInfo.isConducteur;
+    const isSecretaire = userInfo.isSecretaire;
+    const pendingPayment = order.pendingPayment;
+
+    if (isSecretaire && !pendingPayment) {
+      return false; // Hide the order for secretaire if not pending payment
+    }
+
+    if (isConducteur && !isPaid && !order.confimerCommande) {
+      return false; // Hide the order for conducteur if not paid or not confirmed
+    }
+
     if (filter === "paid") {
       return order.isPaid;
     } else if (filter === "delivered") {
@@ -103,6 +116,7 @@ const OrderListScreen = () => {
     } else if (filter === "pending") {
       return order.pendingPayment;
     }
+
     return true; // Add a default return statement
   });
 
@@ -144,34 +158,31 @@ const OrderListScreen = () => {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <div className="table-responsive">
-          {/* Filter selectors */}
-          {userInfo.isAdmin && (
-            <div className="mb-3">
-              <label htmlFor="filterSelect" className="me-2">
-                Filter by:
-              </label>
-              <select
-                id="filterSelect"
-                value={filter}
-                onChange={handleFilterChange}
-              >
-                <option value="">All</option>
-                <option value="paid">Paid</option>
-                <option value="pending">Pending Payment</option>
-                <option value="delivered">Delivered</option>
-                <option value="date">Search by Date</option>
-                <option value="newest">Newest</option>
-                <option value="oldest">Oldest</option>
-              </select>
-              {filter === "date" && (
-                <input
-                  type="date"
-                  value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value)}
-                />
-              )}
-            </div>
-          )}
+          <div className="mb-3">
+            <label htmlFor="filterSelect" className="me-2">
+              Filter by:
+            </label>
+            <select
+              id="filterSelect"
+              value={filter}
+              onChange={handleFilterChange}
+            >
+              <option value="">All</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending Payment</option>
+              <option value="delivered">Delivered</option>
+              <option value="date">Search by Date</option>
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+            </select>
+            {filter === "date" && (
+              <input
+                type="date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+              />
+            )}
+          </div>
 
           <table className="table table-striped">
             <thead>
@@ -281,7 +292,7 @@ const OrderListScreen = () => {
                     if (isSecretaire && !pendingPayment) {
                       return null;
                     }
-                    if (isConducteur && !isPaid) {
+                    if (isConducteur && !isPaid && !order.confimerCommande) {
                       return null;
                     }
                     return (

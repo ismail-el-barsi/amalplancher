@@ -5,6 +5,7 @@ import { Container, Row, Col, Button } from "react-bootstrap";
 import Loading from "../component/Loading";
 import MessageError from "../component/MessageError";
 import { Link } from "react-router-dom";
+import homeImage from "../logo/home.jpg"; // Import the home image
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -49,9 +50,24 @@ const HomePage = () => {
         <title>Amal Plancher</title>
       </Helmet>
 
-      <header className="bg-dark text-light text-center py-5">
-        <h1>Welcome to Amal Plancher</h1>
-        <p>Your reliable source for quality Building materials</p>
+      <header
+        className="bg-dark text-light text-center py-5"
+        style={{
+          backgroundImage: `url(${homeImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="container">
+          <div className="row justify-content-start">
+            <div className="col-12 col-md-6 text-left">
+              <h1 className="text-black">Welcome to Amal Plancher</h1>
+              <p className="text-black">
+                Your reliable source for quality Building materials
+              </p>
+            </div>
+          </div>
+        </div>
       </header>
 
       <section className="py-5">
@@ -76,7 +92,7 @@ const HomePage = () => {
                         </Link>
                       </Col>
                       <Col md={6}>
-                        <div className="bg-light p-4">
+                        <div className="p-4">
                           <h2>{product.name}</h2>
                           <p>{product.description}</p>
                           {product.countInStock === 0 ? (
@@ -96,7 +112,7 @@ const HomePage = () => {
                   ) : (
                     <>
                       <Col md={6}>
-                        <div className="bg-light p-4">
+                        <div className="p-4">
                           <h2>{product.name}</h2>
                           <p>{product.description}</p>
                           {product.countInStock === 0 ? (

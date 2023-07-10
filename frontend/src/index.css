@@ -226,3 +226,8 @@ main {
   border-radius: 0 1rem 1rem 0;
   border-left: 0;
 }
+.text-container {
+  max-width: 100%; /* Adjust the maximum width as desired */
+  margin: 0 auto; /* Center the text container horizontally */
+  padding: 0 20px; /* Add some padding to the sides */
+}

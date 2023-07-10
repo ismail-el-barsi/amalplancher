@@ -67,17 +67,17 @@ function App() {
     dispatch({ type: "SWITCH_MODE" });
   };
 
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const { data } = await axios.get(`/api/products/categories`);
-  //       setCategories(data);
-  //     } catch (err) {
-  //       toast.error(getError(err));
-  //     }
-  //   };
-  //   fetchCategories();
-  // }, []);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await axios.get(`/api/products/categories`);
+        setCategories(data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchCategories();
+  }, []);
   return (
     <BrowserRouter>
       <div
@@ -116,6 +116,19 @@ function App() {
               <Navbar.Collapse id="basic-navbar-nav">
                 {/* <SearchBox /> */}
                 <Nav className="me-auto w-100 justify-content-end">
+                  <NavDropdown title="Categories" id="basic-nav-dropdown">
+                    {categories.map((category) => (
+                      <LinkContainer
+                        key={category}
+                        to={{
+                          pathname: "/search",
+                          search: `category=${category}`,
+                        }}
+                      >
+                        <NavDropdown.Item>{category}</NavDropdown.Item>
+                      </LinkContainer>
+                    ))}
+                  </NavDropdown>
                   <Button variant={mode} onClick={switchModeHandler}>
                     <i
                       className={mode === "light" ? "fa fa-sun" : "fa fa-moon"}
