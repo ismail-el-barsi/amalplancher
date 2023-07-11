@@ -220,6 +220,7 @@ export default function OrderScreen() {
             } else {
               // User is outside the threshold distance, display an error message
               toast.error("You haven't reached the delivery location yet.");
+              dispatch({ type: "DELIVER_FAIL" });
             }
           },
           (error) => {
@@ -420,31 +421,26 @@ export default function OrderScreen() {
                     </Col>
                   </Row>
                 </ListGroup.Item>
-                {userInfo.isAdmin &&
-                  !order.isPaid &&
-                  order.paymentMethod !== "PaidOnDelivery" && (
-                    <ListGroup.Item>
-                      {isPending ? (
-                        <LoadingBox />
-                      ) : (
-                        <div>
+                {!order.isPaid && (
+                  <ListGroup.Item>
+                    {isPending ? (
+                      <LoadingBox />
+                    ) : (
+                      <div>
+                        {order.paymentMethod !== "PaidOnDelivery" && ( // Add condition for payment method
                           <PayPalButtons
                             createOrder={createOrder}
                             onApprove={onApprove}
                             onError={onError}
                           ></PayPalButtons>
-                        </div>
-                      )}
-                      {loadingPay && <LoadingBox></LoadingBox>}
-                    </ListGroup.Item>
-                  )}
+                        )}
+                      </div>
+                    )}
+                    {loadingPay && <LoadingBox></LoadingBox>}
+                  </ListGroup.Item>
+                )}
 
-                {userInfo.isAdmin ||
-                (userInfo.isConducteur &&
-                  order.isPaid &&
-                  !order.isDelivered &&
-                  (order.paymentMethod === "PaidOnDelivery" ||
-                    order.isPaid)) ? (
+                {(userInfo.isAdmin || userInfo.isConducteur) && (
                   <ListGroup.Item>
                     {loadingDeliver && <LoadingBox />}
                     {(!order.pendingPayment &&
@@ -458,7 +454,7 @@ export default function OrderScreen() {
                             <Button type="button" onClick={deliverOrderHandler}>
                               Deliver Order
                             </Button>
-                            <span className="mx-2"></span> {/* Add a space */}
+                            <span className="mx-2"></span>
                             <Button type="button" onClick={showRouteHandler}>
                               Show Route
                             </Button>
@@ -469,7 +465,7 @@ export default function OrderScreen() {
                       <div className="text-center2">Order is confirmed</div>
                     ) : null}
                   </ListGroup.Item>
-                ) : null}
+                )}
 
                 {userInfo.isAdmin ||
                 (userInfo.isSecretaire &&

@@ -44,31 +44,35 @@ const HomePage = () => {
     fetchData();
   }, []);
 
+  const isMobile = window.innerWidth <= 768;
+
   return (
     <div>
       <Helmet>
         <title>Amal Plancher</title>
       </Helmet>
 
-      <header
-        className="bg-dark text-light text-center py-5"
-        style={{
-          backgroundImage: `url(${homeImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="container">
-          <div className="row justify-content-start">
-            <div className="col-12 col-md-6 text-left">
-              <h1 className="text-black">Welcome to Amal Plancher</h1>
-              <p className="text-black">
-                Your reliable source for quality Building materials
-              </p>
+      {!isMobile && (
+        <header
+          className="bg-dark text-light text-center py-5"
+          style={{
+            backgroundImage: `url(${homeImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="container">
+            <div className="row justify-content-start">
+              <div className="col-12 col-md-6 text-left">
+                <h1 className="text-black">Welcome to Amal Plancher</h1>
+                <p className="text-black">
+                  Your reliable source for quality Building materials
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       <section className="py-5">
         <Container>
@@ -78,69 +82,96 @@ const HomePage = () => {
             <MessageError error={error} />
           ) : (
             <Row>
-              {products.map((product, index) => (
-                <React.Fragment key={index}>
-                  {index % 2 === 0 ? (
-                    <>
-                      <Col md={6}>
-                        <Link to={`/product/${product.slug}`}>
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="img-fluid"
-                          />
-                        </Link>
-                      </Col>
-                      <Col md={6}>
-                        <div className="p-4">
-                          <h2>{product.name}</h2>
-                          <p>{product.description}</p>
-                          {product.countInStock === 0 ? (
-                            <Button variant="light" disabled>
-                              Out of stock
-                            </Button>
-                          ) : (
-                            <Link to={`/product/${product.slug}`}>
-                              <Button variant="primary">
-                                View {product.name}
+              {!isMobile &&
+                products.map((product, index) => (
+                  <React.Fragment key={index}>
+                    {index % 2 === 0 ? (
+                      <>
+                        <Col md={6}>
+                          <Link to={`/product/${product.slug}`}>
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="img-fluid"
+                            />
+                          </Link>
+                        </Col>
+                        <Col md={6}>
+                          <div className="p-4">
+                            <h2>{product.name}</h2>
+                            <p>{product.description}</p>
+                            {product.countInStock === 0 ? (
+                              <Button variant="light" disabled>
+                                Out of stock
                               </Button>
-                            </Link>
-                          )}
-                        </div>
-                      </Col>
-                    </>
-                  ) : (
-                    <>
-                      <Col md={6}>
-                        <div className="p-4">
-                          <h2>{product.name}</h2>
-                          <p>{product.description}</p>
-                          {product.countInStock === 0 ? (
-                            <Button variant="light" disabled>
-                              Out of stock
-                            </Button>
-                          ) : (
-                            <Link to={`/product/${product.slug}`}>
-                              <Button variant="primary">
-                                View {product.name}
+                            ) : (
+                              <Link to={`/product/${product.slug}`}>
+                                <Button variant="primary">
+                                  View {product.name}
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
+                        </Col>
+                      </>
+                    ) : (
+                      <>
+                        <Col md={6}>
+                          <div className="p-4">
+                            <h2>{product.name}</h2>
+                            <p>{product.description}</p>
+                            {product.countInStock === 0 ? (
+                              <Button variant="light" disabled>
+                                Out of stock
                               </Button>
-                            </Link>
-                          )}
-                        </div>
-                      </Col>
-                      <Col md={6}>
+                            ) : (
+                              <Link to={`/product/${product.slug}`}>
+                                <Button variant="primary">
+                                  View {product.name}
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
+                        </Col>
+                        <Col md={6}>
+                          <Link to={`/product/${product.slug}`}>
+                            <img
+                              src={product.image}
+                              alt={product.name}
+                              className="img-fluid"
+                            />
+                          </Link>
+                        </Col>
+                      </>
+                    )}
+                  </React.Fragment>
+                ))}
+
+              {isMobile &&
+                products.map((product, index) => (
+                  <Col md={6} key={index}>
+                    <Link to={`/product/${product.slug}`}>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className="img-fluid"
+                      />
+                    </Link>
+                    <div className="p-4">
+                      <h2>{product.name}</h2>
+                      <p>{product.description}</p>
+                      {product.countInStock === 0 ? (
+                        <Button variant="light" disabled>
+                          Out of stock
+                        </Button>
+                      ) : (
                         <Link to={`/product/${product.slug}`}>
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="img-fluid"
-                          />
+                          <Button variant="primary">View {product.name}</Button>
                         </Link>
-                      </Col>
-                    </>
-                  )}
-                </React.Fragment>
-              ))}
+                      )}
+                    </div>
+                  </Col>
+                ))}
             </Row>
           )}
         </Container>
