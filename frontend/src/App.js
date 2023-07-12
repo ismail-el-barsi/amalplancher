@@ -123,7 +123,7 @@ function App() {
                   variant="dark"
                   onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
                 >
-                  <i className="fas fa-bars"></i>
+                  <FaUsersCog className="mr-2" /> Admin
                 </Button>
               )}
 
