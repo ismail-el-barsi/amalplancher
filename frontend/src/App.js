@@ -41,6 +41,13 @@ import EmployeeListPage from "./pages/EmployeListPage";
 import EmployeeEditPage from "./pages/EmployeEditPage";
 import CreateEmployeePage from "./pages/CreateEmployePage";
 import MapPage from "./pages/MapPage";
+import {
+  FaChartBar,
+  FaBox,
+  FaShoppingCart,
+  FaUser,
+  FaUsersCog,
+} from "react-icons/fa";
 
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
@@ -232,33 +239,33 @@ function App() {
           }
         >
           <Nav className="flex-column text-white w-100 p-2">
-            <Nav.Item>
-              <div className="text-center2">
+            <Nav.Item className="mt-auto">
+              <div className="text-center">
                 <strong>ADMIN MENU</strong>
               </div>
               <LinkContainer to="/admin/dashboard">
-                <Nav.Link>
-                  <p>Dashboard</p>
+                <Nav.Link className="mb-3">
+                  <FaChartBar className="mr-2" /> Dashboard
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/admin/products">
-                <Nav.Link>
-                  <p>Products</p>
+                <Nav.Link className="mb-3">
+                  <FaBox className="mr-2" /> Products
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/admin/orders">
-                <Nav.Link>
-                  <p>Orders</p>
+                <Nav.Link className="mb-3">
+                  <FaShoppingCart className="mr-2" /> Orders
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/admin/users">
-                <Nav.Link>
-                  <p>Users</p>
+                <Nav.Link className="mb-3">
+                  <FaUsersCog className="mr-2" /> Users
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/admin/employees">
-                <Nav.Link>
-                  <p>Employees</p>
+                <Nav.Link className="mb-3">
+                  <FaUser className="mr-2" /> Employees
                 </Nav.Link>
               </LinkContainer>
             </Nav.Item>
