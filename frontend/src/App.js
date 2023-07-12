@@ -41,6 +41,8 @@ import EmployeeListPage from "./pages/EmployeListPage";
 import EmployeeEditPage from "./pages/EmployeEditPage";
 import CreateEmployeePage from "./pages/CreateEmployePage";
 import MapPage from "./pages/MapPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import {
   FaChartBar,
   FaBox,
@@ -288,6 +290,12 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/placeorder" element={<PlaceOrderPage />} />
               <Route path="/search" element={<SearchScreen />} />
+              <Route path="/forget-password" element={<ForgetPasswordPage />} />
+              <Route
+                path="/reset-password/:token"
+                element={<ResetPasswordPage />}
+              />
+
               <Route
                 path="/admin/user/:id"
                 element={

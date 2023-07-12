@@ -2,8 +2,10 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
-import { isAuth, isAdmin, generateToken } from "../Utils.js";
+import { isAuth, isAdmin, generateToken, sendGrid, baseUrl } from "../Utils.js";
 const userRouter = express.Router();
+import jwt from "jsonwebtoken";
+
 userRouter.get(
   "/",
   isAuth,
@@ -54,6 +56,68 @@ userRouter.put(
     }
   })
 );
+userRouter.post(
+  "/forget-password",
+  expressAsyncHandler(async (req, res) => {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (user) {
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "3h",
+      });
+      user.resetToken = token;
+      await user.save();
+
+      const sgMail = sendGrid();
+      const msg = {
+        to: `${user.name} <${user.email}>`,
+        from: "amal plancher <luciferelbarsi@gmail.com>",
+        subject: "Reset Password",
+        html: `
+          <p>Please click the following link to reset your password:</p>
+          <a href="${baseUrl()}/reset-password/${token}">Reset Password</a>
+        `,
+      };
+
+      try {
+        await sgMail.send(msg);
+        console.log("Reset password email sent");
+      } catch (error) {
+        console.error("Error sending reset password email:", error);
+      }
+
+      res.send({ message: "We sent a reset password link to your email." });
+    } else {
+      res.status(404).send({ message: "User not found" });
+    }
+  })
+);
+
+userRouter.post(
+  "/reset-password",
+  expressAsyncHandler(async (req, res) => {
+    jwt.verify(req.body.token, process.env.JWT_SECRET, async (err, decode) => {
+      if (err) {
+        res.status(401).send({ message: "Invalid Token" });
+      } else {
+        const user = await User.findOne({ resetToken: req.body.token });
+        if (user) {
+          if (req.body.password) {
+            user.password = bcrypt.hashSync(req.body.password, 8);
+            user.resetToken = null; // Clear the reset token after password reset
+            await user.save();
+            res.send({
+              message: "Password reset successfully",
+            });
+          }
+        } else {
+          res.status(404).send({ message: "User not found" });
+        }
+      }
+    });
+  })
+);
+
 userRouter.put(
   "/:id",
   isAuth,
