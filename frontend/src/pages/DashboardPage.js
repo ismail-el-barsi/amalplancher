@@ -6,8 +6,8 @@ import LoadingBox from "../component/Loading";
 import MessageBox from "../component/MessageError";
 import Card from "react-bootstrap/Card";
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   PieChart,
   Pie,
   Cell,
@@ -180,14 +180,19 @@ export default function DashboardScreen() {
               <MessageBox>No Sale</MessageBox>
             ) : (
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={summary.dailyOrders}>
+                <AreaChart data={summary.dailyOrders}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="_id" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="sales" fill="#8884d8" />
-                </BarChart>
+                  <Area
+                    type="monotone"
+                    dataKey="sales"
+                    fill="#8884d8"
+                    stroke="#8884d8"
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             )}
           </div>

@@ -3,7 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import Order from "../models/OrderModel.js";
 import User from "../models/userModel.js";
 import Product from "../models/productModel.js";
-import { isAuth, isAdmin } from "../Utils.js";
+import { isAuth, isAdmin, sendGrid, payOrderEmailTemplate } from "../Utils.js";
 import Employee from "../models/employeeModel.js";
 
 const orderRouter = express.Router();
@@ -132,10 +132,32 @@ orderRouter.put(
   "/:id/confirmer",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate(
+      "user",
+      "email name"
+    );
+
     if (order) {
-      order.confimerCommande = true; // Set confimerCommande to true
+      order.confimerCommande = true;
       await order.save();
+
+      if (order.confimerCommande) {
+        const sgMail = sendGrid();
+        const msg = {
+          to: `${order.user.name} <${order.user.email}>`,
+          from: "amal plancher <luciferelbarsi@gmail.com>",
+          subject: `Order Confirmed - Order ID: ${order._id}`,
+          html: payOrderEmailTemplate(order),
+        };
+
+        try {
+          await sgMail.send(msg);
+          console.log("Confirmation email sent");
+        } catch (error) {
+          console.error("Error sending confirmation email:", error);
+        }
+      }
+
       res.send({ message: "Order Confirmed" });
     } else {
       res.status(404).send({ message: "Order Not Found" });
@@ -163,7 +185,10 @@ orderRouter.put(
   "/:id/pay",
   isAuth,
   expressAsyncHandler(async (req, res) => {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate(
+      "user",
+      "email name"
+    );
     if (order) {
       order.isPaid = true;
       order.paidAt = Date.now();
@@ -179,6 +204,22 @@ orderRouter.put(
       };
 
       const updatedOrder = await order.save();
+      s;
+      const sgMail = sendGrid();
+      const msg = {
+        to: `${order.user.name} <${order.user.email}>`,
+        from: "amal plancher <luciferelbarsi@gmail.com>",
+        subject: `New order ${order._id}`,
+        html: payOrderEmailTemplate(order),
+      };
+
+      try {
+        await sgMail.send(msg);
+        console.log("Email sent");
+      } catch (error) {
+        console.error("Error sending email:", error);
+      }
+
       res.send({ message: "Order Paid", order: updatedOrder });
     } else {
       res.status(404).send({ message: "Order Not Found" });

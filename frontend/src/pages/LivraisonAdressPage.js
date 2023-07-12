@@ -5,31 +5,43 @@ import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
 import { Shop } from "../Shop";
 import CheckoutSteps from "../component/CheckoutSteps";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LivraisonAdressPage() {
   const navigate = useNavigate();
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
-  //get shiping adress from painier in etat
   const {
     fullBox,
     userInfo,
     panier: { livraisonAddress },
   } = etat;
-  const [fullName, setFullName] = useState(livraisonAddress.fullName || ""); //if fullname exist then use it as default otherwise empty string
+  const [fullName, setFullName] = useState(livraisonAddress.fullName || "");
   const [address, setAddress] = useState(livraisonAddress.address || "");
   const [city, setCity] = useState(livraisonAddress.city || "");
   const [postalCode, setPostalCode] = useState(
     livraisonAddress.postalCode || ""
   );
+  const [country, setCountry] = useState(livraisonAddress.country || "");
+  const [locationSelected, setLocationSelected] = useState(
+    Boolean(livraisonAddress.location && livraisonAddress.location.lat)
+  );
+
   useEffect(() => {
     if (!userInfo) {
       navigate("/login?redirect=/livraison");
     }
   }, [userInfo, navigate]);
-  const [country, setCountry] = useState(livraisonAddress.country || "");
+
   const submitHandler = (e) => {
-    //prevent page from refresshing on submit
     e.preventDefault();
+    if (!locationSelected) {
+      toast.warn("Please choose a location on the map", {
+        toastStyle: { backgroundColor: "yellow" }, // Customizing the toast style
+      });
+      return;
+    }
+
     ctxDispatch({
       type: "SAVE_LIVRAISON_ADDRESS",
       payload: {
@@ -41,7 +53,7 @@ export default function LivraisonAdressPage() {
         location: livraisonAddress.location,
       },
     });
-    //on refreh don t loose data that user entered
+
     localStorage.setItem(
       "livraisonAddress",
       JSON.stringify({
@@ -53,11 +65,14 @@ export default function LivraisonAdressPage() {
         location: livraisonAddress.location,
       })
     );
+
     navigate("/payment");
   };
+
   useEffect(() => {
     ctxDispatch({ type: "SET_FULLBOX_OFF" });
   }, [ctxDispatch, fullBox]);
+
   return (
     <div>
       <Helmet>

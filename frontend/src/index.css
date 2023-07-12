@@ -253,3 +253,18 @@ main {
 .menu li a:hover {
   background-color: #ccc;
 }
+.checkout-steps {
+  justify-content: space-around;
+}
+
+.step-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.checkout-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
