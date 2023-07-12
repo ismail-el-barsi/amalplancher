@@ -148,7 +148,7 @@ export default function DashboardScreen() {
           </div>
 
           <div className="chart-container">
-            <h2 className="chart-heading">Employee Types</h2>
+            <h2 className="chart-heading text-center2">Employee Types</h2>
             {summary.employeeTypes.length === 0 ? (
               <MessageBox>No type of employees</MessageBox>
             ) : (
@@ -175,7 +175,7 @@ export default function DashboardScreen() {
           </div>
 
           <div className="chart-container">
-            <h2 className="chart-heading">Sales</h2>
+            <h2 className="chart-heading text-center2">Sales</h2>
             {summary.dailyOrders.length === 0 ? (
               <MessageBox>No Sale</MessageBox>
             ) : (
@@ -198,7 +198,9 @@ export default function DashboardScreen() {
           </div>
 
           <div className="chart-container">
-            <h2 className="chart-heading">Categories of product</h2>
+            <h2 className="chart-heading text-center2">
+              Categories of product
+            </h2>
             {summary.productCategories.length === 0 ? (
               <MessageBox>No Category</MessageBox>
             ) : (
