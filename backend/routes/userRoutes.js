@@ -159,36 +159,87 @@ userRouter.delete(
 userRouter.post(
   "/login",
   expressAsyncHandler(async (req, res) => {
-    //expressAsyncHandler=catch errer in async function iside it
-    const user = await User.findOne({ email: req.body.email }); //get user by email and return one document from usercollection based on email
-    if (user) {
-      //if user exist = we have atleast one email
-      if (bcrypt.compareSync(req.body.password, user.password)) {
-        //check paswoard first parametre passwoard that user entered second is passwoard crypted and stored in database
-        res.send({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          isAdmin: user.isAdmin,
-          isConducteur: user.isConducteur,
-          isSecretaire: user.isSecretaire,
-          token: generateToken(user),
-        });
-        return; //cause i am going to continue running the code after sending data
-      }
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      res.status(401).send({ message: "Invalid email or password" });
+      return;
     }
-    res.status(401).send({ message: "invalid email or password" });
+
+    if (!user.isConfirmed) {
+      res.status(401).send({ message: "Please confirm your email to login" });
+      return;
+    }
+
+    if (bcrypt.compareSync(password, user.password)) {
+      res.send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isConducteur: user.isConducteur,
+        isSecretaire: user.isSecretaire,
+        isConfirmed: user.isConfirmed,
+        token: generateToken(user),
+      });
+      return;
+    }
+
+    res.status(401).send({ message: "Invalid email or password" });
   })
 );
+
 userRouter.post(
   "/signup",
   expressAsyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
+
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      res.status(400).send({ message: "User already exists" });
+      return;
+    }
+
     const newUser = new User({
-      name: req.body.name,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password),
+      name,
+      email,
+      password: bcrypt.hashSync(password, 8),
     });
+
     const user = await newUser.save();
+
+    const confirmationToken = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
+
+    const sgMail = sendGrid();
+    const msg = {
+      to: `${user.name} <${user.email}>`,
+      from: "amal plancher <luciferelbarsi@gmail.com>",
+      subject: "Email Confirmation",
+      html: `
+        <p>Hi ${user.name},</p>
+        <p>Thank you for signing up! Please click the following link to confirm your email:</p>
+        <a href="${baseUrl()}/confirm-email/${confirmationToken}">Confirm Email</a>
+      `,
+    };
+
+    try {
+      await sgMail.send(msg);
+      console.log("Confirmation email sent");
+    } catch (error) {
+      console.error("Error sending confirmation email:", error);
+      res.status(500).send({ message: "Error sending confirmation email" });
+      return;
+    }
+
     res.send({
       _id: user._id,
       name: user.name,
@@ -196,11 +247,42 @@ userRouter.post(
       isAdmin: user.isAdmin,
       isConducteur: user.isConducteur,
       isSecretaire: user.isSecretaire,
-      token: generateToken(user),
+      isConfirmed: user.isConfirmed,
+      message: "Please check your email to confirm your account.",
     });
-    return;
   })
 );
+
+userRouter.get(
+  "/confirm-email/:token",
+  expressAsyncHandler(async (req, res) => {
+    const token = req.params.token;
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const userId = decoded.userId;
+
+      const user = await User.findById(userId);
+
+      if (user) {
+        user.isConfirmed = true;
+        await user.save();
+
+        res.send(`
+          <script>
+            window.location.href = "${baseUrl()}/login";
+          </script>
+        `);
+      } else {
+        res.status(404).send({ message: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error confirming email:", error);
+      res.status(401).send({ message: "Invalid token" });
+    }
+  })
+);
+
 userRouter.put(
   "/profile",
   isAuth,

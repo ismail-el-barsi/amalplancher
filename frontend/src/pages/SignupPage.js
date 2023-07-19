@@ -1,15 +1,15 @@
-import Axios from "axios";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { getError } from "../Utils";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet-async";
-import React, { useContext, useEffect, useState } from "react";
 import { Shop } from "../Shop";
-import { toast } from "react-toastify";
-import { getError } from "../Utils";
 
-export default function SignupPage() {
+const SignupPage = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get("redirect");
@@ -22,6 +22,7 @@ export default function SignupPage() {
 
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { userInfo } = etat;
+
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -29,14 +30,13 @@ export default function SignupPage() {
       return;
     }
     try {
-      const { data } = await Axios.post("/api/users/signup", {
+      const { data } = await axios.post("/api/users/signup", {
         name,
         email,
         password,
       });
-      ctxDispatch({ type: "USER_LOGIN", payload: data });
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      navigate(redirect || "/");
+      toast.success("Please check your email to confirm your account.");
+      navigate("/login");
     } catch (err) {
       toast.error(getError(err));
     }
@@ -45,6 +45,9 @@ export default function SignupPage() {
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);
+    }
+    if (userInfo && !userInfo.isConfirmed) {
+      toast.warning("Please confirm your email to login.");
     }
   }, [navigate, redirect, userInfo]);
 
@@ -68,6 +71,7 @@ export default function SignupPage() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
+
         <Form.Group className="mb-3" controlId="password">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -75,18 +79,21 @@ export default function SignupPage() {
             required
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Form.Group className="mb-3" controlId="confirmPassword">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
         </Form.Group>
+
+        <Form.Group className="mb-3" controlId="confirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            required
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </Form.Group>
+
         <div className="mb-3">
           <Button type="submit">Sign Up</Button>
         </div>
+
         <div className="mb-3">
           Already have an account?{" "}
           <Link to={`/signin?redirect=${redirect}`}>Sign-In</Link>
@@ -94,4 +101,6 @@ export default function SignupPage() {
       </Form>
     </Container>
   );
-}
+};
+
+export default SignupPage;

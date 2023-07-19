@@ -50,6 +50,7 @@ import {
   FaUser,
   FaUsersCog,
 } from "react-icons/fa";
+import ConfirmEmailPage from "./pages/ConfirmEmailPage";
 
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
@@ -320,6 +321,10 @@ function App() {
                   </AdminRoute>
                 }
               ></Route>
+              <Route
+                path="/confirm-email/:token"
+                element={<ConfirmEmailPage />}
+              />
               <Route
                 path="/conducteur/orders"
                 element={

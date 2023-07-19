@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, default: false, required: true },
     isConducteur: { type: Boolean, default: false, required: true },
     isSecretaire: { type: Boolean, default: false, required: true },
+    isConfirmed: { type: Boolean, default: false, required: true },
     resetToken: { type: String },
   },
   {
