@@ -505,17 +505,34 @@ export default function OrderScreen() {
           order.confimerCommande ? (
             <div className="d-grid">
               {!order.isDelivered && (
-                <MiniMap
-                  destination={{
-                    lat: order.shippingAddress.location.lat,
-                    lng: order.shippingAddress.location.lng,
-                  }}
-                />
+                <div className="d-flex justify-content-between">
+                  <Button type="button" onClick={deliverOrderHandler}>
+                    Deliver Order
+                  </Button>
+                  <span className="mx-2"></span>
+                  <Button type="button" onClick={showRouteHandler}>
+                    Show Route
+                  </Button>
+                </div>
               )}
             </div>
           ) : order.confimerCommande ? (
-            <div className="text-center2"></div>
+            <div className="text-center2">Order is confirmed</div>
           ) : null}
+        </ListGroup.Item>
+      ) : userInfo.isAdmin || userInfo.isConducteur ? (
+        <ListGroup.Item>
+          {loadingDeliver && <LoadingBox />}
+          <div className="d-grid">
+            {!order.isDelivered && (
+              <MiniMap
+                destination={{
+                  lat: order.shippingAddress.location.lat,
+                  lng: order.shippingAddress.location.lng,
+                }}
+              />
+            )}
+          </div>
         </ListGroup.Item>
       ) : null}
     </div>
