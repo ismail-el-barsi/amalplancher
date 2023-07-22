@@ -467,7 +467,7 @@ export default function OrderScreen() {
                   </ListGroup.Item>
                 )}
 
-                {(userInfo.isAdmin || userInfo.isConducteur) && (
+                {(userInfo.isAdmin || userInfo.isSecretaire) && (
                   <ListGroup.Item>
                     {order.pendingPayment &&
                     !order.isPaid &&
