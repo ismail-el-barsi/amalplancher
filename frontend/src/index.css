@@ -119,10 +119,12 @@ main {
 }
 
 .logo-img {
-  width: 50px; /* Adjust the width to your desired size */
-  height: auto;
+  width: 80px; /* Adjust the width to your desired size */
+  height: 80px; /* Set the height to the same value as the width to make it circular */
   margin-right: 10px; /* Adjust the right margin as needed */
+  border-radius: 100%; /* Make the logo circular by setting the border-radius to 50% */
 }
+
 .side-navbar {
   height: 100vh;
   position: fixed;
