@@ -5,5 +5,5 @@ import { Shop } from "../Shop";
 export default function ProtectedRoute({ children }) {
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
-  return userInfo ? children : <Navigate to="/signin" />;
+  return userInfo ? children : <Navigate to="/login" />;
 }
