@@ -4,6 +4,7 @@ import {
   LoadScript,
   GoogleMap,
   DirectionsRenderer,
+  InfoWindow,
 } from "@react-google-maps/api";
 import { Shop } from "../Shop";
 import { toast } from "react-toastify";
@@ -21,10 +22,11 @@ export default function MapScreen({ destination }) {
   const [directions, setDirections] = useState(null);
   const [isNavigationStarted, setIsNavigationStarted] = useState(false);
   const [zoom, setZoom] = useState(13);
-  const [distance, setDistance] = useState("");
-  const [duration, setDuration] = useState("");
   const [currentLocation, setCurrentLocation] = useState(null);
   const [hasReachedDestination, setHasReachedDestination] = useState(false);
+  const [distance, setDistance] = useState("");
+  const [duration, setDuration] = useState("");
+  const [infoWindowVisible, setInfoWindowVisible] = useState(false); // Add this state
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
@@ -40,7 +42,6 @@ export default function MapScreen({ destination }) {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-
           setCurrentLocation(origin);
         },
         (error) => {
@@ -136,6 +137,7 @@ export default function MapScreen({ destination }) {
     setIsNavigationStarted(true);
     getUserCurrentLocation();
     setZoom(15);
+    setInfoWindowVisible(true); // Show the InfoWindow when navigation starts
   };
 
   if (loading) {
@@ -168,20 +170,35 @@ export default function MapScreen({ destination }) {
               }}
             />
           )}
+
+          {/* Display InfoWindow */}
+          {infoWindowVisible && !hasReachedDestination && (
+            <InfoWindow
+              position={destination}
+              onCloseClick={() => setInfoWindowVisible(false)}
+            >
+              <div>
+                <p>Distance: {distance}</p>
+                <p>Duration: {duration}</p>
+              </div>
+            </InfoWindow>
+          )}
+
+          {/* InfoWindow for reaching the destination */}
+          {hasReachedDestination && (
+            <InfoWindow
+              position={destination}
+              onCloseClick={() => setHasReachedDestination(false)}
+            >
+              <div>
+                <p>You have reached your destination!</p>
+              </div>
+            </InfoWindow>
+          )}
         </GoogleMap>
       </LoadScript>
       {isNavigationStarted && (
-        <>
-          <div>
-            <p>Distance: {distance}</p>
-            <p>Duration: {duration}</p>
-          </div>
-          {hasReachedDestination ? (
-            <p>Arrived at destination!</p>
-          ) : (
-            <p>Following the route...</p>
-          )}
-        </>
+        <>{/* ... Existing info displayed below map ... */}</>
       )}
       {!isNavigationStarted && (
         <div className="text-center2 mt-3">
