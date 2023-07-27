@@ -18,8 +18,9 @@ export default function MapScreen() {
   const { userInfo } = etat;
   const navigate = useNavigate();
   const [googleApiKey, setGoogleApiKey] = useState("");
-  const [loading, setLoading] = useState(true); // New state variable for loading status
-  const [mapCenter, setMapCenter] = useState(null); // Change 'location' to 'mapCenter'
+  const [center, setCenter] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const mapRef = useRef(null);
   const placeRef = useRef(null);
@@ -29,12 +30,19 @@ export default function MapScreen() {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by this browser");
     } else {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setMapCenter({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setCenter(userLocation);
+          setLocation(userLocation);
+        },
+        () => {
+          setLoading(false); // Set loading to false if geolocation fails
+        }
+      );
     }
   };
 
@@ -57,10 +65,17 @@ export default function MapScreen() {
     ctxDispatch({
       type: "SET_FULLBOX_ON",
     });
-  }, [ctxDispatch]);
+  }, [ctxDispatch, userInfo.token]);
 
   const onLoad = (map) => {
     mapRef.current = map;
+  };
+
+  const onIdle = () => {
+    setLocation({
+      lat: mapRef.current.center.lat(),
+      lng: mapRef.current.center.lng(),
+    });
   };
 
   const onLoadPlaces = (place) => {
@@ -69,7 +84,8 @@ export default function MapScreen() {
 
   const onPlacesChanged = () => {
     const place = placeRef.current.getPlaces()[0].geometry.location;
-    setMapCenter({ lat: place.lat(), lng: place.lng() });
+    setCenter({ lat: place.lat(), lng: place.lng() });
+    setLocation({ lat: place.lat(), lng: place.lng() });
   };
 
   const onMarkerLoad = (marker) => {
@@ -81,8 +97,8 @@ export default function MapScreen() {
     ctxDispatch({
       type: "SAVE_LIVRAISON_ADDRESS_MAP_LOCATION",
       payload: {
-        lat: mapCenter.lat,
-        lng: mapCenter.lng,
+        lat: location.lat,
+        lng: location.lng,
         address: places[0].formatted_address,
         name: places[0].name,
         vicinity: places[0].vicinity,
@@ -98,31 +114,31 @@ export default function MapScreen() {
     return <div>Loading...</div>;
   }
 
-  return (
+  return center ? ( // Render the map only if center is available (user's current location is obtained)
     <div className="full-box">
       <LoadScript libraries={libs} googleMapsApiKey={googleApiKey}>
         <GoogleMap
           id="sample-map"
           mapContainerStyle={{ height: "100%", width: "100%" }}
-          center={mapCenter} // Change 'location' to 'mapCenter'
+          center={center}
           zoom={15}
           onLoad={onLoad}
+          onIdle={onIdle}
         >
           <StandaloneSearchBox
             onLoad={onLoadPlaces}
             onPlacesChanged={onPlacesChanged}
           >
             <div className="map-input-box">
-              <input type="text" placeholder="Enter your address"></input>
+              <input type="text" placeholder="Enter your address" />
               <Button type="button" onClick={onConfirm}>
                 Confirm
               </Button>
             </div>
           </StandaloneSearchBox>
-          {mapCenter && <Marker position={mapCenter} onLoad={onMarkerLoad} />}{" "}
-          {/* Change 'location' to 'mapCenter' */}
+          {location && <Marker position={location} onLoad={onMarkerLoad} />}
         </GoogleMap>
       </LoadScript>
     </div>
-  );
+  ) : null; // Return null if center is not available
 }
