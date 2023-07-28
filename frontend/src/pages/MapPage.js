@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Shop } from "../Shop";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const libs = ["places"];
 
@@ -40,7 +41,7 @@ export default function MapScreen() {
           setLocation(userLocation);
         },
         () => {
-          setLoading(false); // Set loading to false if geolocation fails
+          setLoading(false);
         }
       );
     }
@@ -109,12 +110,17 @@ export default function MapScreen() {
     navigate("/livraison");
   };
 
+  const GPSIcon = () => (
+    <div className="gps-icon" onClick={getUserCurrentLocation}>
+      <FaMapMarkerAlt size={24} />
+    </div>
+  );
+
   if (loading) {
-    // Render a loading indicator while fetching the API key
     return <div>Loading...</div>;
   }
 
-  return center ? ( // Render the map only if center is available (user's current location is obtained)
+  return center ? (
     <div className="full-box">
       <LoadScript libraries={libs} googleMapsApiKey={googleApiKey}>
         <GoogleMap
@@ -137,8 +143,9 @@ export default function MapScreen() {
             </div>
           </StandaloneSearchBox>
           {location && <Marker position={location} onLoad={onMarkerLoad} />}
+          <GPSIcon />
         </GoogleMap>
       </LoadScript>
     </div>
-  ) : null; // Return null if center is not available
+  ) : null;
 }
