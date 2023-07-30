@@ -496,11 +496,7 @@ export default function OrderScreen() {
           </Card>
         </Col>
       </Row>
-      {userInfo.isAdmin ||
-      (userInfo.isConducteur &&
-        order.isPaid &&
-        !order.isDelivered &&
-        (order.paymentMethod === "PaidOnDelivery" || order.isPaid)) ? (
+      {(userInfo.isAdmin || userInfo.isConducteur) && (
         <ListGroup.Item>
           {loadingDeliver && <LoadingBox />}
           {(!order.pendingPayment &&
@@ -523,10 +519,10 @@ export default function OrderScreen() {
               )}
             </div>
           ) : order.confimerCommande ? (
-            <div className="text-center2"></div>
+            <div className="text-center2">Order is confirmed</div>
           ) : null}
         </ListGroup.Item>
-      ) : null}
+      )}
     </div>
   );
 }
