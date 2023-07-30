@@ -5,6 +5,7 @@ import {
   GoogleMap,
   DirectionsRenderer,
   InfoWindow,
+  Marker,
 } from "@react-google-maps/api";
 import { Shop } from "../Shop";
 import { toast } from "react-toastify";
@@ -12,7 +13,7 @@ import { toast } from "react-toastify";
 const defaultLocation = { lat: 45.516, lng: -73.56 };
 const libs = ["places"];
 
-export default function MapScreen({ destination }) {
+export default function MapScreen({ destination, defaultLocation }) {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { userInfo } = etat;
   const [googleApiKey, setGoogleApiKey] = useState("");
@@ -155,6 +156,12 @@ export default function MapScreen({ destination }) {
           onLoad={onLoad}
           onIdle={onIdle}
         >
+          {defaultLocation && (
+            <Marker
+              position={defaultLocation}
+              icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
+            />
+          )}
           {directions && isNavigationStarted && !hasReachedDestination && (
             <DirectionsRenderer
               directions={directions}

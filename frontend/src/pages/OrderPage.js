@@ -515,6 +515,10 @@ export default function OrderScreen() {
                     lat: order.shippingAddress.location.lat,
                     lng: order.shippingAddress.location.lng,
                   }}
+                  defaultLocation={{
+                    lat: order.shippingAddress.location.lat,
+                    lng: order.shippingAddress.location.lng,
+                  }}
                 />
               )}
             </div>
