@@ -9,8 +9,8 @@ import {
 } from "@react-google-maps/api";
 import { Shop } from "../Shop";
 import { toast } from "react-toastify";
-import { FaCar } from "react-icons/fa"; // Import the car icon from React Icons
-import { renderToString } from "react-dom/server"; // Import renderToString from react-dom/server
+import { FaCar } from "react-icons/fa";
+import { renderToString } from "react-dom/server";
 
 const libs = ["places"];
 
@@ -35,8 +35,8 @@ export default function MapScreen({ destination, defaultLocation }) {
   const [hasReachedDestination, setHasReachedDestination] = useState(false);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
-  const [infoWindowVisible, setInfoWindowVisible] = useState(false); // Add this state
-  const [currentPositionMarker, setCurrentPositionMarker] = useState(null); // New state to hold current position marker data
+  const [infoWindowVisible, setInfoWindowVisible] = useState(false);
+  const [currentPositionMarker, setCurrentPositionMarker] = useState(null);
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
@@ -126,7 +126,6 @@ export default function MapScreen({ destination, defaultLocation }) {
           );
 
         if (currentDistance <= 100) {
-          // Set the threshold distance in meters
           setHasReachedDestination(true);
           clearInterval(checkArrival);
         }
@@ -160,6 +159,11 @@ export default function MapScreen({ destination, defaultLocation }) {
     getUserCurrentLocation();
     setZoom(15);
     setInfoWindowVisible(true); // Show the InfoWindow when navigation starts
+  };
+
+  const handleStopNavigation = () => {
+    setIsNavigationStarted(false); // Set to false to stop navigation
+    setInfoWindowVisible(false); // Close the InfoWindow when navigation stops
   };
 
   if (loading) {
@@ -228,7 +232,11 @@ export default function MapScreen({ destination, defaultLocation }) {
         </GoogleMap>
       </LoadScript>
       {isNavigationStarted && (
-        <>{/* ... Existing info displayed below map ... */}</>
+        <div className="text-center2 mt-3">
+          <button className="btn btn-danger" onClick={handleStopNavigation}>
+            Stop Navigation
+          </button>
+        </div>
       )}
       {!isNavigationStarted && (
         <div className="text-center2 mt-3">
