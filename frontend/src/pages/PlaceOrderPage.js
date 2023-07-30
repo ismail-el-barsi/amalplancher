@@ -65,6 +65,20 @@ export default function PlaceOrderPage() {
           },
         }
       );
+      for (const cartItem of panier.panierItems) {
+        const { data: updatedProduct } = await Axios.put(
+          `/api/products/updateQuantity/${cartItem._id}`,
+          { quantity: cartItem.quantity },
+          {
+            headers: {
+              authorization: `Bearer ${userInfo.token}`,
+            },
+          }
+        );
+
+        // Optionally, you can do something with the updatedProduct if needed
+        console.log("Updated Product:", updatedProduct);
+      }
       ctxDispatch({ type: "PANIER_CLEAR" });
       dispatch({ type: "CREATE_SUCCESS" });
       localStorage.removeItem("panierItems");

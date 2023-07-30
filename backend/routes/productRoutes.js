@@ -32,6 +32,28 @@ productRouter.post(
       .send({ message: "Product Created", product: createdProduct });
   })
 );
+productRouter.put("/updateQuantity/:id", async (req, res) => {
+  const productId = req.params.id;
+  const { quantity } = req.body;
+
+  try {
+    // Fetch the product from the database
+    const product = await Product.findById(productId);
+
+    if (product) {
+      // Update the countInStock
+      product.countInStock -= quantity;
+      await product.save();
+
+      // Return the updated product
+      res.send(product);
+    } else {
+      res.status(404).send({ message: "Product Not Found" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Error updating product quantity" });
+  }
+});
 
 productRouter.put(
   "/:id",
