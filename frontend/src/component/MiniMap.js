@@ -9,8 +9,8 @@ import {
 } from "@react-google-maps/api";
 import { Shop } from "../Shop";
 import { toast } from "react-toastify";
-import { FaCar } from "react-icons/fa"; // Import the car icon from React Icons
-import { renderToString } from "react-dom/server"; // Import renderToString from react-dom/server
+import { FaCar } from "react-icons/fa";
+import { renderToString } from "react-dom/server";
 
 const libs = ["places"];
 
@@ -35,18 +35,21 @@ export default function MapScreen({ destination, defaultLocation }) {
   const [hasReachedDestination, setHasReachedDestination] = useState(false);
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
-  const [infoWindowVisible, setInfoWindowVisible] = useState(false); // Add this state
-  const [currentPositionMarker, setCurrentPositionMarker] = useState(null); // New state to hold current position marker data
+  const [infoWindowVisible, setInfoWindowVisible] = useState(false);
+  const [currentPositionMarker, setCurrentPositionMarker] = useState(null);
+  const [watchId, setWatchId] = useState(null); // New state to store watchPosition identifier
+  const [isNavigationStopped, setIsNavigationStopped] = useState(false); // New state for navigation stopping
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
   const directionsRendererRef = useRef(null);
 
+  // Function to get user's current location using watchPosition
   const getUserCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by this browser");
     } else {
-      navigator.geolocation.getCurrentPosition(
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
           const origin = {
             lat: position.coords.latitude,
@@ -70,6 +73,9 @@ export default function MapScreen({ destination, defaultLocation }) {
           console.error("Error getting current location:", error);
         }
       );
+
+      // Store the watchId so that we can clear it when needed
+      setWatchId(watchId);
     }
   };
 
@@ -136,6 +142,38 @@ export default function MapScreen({ destination, defaultLocation }) {
     }
   }, [isNavigationStarted, currentLocation, destination]);
 
+  // Function to handle starting navigation
+  const handleStartNavigation = () => {
+    setIsNavigationStarted(true);
+    getUserCurrentLocation();
+    setZoom(15);
+    setInfoWindowVisible(true); // Show the InfoWindow when navigation starts
+  };
+
+  // Function to handle stopping navigation
+  const handleStopNavigation = () => {
+    setIsNavigationStarted(false);
+    setIsNavigationStopped(true);
+    setHasReachedDestination(false);
+    setInfoWindowVisible(false);
+  };
+
+  useEffect(() => {
+    if (isNavigationStopped && watchId) {
+      // Clear the watchPosition when navigation is stopped
+      navigator.geolocation.clearWatch(watchId);
+      setWatchId(null);
+    }
+  }, [isNavigationStopped, watchId]);
+
+  useEffect(() => {
+    return () => {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [watchId]);
+
   const onLoad = (map) => {
     mapRef.current = map;
     directionsServiceRef.current = new window.google.maps.DirectionsService();
@@ -153,13 +191,6 @@ export default function MapScreen({ destination, defaultLocation }) {
       });
       setZoom(mapRef.current.zoom);
     }
-  };
-
-  const handleStartNavigation = () => {
-    setIsNavigationStarted(true);
-    getUserCurrentLocation();
-    setZoom(15);
-    setInfoWindowVisible(true); // Show the InfoWindow when navigation starts
   };
 
   if (loading) {
@@ -228,7 +259,14 @@ export default function MapScreen({ destination, defaultLocation }) {
         </GoogleMap>
       </LoadScript>
       {isNavigationStarted && (
-        <>{/* ... Existing info displayed below map ... */}</>
+        <>
+          {/* ... Existing info displayed below map ... */}
+          <div className="text-center2 mt-3">
+            <button className="btn btn-danger" onClick={handleStopNavigation}>
+              Stop Navigation
+            </button>
+          </div>
+        </>
       )}
       {!isNavigationStarted && (
         <div className="text-center2 mt-3">
