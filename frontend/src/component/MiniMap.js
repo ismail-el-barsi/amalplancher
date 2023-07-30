@@ -10,7 +10,6 @@ import {
 import { Shop } from "../Shop";
 import { toast } from "react-toastify";
 
-const defaultLocation = { lat: 45.516, lng: -73.56 };
 const libs = ["places"];
 
 export default function MapScreen({ destination, defaultLocation }) {
@@ -161,6 +160,7 @@ export default function MapScreen({ destination, defaultLocation }) {
             <DirectionsRenderer
               directions={directions}
               options={{
+                markerOptions: { visible: false },
                 polylineOptions: {
                   strokeColor: "#0000FF",
                   strokeOpacity: 0.7,
