@@ -42,6 +42,7 @@ export default function MapScreen({ destination, defaultLocation }) {
   const directionsServiceRef = useRef(null);
   const directionsRendererRef = useRef(null);
 
+  // Function to get the user's current location
   const getUserCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation is not supported by this browser");
@@ -73,6 +74,7 @@ export default function MapScreen({ destination, defaultLocation }) {
     }
   };
 
+  // Fetch the Google API key when the component mounts
   useEffect(() => {
     const fetchGoogleApiKey = async () => {
       try {
@@ -90,6 +92,7 @@ export default function MapScreen({ destination, defaultLocation }) {
     fetchGoogleApiKey();
   }, [userInfo.token]);
 
+  // Calculate directions and update map state when the current location changes
   useEffect(() => {
     if (currentLocation) {
       directionsServiceRef.current.route(
@@ -116,6 +119,7 @@ export default function MapScreen({ destination, defaultLocation }) {
     }
   }, [currentLocation, destination]);
 
+  // Check for reaching the destination when navigation is started
   useEffect(() => {
     if (isNavigationStarted && currentLocation) {
       const checkArrival = setInterval(() => {
@@ -135,6 +139,7 @@ export default function MapScreen({ destination, defaultLocation }) {
     }
   }, [isNavigationStarted, currentLocation, destination]);
 
+  // Function to handle map load
   const onLoad = (map) => {
     mapRef.current = map;
     directionsServiceRef.current = new window.google.maps.DirectionsService();
@@ -144,6 +149,7 @@ export default function MapScreen({ destination, defaultLocation }) {
     });
   };
 
+  // Function to handle map idle event
   const onIdle = () => {
     if (!isNavigationStarted) {
       setLocation({
@@ -154,6 +160,7 @@ export default function MapScreen({ destination, defaultLocation }) {
     }
   };
 
+  // Function to handle start navigation button click
   const handleStartNavigation = () => {
     setIsNavigationStarted(true);
     getUserCurrentLocation();
@@ -161,9 +168,11 @@ export default function MapScreen({ destination, defaultLocation }) {
     setInfoWindowVisible(true); // Show the InfoWindow when navigation starts
   };
 
+  // Function to handle stop navigation button click
   const handleStopNavigation = () => {
     setIsNavigationStarted(false); // Set to false to stop navigation
     setInfoWindowVisible(false); // Close the InfoWindow when navigation stops
+    setCurrentPositionMarker(null); // Remove the car icon marker
   };
 
   if (loading) {
