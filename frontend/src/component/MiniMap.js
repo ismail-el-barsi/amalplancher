@@ -156,12 +156,7 @@ export default function MapScreen({ destination, defaultLocation }) {
           onLoad={onLoad}
           onIdle={onIdle}
         >
-          {defaultLocation && (
-            <Marker
-              position={defaultLocation}
-              icon="http://maps.google.com/mapfiles/ms/icons/red-dot.png"
-            />
-          )}
+          {defaultLocation && <Marker position={defaultLocation} />}
           {directions && isNavigationStarted && !hasReachedDestination && (
             <DirectionsRenderer
               directions={directions}
