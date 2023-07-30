@@ -9,8 +9,17 @@ import {
 } from "@react-google-maps/api";
 import { Shop } from "../Shop";
 import { toast } from "react-toastify";
+import { FaCar } from "react-icons/fa"; // Import the car icon from React Icons
+import { renderToString } from "react-dom/server"; // Import renderToString from react-dom/server
 
 const libs = ["places"];
+
+// Function to convert an SVG icon to a data URL
+function getIconDataURL(icon) {
+  const svgString = renderToString(icon);
+  const dataURL = `data:image/svg+xml;base64,${btoa(svgString)}`;
+  return dataURL;
+}
 
 export default function MapScreen({ destination, defaultLocation }) {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
@@ -27,6 +36,7 @@ export default function MapScreen({ destination, defaultLocation }) {
   const [distance, setDistance] = useState("");
   const [duration, setDuration] = useState("");
   const [infoWindowVisible, setInfoWindowVisible] = useState(false); // Add this state
+  const [currentPositionMarker, setCurrentPositionMarker] = useState(null); // New state to hold current position marker data
 
   const mapRef = useRef(null);
   const directionsServiceRef = useRef(null);
@@ -43,6 +53,18 @@ export default function MapScreen({ destination, defaultLocation }) {
             lng: position.coords.longitude,
           };
           setCurrentLocation(origin);
+
+          // Get the SVG icon from React Icons
+          const carIconSVG = <FaCar color="red" />;
+
+          // Convert the SVG icon to a data URL
+          const carIconDataURL = getIconDataURL(carIconSVG);
+
+          // Use the data URL as the icon for the current position marker
+          setCurrentPositionMarker({
+            position: origin,
+            icon: carIconDataURL,
+          });
         },
         (error) => {
           console.error("Error getting current location:", error);
@@ -156,6 +178,12 @@ export default function MapScreen({ destination, defaultLocation }) {
           onIdle={onIdle}
         >
           {defaultLocation && <Marker position={defaultLocation} />}
+          {currentPositionMarker && (
+            <Marker
+              position={currentPositionMarker.position}
+              icon={currentPositionMarker.icon}
+            />
+          )}
           {directions && isNavigationStarted && !hasReachedDestination && (
             <DirectionsRenderer
               directions={directions}
