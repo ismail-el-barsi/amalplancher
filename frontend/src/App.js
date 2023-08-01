@@ -322,7 +322,7 @@ function App() {
                 }
               ></Route>
               <Route
-                path="/confirm-email/:token"
+                path="/confirm-email/:userId"
                 element={<ConfirmEmailPage />}
               />
               <Route

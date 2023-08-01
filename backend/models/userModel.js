@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema(
     isSecretaire: { type: Boolean, default: false, required: true },
     isConfirmed: { type: Boolean, default: false, required: true },
     resetToken: { type: String },
+    confirmationCode: { type: String },
   },
   {
     //If you set timestamps: true, Mongoose will add two properties of type Date to your schema:

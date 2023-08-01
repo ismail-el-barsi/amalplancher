@@ -191,33 +191,28 @@ userRouter.post(
   })
 );
 
-userRouter.post(
-  "/signup",
-  expressAsyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
+userRouter.post("/signup", async (req, res) => {
+  const { name, email, password } = req.body;
 
+  try {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      res.status(400).send({ message: "User already exists" });
-      return;
+      return res.status(400).send({ message: "User already exists" });
     }
+
+    const confirmationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
 
     const newUser = new User({
       name,
       email,
       password: bcrypt.hashSync(password, 8),
+      confirmationCode,
     });
 
     const user = await newUser.save();
-
-    const confirmationToken = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1d",
-      }
-    );
 
     const sgMail = sendGrid();
     const msg = {
@@ -226,8 +221,7 @@ userRouter.post(
       subject: "Email Confirmation",
       html: `
         <p>Hi ${user.name},</p>
-        <p>Thank you for signing up! Please click the following link to confirm your email:</p>
-        <a href="${baseUrl()}/confirm-email/${confirmationToken}">Confirm Email</a>
+        <p>Thank you for signing up! Your confirmation code is: ${confirmationCode}</p>
       `,
     };
 
@@ -236,52 +230,49 @@ userRouter.post(
       console.log("Confirmation email sent");
     } catch (error) {
       console.error("Error sending confirmation email:", error);
-      res.status(500).send({ message: "Error sending confirmation email" });
-      return;
+      return res
+        .status(500)
+        .send({ message: "Error sending confirmation email" });
     }
 
     res.send({
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin,
-      isConducteur: user.isConducteur,
-      isSecretaire: user.isSecretaire,
-      isConfirmed: user.isConfirmed,
+      confirmationToken: confirmationCode, // Include the confirmation token in the response
       message: "Please check your email to confirm your account.",
     });
-  })
-);
+  } catch (err) {
+    console.error("Error creating user:", err);
+    res.status(500).send({ message: "Error creating user" });
+  }
+});
 
-userRouter.get(
-  "/confirm-email/:token",
-  expressAsyncHandler(async (req, res) => {
-    const token = req.params.token;
+userRouter.post("/confirm-email/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { confirmationCode } = req.body;
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const userId = decoded.userId;
+  try {
+    const user = await User.findById(userId);
 
-      const user = await User.findById(userId);
-
-      if (user) {
-        user.isConfirmed = true;
-        await user.save();
-
-        res.send(`
-          <script>
-            window.location.href = "${baseUrl()}/login";
-          </script>
-        `);
-      } else {
-        res.status(404).send({ message: "User not found" });
-      }
-    } catch (error) {
-      console.error("Error confirming email:", error);
-      res.status(401).send({ message: "Invalid token" });
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
     }
-  })
-);
+
+    if (user.confirmationCode !== confirmationCode) {
+      return res.status(401).send({ message: "Invalid confirmation code" });
+    }
+
+    user.isConfirmed = true;
+    user.confirmationCode = null; // Clear the confirmation code after confirmation
+    await user.save();
+
+    res.send({ message: "Email confirmed successfully" });
+  } catch (error) {
+    console.error("Error confirming email:", error);
+    res.status(401).send({ message: "Invalid confirmation code" });
+  }
+});
 
 userRouter.put(
   "/profile",

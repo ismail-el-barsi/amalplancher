@@ -1,31 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { Helmet } from "react-helmet-async";
 
 const ConfirmEmailPage = () => {
-  const { token } = useParams();
+  const { userId } = useParams();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const confirmEmail = async () => {
-      try {
-        const response = await axios.get(`/api/users/confirm-email/${token}`);
-        // Uncomment the line below to display a success message
-        console.log(response.data.message);
+  const [confirmationCode, setConfirmationCode] = useState("");
+
+  const handleConfirmation = async (e) => {
+    e.preventDefault();
+
+    try {
+      const { data } = await axios.post(`/api/users/confirm-email/${userId}`, {
+        confirmationCode,
+      });
+
+      if (data.message === "Email confirmed successfully") {
+        toast.success(data.message);
         navigate("/login");
-      } catch (error) {
-        // const errorMessage =
-        //   error.response && error.response.data.message
-        //     ? error.response.data.message
-        //     : "An error occurred while confirming the email.";
-        // console.error(errorMessage);
       }
-    };
+    } catch (error) {
+      toast.error("Invalid confirmation code");
+    }
+  };
 
-    confirmEmail();
-  }, [token, navigate]);
-
-  return <h1>Confirming Email...</h1>;
+  return (
+    <div>
+      <Helmet>
+        <title>Email Confirmation</title>
+      </Helmet>
+      <h1>Confirm Email</h1>
+      <form onSubmit={handleConfirmation}>
+        <label>Enter the 6-digit code received in your email:</label>
+        <input
+          type="text"
+          value={confirmationCode}
+          onChange={(e) => setConfirmationCode(e.target.value)}
+        />
+        <button type="submit">Confirm Email</button>
+      </form>
+    </div>
+  );
 };
 
 export default ConfirmEmailPage;

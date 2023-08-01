@@ -35,8 +35,8 @@ const SignupPage = () => {
         email,
         password,
       });
-      toast.success("Please check your email to confirm your account.");
-      navigate("/login");
+      toast.success(data.message);
+      navigate(`/confirm-email/${data._id}`); // Use the user's ID in the redirect
     } catch (err) {
       toast.error(getError(err));
     }
