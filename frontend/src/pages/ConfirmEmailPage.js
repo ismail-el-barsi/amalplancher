@@ -27,21 +27,42 @@ const ConfirmEmailPage = () => {
     }
   };
 
+  const handleCodeChange = (e) => {
+    const inputCode = e.target.value;
+    if (inputCode.length <= 6) {
+      setConfirmationCode(inputCode);
+    }
+  };
+
   return (
-    <div>
+    <div className="container mt-5">
       <Helmet>
         <title>Email Confirmation</title>
       </Helmet>
-      <h1>Confirm Email</h1>
-      <form onSubmit={handleConfirmation}>
-        <label>Enter the 6-digit code received in your email:</label>
-        <input
-          type="text"
-          value={confirmationCode}
-          onChange={(e) => setConfirmationCode(e.target.value)}
-        />
-        <button type="submit">Confirm Email</button>
-      </form>
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <h1 className="card-title">Confirm Email</h1>
+              <form onSubmit={handleConfirmation}>
+                <div className="form-group">
+                  <label>Enter the 6-digit code received in your email:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={confirmationCode}
+                    onChange={handleCodeChange}
+                    maxLength={6} // Limit input to 6 characters
+                  />
+                </div>
+                <button type="submit" className="btn btn-primary">
+                  Confirm Email
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
