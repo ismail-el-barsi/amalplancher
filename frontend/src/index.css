@@ -286,3 +286,20 @@ main {
 .gps-icon:hover {
   color: red;
 }
+.info-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.info-cell {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.info-cell p {
+  margin: 0;
+}
+.underline {
+  text-decoration: underline;
+}

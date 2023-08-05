@@ -51,7 +51,8 @@ import {
   FaUsersCog,
 } from "react-icons/fa";
 import ConfirmEmailPage from "./pages/ConfirmEmailPage";
-
+import InvoiceForm from "./component/InvoiceForm";
+import ViewInvoice from "./component/ViewInvoice";
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { fullBox, panier, userInfo } = etat;
@@ -160,6 +161,9 @@ function App() {
                       className={mode === "light" ? "fa fa-sun" : "fa fa-moon"}
                     ></i>
                   </Button>
+                  <Link to="/generate-invoice" className="nav-link">
+                    Invoice
+                  </Link>
                   <Link to="/panier" className="nav-link">
                     panier
                     {panier.panierItems.length > 0 && (
@@ -431,6 +435,8 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/generate-invoice" element={<InvoiceForm />} />
+              <Route path="/view-invoice" element={<ViewInvoice />} />
             </Routes>
           </Container>
         </main>
