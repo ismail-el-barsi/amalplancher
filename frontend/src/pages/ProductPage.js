@@ -40,6 +40,7 @@ const reducer = (state, action) => {
 };
 
 function ProductPage() {
+  const [activeType, setActiveType] = useState("");
   const [hoveredImage, setHoveredImage] = useState("");
   const handleImageHover = (image) => {
     setHoveredImage(image);
@@ -186,6 +187,27 @@ function ProductPage() {
           </Card>
         </Col>
       </Row>
+      <div className="my-3">
+        {product.type ? (
+          <div>
+            <h2>Product Types</h2>
+            {product.type.split(",").map((type, index) => (
+              <Button
+                key={index}
+                variant={activeType === type.trim() ? "info" : "primary"}
+                className="me-2"
+                onClick={() => {
+                  setActiveType(type.trim());
+                  Navigate(`/product/${type.trim()}`);
+                }}
+              >
+                {type.trim()}
+              </Button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+
       <div className="my-3">
         <h2 ref={reviewsRef}>Reviews</h2>
         <div className="mb-3">

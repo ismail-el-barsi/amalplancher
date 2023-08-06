@@ -51,8 +51,10 @@ import {
   FaUsersCog,
 } from "react-icons/fa";
 import ConfirmEmailPage from "./pages/ConfirmEmailPage";
-import InvoiceForm from "./component/InvoiceForm";
-import ViewInvoice from "./component/ViewInvoice";
+import ListFacture from "./pages/listFacture";
+import CreateInvoicePage from "./pages/CreateFcture";
+import EditInvoicePage from "./pages/factureeditpage";
+import Viewfacture from "./pages/viewfacture";
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { fullBox, panier, userInfo } = etat;
@@ -161,9 +163,6 @@ function App() {
                       className={mode === "light" ? "fa fa-sun" : "fa fa-moon"}
                     ></i>
                   </Button>
-                  <Link to="/generate-invoice" className="nav-link">
-                    Invoice
-                  </Link>
                   <Link to="/panier" className="nav-link">
                     panier
                     {panier.panierItems.length > 0 && (
@@ -212,6 +211,11 @@ function App() {
                         <NavDropdown.Item>employees</NavDropdown.Item>
                       </LinkContainer>
                     </NavDropdown>
+                  )}
+                  {userInfo && (userInfo.isAdmin || userInfo.isSecretaire) && (
+                    <Link to="/admin/factures" className="nav-link">
+                      facture
+                    </Link>
                   )}
                   {userInfo && userInfo.isConducteur && (
                     <NavDropdown
@@ -306,6 +310,22 @@ function App() {
                 element={
                   <AdminRoute>
                     <UserEditScreen />
+                  </AdminRoute>
+                }
+              ></Route>
+              <Route
+                path="/admin/facture/:id"
+                element={
+                  <AdminRoute>
+                    <EditInvoicePage />
+                  </AdminRoute>
+                }
+              ></Route>
+              <Route
+                path="/admin/viewfactures/:id"
+                element={
+                  <AdminRoute>
+                    <Viewfacture />
                   </AdminRoute>
                 }
               ></Route>
@@ -435,8 +455,22 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/generate-invoice" element={<InvoiceForm />} />
-              <Route path="/view-invoice" element={<ViewInvoice />} />
+              <Route
+                path="/admin/factures"
+                element={
+                  <ProtectedRoute>
+                    <ListFacture />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/facture/"
+                element={
+                  <AdminRoute>
+                    <CreateInvoicePage />
+                  </AdminRoute>
+                }
+              ></Route>
             </Routes>
           </Container>
         </main>

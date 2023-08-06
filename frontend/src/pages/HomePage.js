@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import axios from "axios";
 import { Container, Row, Col, Button } from "react-bootstrap";
@@ -23,8 +23,33 @@ const reducer = (state, action) => {
       return state;
   }
 };
+const PRODUCTS_PER_PAGE = 6;
+
+const Pagination = ({ currentPage, totalPages, onChange }) => {
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  return (
+    <nav>
+      <ul className="pagination">
+        {pageNumbers.map((pageNumber) => (
+          <li
+            key={pageNumber}
+            className={`page-item ${
+              pageNumber === currentPage ? "active" : ""
+            }`}
+          >
+            <button className="page-link" onClick={() => onChange(pageNumber)}>
+              {pageNumber}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+};
 
 const HomePage = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [{ loading, error, products }, dispatch] = useReducer(reducer, {
     products: [],
     loading: true,
@@ -36,7 +61,16 @@ const HomePage = () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
         const res = await axios.get("/api/products");
-        dispatch({ type: "FETCH_SUCCESS", payload: res.data });
+        // Filter out duplicate categories and keep the first occurrence
+        const uniqueProducts = [];
+        const uniqueCategories = new Set();
+        res.data.forEach((product) => {
+          if (!uniqueCategories.has(product.category)) {
+            uniqueCategories.add(product.category);
+            uniqueProducts.push(product);
+          }
+        });
+        dispatch({ type: "FETCH_SUCCESS", payload: uniqueProducts });
       } catch (error) {
         dispatch({ type: "FETCH_FAIL", payload: error.message });
       }
@@ -45,7 +79,12 @@ const HomePage = () => {
   }, []);
 
   const isMobile = window.innerWidth <= 768;
-
+  const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const endIndex = startIndex + PRODUCTS_PER_PAGE;
+  const productsToShow = products.slice(
+    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    currentPage * PRODUCTS_PER_PAGE
+  );
   return (
     <div>
       <Helmet>
@@ -83,7 +122,7 @@ const HomePage = () => {
           ) : (
             <Row>
               {!isMobile &&
-                products.map((product, index) => (
+                productsToShow.map((product, index) => (
                   <React.Fragment key={index}>
                     {index % 2 === 0 ? (
                       <>
@@ -148,7 +187,7 @@ const HomePage = () => {
                 ))}
 
               {isMobile &&
-                products.map((product, index) => (
+                productsToShow.map((product, index) => (
                   <Col md={6} key={index}>
                     <Link to={`/product/${product.slug}`}>
                       <img
@@ -212,6 +251,13 @@ const HomePage = () => {
             </Col>
           </Row>
         </Container>
+        <div className="text-center2">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(products.length / PRODUCTS_PER_PAGE)}
+            onChange={(newPage) => setCurrentPage(newPage)}
+          />
+        </div>
       </section>
     </div>
   );

@@ -9,6 +9,7 @@ import uploadRouter from "./routes/uploadRoutes.js";
 import employeRouter from "./routes/EmployeRoute.js";
 import path from "path";
 import cors from "cors";
+import factureRouter from "./routes/FactureRoute.js";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use("/api/products", productRouter);
 app.use("/api/users", userRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/employees", employeRouter);
+app.use("/api/factures", factureRouter);
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "/frontend/build")));
