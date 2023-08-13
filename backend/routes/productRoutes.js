@@ -54,6 +54,29 @@ productRouter.put("/updateQuantity/:id", async (req, res) => {
     res.status(500).send({ message: "Error updating product quantity" });
   }
 });
+productRouter.put("/updateQuantity2/:id", async (req, res) => {
+  const productId = req.params.id;
+  const { quantity, action } = req.body; // Receive both quantity and action
+
+  try {
+    const product = await Product.findById(productId);
+
+    if (product) {
+      if (action === "achat") {
+        product.countInStock += quantity; // Increment stock for "achat"
+      } else if (action === "vente") {
+        product.countInStock -= quantity; // Decrement stock for "vente"
+      }
+
+      await product.save();
+      res.send(product);
+    } else {
+      res.status(404).send({ message: "Product Not Found" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Error updating product quantity" });
+  }
+});
 
 productRouter.put(
   "/:id",

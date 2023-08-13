@@ -55,6 +55,7 @@ import ListFacture from "./pages/listFacture";
 import CreateInvoicePage from "./pages/CreateFcture";
 import EditInvoicePage from "./pages/factureeditpage";
 import Viewfacture from "./pages/viewfacture";
+import GestionStockManulle from "./pages/GestionStockManuel";
 function App() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { fullBox, panier, userInfo } = etat;
@@ -217,6 +218,11 @@ function App() {
                       facture
                     </Link>
                   )}
+                  {userInfo && (userInfo.isAdmin || userInfo.isSecretaire) && (
+                    <Link to="/admin/stock" className="nav-link">
+                      stock
+                    </Link>
+                  )}
                   {userInfo && userInfo.isConducteur && (
                     <NavDropdown
                       title="conducteur"
@@ -318,6 +324,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <EditInvoicePage />
+                  </AdminRoute>
+                }
+              ></Route>
+              <Route
+                path="/admin/stock"
+                element={
+                  <AdminRoute>
+                    <GestionStockManulle />
                   </AdminRoute>
                 }
               ></Route>

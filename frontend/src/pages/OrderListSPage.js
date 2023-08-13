@@ -116,6 +116,11 @@ const OrderListScreen = () => {
     } else if (filter === "pending") {
       return order.pendingPayment;
     }
+    if (filter === "date" && dateFilter) {
+      const orderDate = new Date(order.createdAt).setHours(0, 0, 0, 0);
+      const selectedDate = new Date(dateFilter).setHours(0, 0, 0, 0);
+      return orderDate === selectedDate;
+    }
 
     return true; // Add a default return statement
   });

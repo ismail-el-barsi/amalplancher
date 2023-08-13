@@ -8,7 +8,9 @@ import { Shop } from "../Shop";
 import { getError } from "../Utils";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 const ITEMS_PER_PAGE = 10;
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -33,7 +35,6 @@ const reducer = (state, action) => {
       return { ...state, loadingDelete: false };
     case "DELETE_RESET":
       return { ...state, loadingDelete: false, successDelete: false };
-
     default:
       return state;
   }
@@ -48,7 +49,9 @@ export default function FactureListScreen() {
       error: "",
     });
 
-  const [searchTerm, setSearchTerm] = useState(""); // Add state for search term
+  const [searchTerm, setSearchTerm] = useState(""); // State for client name search
+  const [dateSearchTerm, setDateSearchTerm] = useState(""); // State for date search
+  const [monthSearchTerm, setMonthSearchTerm] = useState(""); // State for month search
 
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
@@ -91,8 +94,10 @@ export default function FactureListScreen() {
       }
     }
   };
+
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
+
   function Pagination({ currentPage, totalPages, onChange }) {
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -130,9 +135,21 @@ export default function FactureListScreen() {
         <input
           type="text"
           placeholder="Rechercher par nom de client..."
-          className="form-control w-50"
+          className="form-control w-20 me-2"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <input
+          type="date"
+          className="form-control w-20 me-2"
+          value={dateSearchTerm}
+          onChange={(e) => setDateSearchTerm(e.target.value)}
+        />
+        <input
+          type="month"
+          className="form-control w-20"
+          value={monthSearchTerm}
+          onChange={(e) => setMonthSearchTerm(e.target.value)}
         />
       </div>
 
@@ -166,6 +183,16 @@ export default function FactureListScreen() {
                     facture.client
                       .toLowerCase()
                       .includes(searchTerm.toLowerCase())
+                  )
+                  .filter((facture) =>
+                    dateSearchTerm
+                      ? facture.date.includes(dateSearchTerm)
+                      : true
+                  )
+                  .filter((facture) =>
+                    monthSearchTerm
+                      ? facture.date.includes(monthSearchTerm)
+                      : true
                   )
                   .slice(startIndex, endIndex)
                   .map((facture) => (
@@ -207,15 +234,15 @@ export default function FactureListScreen() {
                       </td>
                     </tr>
                   ))}
-              <div className="d-flex justify-content-center">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(factures.length / ITEMS_PER_PAGE)}
-                  onChange={(newPage) => setCurrentPage(newPage)}
-                />
-              </div>
             </tbody>
           </table>
+          <div className="d-flex justify-content-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(factures.length / ITEMS_PER_PAGE)}
+              onChange={(newPage) => setCurrentPage(newPage)}
+            />
+          </div>
         </>
       )}
     </div>

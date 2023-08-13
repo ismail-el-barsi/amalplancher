@@ -17,6 +17,7 @@ import { Card } from "react-bootstrap";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import logo from "../logo/logo2.png";
+import { NumberToLetter } from "convertir-nombre-lettre";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -31,7 +32,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function EditInvoicePage() {
+export default function ViewInvoicePage() {
   const params = useParams();
   const { id: invoiceId } = params;
 
@@ -114,11 +115,26 @@ export default function EditInvoicePage() {
 
     generateButton.style.display = "block";
   };
+  const numberToFrenchWords = (number) => {
+    if (number === 0) {
+      return "zéro";
+    }
+
+    const [integerPart, decimalPart] = number.toString().split(".");
+    let result = NumberToLetter(integerPart);
+
+    if (decimalPart !== undefined) {
+      const decimalWords = NumberToLetter(decimalPart);
+      result += ` virgule ${decimalWords}`;
+    }
+
+    return result;
+  };
 
   return (
     <Container
       ref={invoiceRef}
-      className="p-3"
+      className="p-3 mobile-container"
       style={{
         width: "210mm",
         height: "297mm",
@@ -126,6 +142,9 @@ export default function EditInvoicePage() {
         padding: 0,
         margin: "auto",
         boxSizing: "border-box",
+        transform: window.innerWidth <= 767 ? "scale(0.455)" : "none", // Adjust the scale value as needed
+        transformOrigin: "top left",
+        userSelect: "none",
       }}
     >
       {loading ? (
@@ -264,7 +283,7 @@ export default function EditInvoicePage() {
           <div className="container text-center2 mt-5">
             <strong>
               Arrêtée la présente facture à la somme de (T.T.C):
-              {totalTtc}
+              {numberToFrenchWords(totalTtc)}
             </strong>
           </div>
           {/* Footer */}
