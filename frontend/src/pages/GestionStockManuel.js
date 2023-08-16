@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const DuplicatedProduct = ({
   products,
-  updateStock,
+  updateStockForProduct,
   removeNewProduct,
   index,
 }) => {
@@ -28,7 +28,7 @@ const DuplicatedProduct = ({
     }
 
     try {
-      await updateStock(selectedProduct, quantity, action);
+      await updateStockForProduct(selectedProduct, quantity, action);
       clearFormFields();
       toast.success("Stock updated successfully!");
     } catch (error) {
@@ -141,7 +141,11 @@ const App = () => {
     }
   };
 
-  const updateStock = async (productName, updatedQuantity, updatedAction) => {
+  const updateStockForProduct = async (
+    productName,
+    updatedQuantity,
+    updatedAction
+  ) => {
     const selectedProductObject = products.find(
       (product) => product.name === productName
     );
@@ -181,6 +185,8 @@ const App = () => {
       }
 
       fetchProducts();
+      clearFormFields();
+      toast.success("Stock updated successfully!");
     } catch (error) {
       throw error;
     }
@@ -275,7 +281,9 @@ const App = () => {
               </div>
               <button
                 className="btn btn-primary mt-2"
-                onClick={() => updateStock(selectedProduct, quantity, action)}
+                onClick={() =>
+                  updateStockForProduct(selectedProduct, quantity, action)
+                }
                 disabled={!isRadioSelected}
               >
                 Update Stock
@@ -291,7 +299,7 @@ const App = () => {
               key={newProduct.index}
               index={newProduct.index}
               products={products}
-              updateStock={updateStock}
+              updateStockForProduct={updateStockForProduct} // Pass the common function here
               removeNewProduct={removeNewProduct}
             />
           ))}
