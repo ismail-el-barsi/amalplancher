@@ -8,6 +8,7 @@ import { Shop } from "../Shop";
 import { getError } from "../Utils";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -97,9 +98,9 @@ export default function UserListScreen() {
         <title>Users</title>
       </Helmet>
       <h1>Users</h1>
-      {loadingDelete && <LoadingBox></LoadingBox>}
+      {loadingDelete && <LoadingBox />}
       {loading ? (
-        <LoadingBox></LoadingBox>
+        <LoadingBox />
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
@@ -126,21 +127,22 @@ export default function UserListScreen() {
                   <td>{user.isConducteur ? "YES" : "NO"}</td>
                   <td>{user.isSecretaire ? "YES" : "NO"}</td>
                   <td>
-                    <Button
-                      type="button"
-                      variant="light"
-                      onClick={() => navigate(`/admin/user/${user._id}`)}
-                    >
-                      Edit
-                    </Button>
-                    <br />
-                    <Button
-                      type="button"
-                      variant="light"
-                      onClick={() => deleteHandler(user)}
-                    >
-                      Delete
-                    </Button>
+                    <div className="d-flex gap-2">
+                      <Button
+                        type="button"
+                        variant="light"
+                        onClick={() => navigate(`/admin/user/${user._id}`)}
+                      >
+                        <FaEdit /> Edit
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="light"
+                        onClick={() => deleteHandler(user)}
+                      >
+                        <FaTrash /> Delete
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}

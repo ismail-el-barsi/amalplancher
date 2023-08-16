@@ -8,7 +8,7 @@ import MessageBox from "../component/MessageError";
 import { Shop } from "../Shop";
 import { getError } from "../Utils";
 import { toast } from "react-toastify";
-
+import { FaEye, FaTrash } from "react-icons/fa";
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -221,7 +221,7 @@ const OrderListScreen = () => {
                         </td>
                         <td>{order.pendingPayment ? "yes" : "no"}</td>
                         <td>
-                          <div className="d-grid gap-2">
+                          <div className="d-flex gap-2">
                             <Button
                               type="button"
                               variant="light"
@@ -229,7 +229,7 @@ const OrderListScreen = () => {
                                 navigate(`/order/${order._id}`);
                               }}
                             >
-                              Details
+                              <FaEye /> Details
                             </Button>
                             {userInfo.isAdmin && (
                               <Button
@@ -238,7 +238,7 @@ const OrderListScreen = () => {
                                 onClick={() => deleteHandler(order)}
                                 disabled={loadingDelete}
                               >
-                                Delete
+                                <FaTrash /> Delete
                               </Button>
                             )}
                           </div>
@@ -264,7 +264,7 @@ const OrderListScreen = () => {
                         </td>
                         <td>{order.pendingPayment ? "yes" : "no"}</td>
                         <td>
-                          <div className="d-grid gap-2">
+                          <div className="d-flex gap-2">
                             <Button
                               type="button"
                               variant="light"
@@ -272,7 +272,7 @@ const OrderListScreen = () => {
                                 navigate(`/order/${order._id}`);
                               }}
                             >
-                              Details
+                              <FaEye /> Details
                             </Button>
                             {userInfo.isAdmin && (
                               <Button
@@ -281,7 +281,7 @@ const OrderListScreen = () => {
                                 onClick={() => deleteHandler(order)}
                                 disabled={loadingDelete}
                               >
-                                Delete
+                                <FaTrash /> Delete
                               </Button>
                             )}
                           </div>
@@ -316,7 +316,7 @@ const OrderListScreen = () => {
                         </td>
                         <td>{order.pendingPayment ? "yes" : "no"}</td>
                         <td>
-                          <div className="d-grid gap-2">
+                          <div className="d-flex gap-2">
                             <Button
                               type="button"
                               variant="light"
@@ -324,7 +324,7 @@ const OrderListScreen = () => {
                                 navigate(`/order/${order._id}`);
                               }}
                             >
-                              Details
+                              <FaEye /> Details
                             </Button>
                             {userInfo.isAdmin && (
                               <Button
@@ -333,7 +333,7 @@ const OrderListScreen = () => {
                                 onClick={() => deleteHandler(order)}
                                 disabled={loadingDelete}
                               >
-                                Delete
+                                <FaTrash /> Delete
                               </Button>
                             )}
                           </div>

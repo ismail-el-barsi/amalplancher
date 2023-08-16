@@ -4,6 +4,14 @@ import { Helmet } from "react-helmet-async";
 import LoadingBox from "../component/Loading";
 import MessageBox from "../component/MessageError";
 import Button from "react-bootstrap/Button";
+import {
+  FaSearch,
+  FaCalendarAlt,
+  FaRegCalendarAlt,
+  FaEye,
+  FaEdit,
+  FaTrashAlt,
+} from "react-icons/fa";
 import { Shop } from "../Shop";
 import { getError } from "../Utils";
 import { useNavigate } from "react-router-dom";
@@ -49,9 +57,9 @@ export default function FactureListScreen() {
       error: "",
     });
 
-  const [searchTerm, setSearchTerm] = useState(""); // State for client name search
-  const [dateSearchTerm, setDateSearchTerm] = useState(""); // State for date search
-  const [monthSearchTerm, setMonthSearchTerm] = useState(""); // State for month search
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateSearchTerm, setDateSearchTerm] = useState("");
+  const [monthSearchTerm, setMonthSearchTerm] = useState("");
 
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
@@ -152,7 +160,6 @@ export default function FactureListScreen() {
           onChange={(e) => setMonthSearchTerm(e.target.value)}
         />
       </div>
-
       {loading ? (
         <LoadingBox />
       ) : error ? (
@@ -164,6 +171,7 @@ export default function FactureListScreen() {
             variant="light"
             onClick={() => navigate(`/admin/facture/`)}
           >
+            <FaEdit className="me-2" />
             Create
           </Button>
           <table className="table table-striped">
@@ -211,6 +219,7 @@ export default function FactureListScreen() {
                                 navigate(`/admin/viewfactures/${facture._id}`)
                               }
                             >
+                              <FaEye />
                               Afficher
                             </Button>
                             <Button
@@ -220,6 +229,7 @@ export default function FactureListScreen() {
                                 navigate(`/admin/facture/${facture._id}`)
                               }
                             >
+                              <FaEdit />
                               Modifier
                             </Button>
                             <Button
@@ -227,6 +237,7 @@ export default function FactureListScreen() {
                               variant="light"
                               onClick={() => deleteHandler(facture)}
                             >
+                              <FaTrashAlt />
                               Supprimer
                             </Button>
                           </div>

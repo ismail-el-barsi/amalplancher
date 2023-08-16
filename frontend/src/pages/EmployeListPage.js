@@ -8,6 +8,7 @@ import { Shop } from "../Shop";
 import { getError } from "../Utils";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -109,6 +110,7 @@ export default function EmployeeListScreen() {
             variant="light"
             onClick={() => navigate(`/admin/employee/`)}
           >
+            <FaEdit className="me-2" />
             Create
           </Button>
           <table className="table table-striped">
@@ -141,7 +143,7 @@ export default function EmployeeListScreen() {
                   <td>{employee.type}</td>
                   <td>{employee.salary}</td>
                   <td>
-                    <div className="d-grid gap-2">
+                    <div className="d-flex justify-content-between mb-3">
                       <Button
                         type="button"
                         variant="light"
@@ -149,6 +151,7 @@ export default function EmployeeListScreen() {
                           navigate(`/admin/employees/${employee._id}`)
                         }
                       >
+                        <FaEdit className="me-2" />
                         Edit
                       </Button>
                       <Button
@@ -156,6 +159,7 @@ export default function EmployeeListScreen() {
                         variant="light"
                         onClick={() => deleteHandler(employee)}
                       >
+                        <FaTrash className="me-2" />
                         Delete
                       </Button>
                     </div>

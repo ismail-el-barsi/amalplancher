@@ -18,6 +18,12 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  FaUsers,
+  FaShoppingCart,
+  FaMoneyBillAlt,
+  FaUserTie,
+} from "react-icons/fa";
 import { Col, Row } from "react-bootstrap";
 
 const reducer = (state, action) => {
@@ -86,6 +92,7 @@ export default function DashboardScreen() {
                 <Card>
                   <Card.Body>
                     <Card.Title className="dashboard-card-title">
+                      <FaUsers size={30} />
                       {summary.users && summary.users.length > 0
                         ? summary.users[0].numUsers
                         : 0}
@@ -98,6 +105,7 @@ export default function DashboardScreen() {
                 <Card>
                   <Card.Body>
                     <Card.Title className="dashboard-card-title">
+                      <FaShoppingCart size={30} />
                       {summary.orders && summary.orders.length > 0
                         ? summary.orders[0].numOrders
                         : 0}
@@ -110,6 +118,7 @@ export default function DashboardScreen() {
                 <Card>
                   <Card.Body>
                     <Card.Title className="dashboard-card-title">
+                      <FaMoneyBillAlt size={30} />
                       {summary.orders && summary.orders.length > 0
                         ? summary.orders[0].totalSales.toFixed(2)
                         : 0}
@@ -123,6 +132,7 @@ export default function DashboardScreen() {
                 <Card>
                   <Card.Body>
                     <Card.Title className="dashboard-card-title">
+                      <FaUserTie size={30} />
                       {summary.employees && summary.employees.length > 0
                         ? summary.employees[0].numEmployees
                         : 0}
@@ -131,19 +141,7 @@ export default function DashboardScreen() {
                   </Card.Body>
                 </Card>
               </Col>
-              <Col xs={6} sm={6} md={4}>
-                <Card>
-                  <Card.Body>
-                    <Card.Title className="dashboard-card-title">
-                      {summary.employees && summary.employees.length > 0
-                        ? summary.employees[0].totalSalary
-                        : 0}
-                      MAD
-                    </Card.Title>
-                    <Card.Text>Total Salary</Card.Text>
-                  </Card.Body>
-                </Card>
-              </Col>
+              {/* Add more columns here if needed */}
             </Row>
           </div>
 
