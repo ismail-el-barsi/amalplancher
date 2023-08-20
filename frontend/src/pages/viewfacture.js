@@ -223,52 +223,28 @@ export default function ViewInvoicePage() {
                 </div>
               </div>
             </Card.Body>
-            <Card.Body>
-              <Card className="mt-4" border="dark">
-                <Card.Body>
-                  <div className="info-row">
-                    <div className="info-cell" style={{ flex: "2.5" }}>
-                      <p>
-                        <strong>Designation:</strong>
-                      </p>
-                      <p>{designation}</p>
-                    </div>
-                    <div className="info-cell">
-                      <p>
-                        <strong>Quantité:</strong>
-                      </p>
-                      <p>{quantite}</p>
-                    </div>
-                    <div className="info-cell">
-                      <p>
-                        <strong>Prix Uni T.T.C:</strong>
-                      </p>
-                      <p>{prixUni}</p>
-                    </div>
-                    <div className="info-cell">
-                      <p>
-                        <strong>Total T.T.C:</strong>
-                      </p>
-                      <p>{totalTtc}</p>
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Card.Body>
+          </Card>
+          <Card.Body>
             <Card className="mt-4" border="dark">
               <Card.Body>
                 <div className="info-row">
-                  <div className="info-cell">
+                  <div className="info-cell" style={{ flex: "2.5" }}>
                     <p>
-                      <strong>Total H.T:</strong>
+                      <strong>Designation:</strong>
                     </p>
-                    <p>{totalHt}</p>
+                    <p>{designation}</p>
                   </div>
                   <div className="info-cell">
                     <p>
-                      <strong>Total TVA:</strong>
+                      <strong>Quantité:</strong>
                     </p>
-                    <p>{totalTva}</p>
+                    <p>{quantite}</p>
+                  </div>
+                  <div className="info-cell">
+                    <p>
+                      <strong>Prix Uni T.T.C:</strong>
+                    </p>
+                    <p>{prixUni}</p>
                   </div>
                   <div className="info-cell">
                     <p>
@@ -279,6 +255,30 @@ export default function ViewInvoicePage() {
                 </div>
               </Card.Body>
             </Card>
+          </Card.Body>
+          <Card className="mt-4" border="dark">
+            <Card.Body>
+              <div className="info-row">
+                <div className="info-cell">
+                  <p>
+                    <strong>Total H.T:</strong>
+                  </p>
+                  <p>{totalHt}</p>
+                </div>
+                <div className="info-cell">
+                  <p>
+                    <strong>Total TVA:</strong>
+                  </p>
+                  <p>{totalTva}</p>
+                </div>
+                <div className="info-cell">
+                  <p>
+                    <strong>Total T.T.C:</strong>
+                  </p>
+                  <p>{totalTtc}</p>
+                </div>
+              </div>
+            </Card.Body>
           </Card>
           <div className="container text-center2 mt-5">
             <strong>
@@ -311,10 +311,7 @@ export default function ViewInvoicePage() {
           {/* Generate PDF button */}
         </Form>
       )}
-      <button
-        onClick={generatePDF}
-        className="btn btn-primary mt-4 generate-button"
-      >
+      <button onClick={generatePDF} className="btn btn-primary generate-button">
         Generate PDF
       </button>
     </Container>
