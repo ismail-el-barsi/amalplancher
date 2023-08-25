@@ -55,7 +55,13 @@ export default function EditInvoicePage() {
   const [totalTva, setTotalTva] = useState(0);
   const [totalTtc, setTotalTtc] = useState(0);
   const [montant, setMontant] = useState(0);
-
+  const [montantEnEspece, setMontantEnEspece] = useState(0);
+  const [montantDeCheque, setMontantDeCheque] = useState(0);
+  const [numCheque, setNumCheque] = useState("");
+  const [unitOfMeasure, setUnitOfMeasure] = useState("");
+  const handleModeReglementChange = (selectedMode) => {
+    setModeReglement(selectedMode);
+  };
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
@@ -78,7 +84,10 @@ export default function EditInvoicePage() {
         setTotalTva(data.totalTva);
         setTotalTtc(data.totalTtc);
         setMontant(data.montant);
-
+        setMontantDeCheque(data.montantDeCheque);
+        setMontantEnEspece(data.montantEnEspece);
+        setNumCheque(data.numCheque);
+        setUnitOfMeasure(data.unitOfMeasure);
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -99,9 +108,9 @@ export default function EditInvoicePage() {
   };
 
   useEffect(() => {
-    const calculatedTotalHt = quantite * prixUni;
-    const calculatedTotalTva = calculatedTotalHt * 0.2; // Assuming 20% VAT
-    const calculatedTotalTtc = calculatedTotalHt + calculatedTotalTva;
+    const calculatedTotalTtc = quantite * prixUni;
+    const calculatedTotalHt = calculatedTotalTtc / 1.2;
+    const calculatedTotalTva = calculatedTotalTtc - calculatedTotalHt;
     setTotalHt(calculatedTotalHt);
     setTotalTva(calculatedTotalTva);
     setTotalTtc(calculatedTotalTtc);
@@ -127,6 +136,10 @@ export default function EditInvoicePage() {
           montant,
           designation,
           prixUni,
+          montantEnEspece,
+          montantDeCheque,
+          numCheque,
+          unitOfMeasure,
         },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },
@@ -142,6 +155,11 @@ export default function EditInvoicePage() {
       dispatch({ type: "UPDATE_FAIL" });
     }
   };
+  const paymentOptions = [
+    { value: "chèque", label: "Chèque" },
+    { value: "espèce", label: "Espèce" },
+    { value: "chèque et espèce", label: "Chèque et Espèce" },
+  ];
 
   return (
     <Container className="small-container">
@@ -182,39 +200,85 @@ export default function EditInvoicePage() {
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="numero">
-            <Form.Label>Invoice Number</Form.Label>
+            <Form.Label>Numero</Form.Label>
             <Form.Control
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
               required
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="modeReglement">
-            <Form.Label>Mode of Payment</Form.Label>
-            <Form.Control
-              value={modeReglement}
-              onChange={(e) => setModeReglement(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="quantite">
-            <Form.Label>Quantity</Form.Label>
-            <Form.Control
-              type="number"
-              value={quantite}
-              onChange={handleQuantityChange}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="montant">
-            <Form.Label>Montant</Form.Label>
-            <Form.Control
-              type="number"
-              value={montant}
-              onChange={(e) => setMontant(parseFloat(e.target.value))}
-              readOnly
-            />
-          </Form.Group>
+          {modeReglement === "espèce" && (
+            <Form.Group className="mb-3" controlId="montantEnEspece">
+              <Form.Label>Montant en Espèce</Form.Label>
+              <Form.Control
+                type="number"
+                value={montantEnEspece}
+                onChange={(e) => setMontantEnEspece(parseFloat(e.target.value))}
+                required
+              />
+            </Form.Group>
+          )}
+
+          {modeReglement === "chèque" && (
+            <Form.Group className="mb-3" controlId="montantDeCheque">
+              <Form.Label>Montant de Chèque</Form.Label>
+              <Form.Control
+                type="number"
+                value={montantDeCheque}
+                onChange={(e) => setMontantDeCheque(parseFloat(e.target.value))}
+                required
+              />
+            </Form.Group>
+          )}
+
+          {modeReglement === "chèque et espèce" && (
+            <>
+              <Form.Group className="mb-3" controlId="montantEnEspece">
+                <Form.Label>Montant en Espèce</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={montantEnEspece}
+                  onChange={(e) =>
+                    setMontantEnEspece(parseFloat(e.target.value))
+                  }
+                  required
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="montantDeCheque">
+                <Form.Label>Montant de Chèque</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={montantDeCheque}
+                  onChange={(e) =>
+                    setMontantDeCheque(parseFloat(e.target.value))
+                  }
+                  required
+                />
+              </Form.Group>
+            </>
+          )}
+          {modeReglement === "chèque" && (
+            <Form.Group className="mb-3" controlId="numCheque">
+              <Form.Label>Numéro de Chèque</Form.Label>
+              <Form.Control
+                type="text"
+                value={numCheque}
+                onChange={(e) => setNumCheque(e.target.value)}
+                required
+              />
+            </Form.Group>
+          )}
+          {modeReglement === "chèque et espèce" && (
+            <Form.Group className="mb-3" controlId="numCheque">
+              <Form.Label>Numéro de Chèque</Form.Label>
+              <Form.Control
+                type="text"
+                value={numCheque}
+                onChange={(e) => setNumCheque(e.target.value)}
+                required
+              />
+            </Form.Group>
+          )}
           <Form.Group className="mb-3" controlId="designation">
             <Form.Label>Designation</Form.Label>
             <Form.Control
@@ -228,15 +292,39 @@ export default function EditInvoicePage() {
             <Form.Control
               type="number"
               value={prixUni}
-              onChange={handlePrixUniChange}
+              onChange={(e) => setPrixUni(parseFloat(e.target.value))}
               required
             />
           </Form.Group>
+          <Form.Group className="mb-3" controlId="quantite">
+            <Form.Label>Quantite</Form.Label>
+            <div className="d-flex align-items-center">
+              <Form.Control
+                type="number"
+                value={quantite}
+                onChange={(e) => setQuantite(parseFloat(e.target.value))}
+                required
+              />
+              <Form.Control
+                as="select"
+                className="ms-2"
+                value={unitOfMeasure}
+                onChange={(e) => setUnitOfMeasure(e.target.value)}
+                required
+              >
+                <option value="">Unité</option>
+                <option value="M²">M²</option>
+                <option value="U">U</option>
+                {/* Add other unit options */}
+              </Form.Control>
+            </div>
+          </Form.Group>
+
           <Form.Group className="mb-3" controlId="totalHt">
             <Form.Label>Total HT</Form.Label>
             <Form.Control
               type="number"
-              value={totalHt}
+              value={totalHt.toFixed(2)}
               onChange={(e) => setTotalHt(parseFloat(e.target.value))}
               readOnly
             />
@@ -245,7 +333,7 @@ export default function EditInvoicePage() {
             <Form.Label>Total TVA</Form.Label>
             <Form.Control
               type="number"
-              value={totalTva}
+              value={totalTva.toFixed(2)}
               onChange={(e) => setTotalTva(parseFloat(e.target.value))}
               readOnly
             />
@@ -258,6 +346,30 @@ export default function EditInvoicePage() {
               onChange={(e) => setTotalTtc(parseFloat(e.target.value))}
               readOnly
             />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="montant">
+            <Form.Label>Montant</Form.Label>
+            <Form.Control
+              type="number"
+              value={montant.toFixed(2)}
+              onChange={(e) => setMontant(parseFloat(e.target.value))}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="modeReglement">
+            <Form.Label>Mode de Payement</Form.Label>
+            <Form.Select
+              value={modeReglement}
+              onChange={(e) => handleModeReglementChange(e.target.value)}
+              required
+            >
+              <option value="">Sélectionner un mode de payement</option>
+              {paymentOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
 
           <div className="mb-3">

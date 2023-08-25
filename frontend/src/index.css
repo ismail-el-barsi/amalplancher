@@ -38,6 +38,9 @@ main {
   font-size: 20px;
   text-align: center;
 }
+.text-center3 {
+  text-align: center;
+}
 .rating {
   color: blueviolet;
 }
@@ -306,12 +309,6 @@ main {
 .small-font {
   font-size: 18px; /* Adjust the font size as needed */
 }
-.pdf-container {
-  /* Define styles for A4 paper layout */
-  width: 210mm;
-  height: 297mm;
-  border: 1px solid black;
-  padding: 0;
-  margin: auto;
-  box-sizing: border-box;
+.reduce-font-size {
+  font-size: 14px;
 }

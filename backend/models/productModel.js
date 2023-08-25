@@ -26,6 +26,22 @@ const productSchema = new mongoose.Schema(
     rating: { type: Number, required: true, default: 0 },
     numReviews: { type: Number, required: true, default: 0 },
     reviews: [reviewSchema],
+    manufacturingDate: { type: Date },
+    quantityInBatch: { type: Number },
+    typedachat: {
+      type: String,
+      enum: ["achat", "vente"], // Only "achat" or "vente" values are allowed
+    },
+    historicalData: [
+      {
+        manufacturingDate: { type: Date },
+        quantityInBatch: { type: Number },
+        typedachat: {
+          type: String,
+          enum: ["achat", "vente"],
+        },
+      },
+    ],
   },
   {
     timestamps: true,

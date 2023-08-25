@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { getError } from "../Utils";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { FaEdit, FaEye, FaTrashAlt } from "react-icons/fa";
 const reducer = (etat, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -155,22 +155,34 @@ export default function ProductListScreen() {
                     <td>{product.category}</td>
                     <td>{product.brand}</td>
                     <td>
-                      <Button
-                        type="button"
-                        variant="light"
-                        onClick={() =>
-                          navigate(`/admin/product/${product._id}`)
-                        }
-                      >
-                        <FaEdit /> Edit
-                      </Button>{" "}
-                      <Button
-                        type="button"
-                        variant="light"
-                        onClick={() => deleteHandler(product)}
-                      >
-                        <FaTrashAlt /> Delete
-                      </Button>
+                      <div className="d-flex gap-2">
+                        <Button
+                          type="button"
+                          variant="light"
+                          onClick={() =>
+                            navigate(`/admin/viewproduct/${product._id}`)
+                          }
+                        >
+                          <FaEye />
+                          Afficher
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="light"
+                          onClick={() =>
+                            navigate(`/admin/product/${product._id}`)
+                          }
+                        >
+                          <FaEdit /> Edit
+                        </Button>{" "}
+                        <Button
+                          type="button"
+                          variant="light"
+                          onClick={() => deleteHandler(product)}
+                        >
+                          <FaTrashAlt /> Delete
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}

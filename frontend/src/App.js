@@ -43,6 +43,7 @@ import CreateEmployeePage from "./pages/CreateEmployePage";
 import MapPage from "./pages/MapPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage";
+import ProductViewScreen from "./pages/ProductViewPage";
 import {
   FaChartBar,
   FaBox,
@@ -434,6 +435,14 @@ function App() {
                 element={
                   <AdminRoute>
                     <ProductEditScreen />
+                  </AdminRoute>
+                }
+              ></Route>
+              <Route
+                path="/admin/viewproduct/:id"
+                element={
+                  <AdminRoute>
+                    <ProductViewScreen />
                   </AdminRoute>
                 }
               ></Route>

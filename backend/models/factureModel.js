@@ -14,6 +14,10 @@ const invoiceSchema = new mongoose.Schema(
     designation: { type: String, required: true },
     totalTva: { type: Number, required: true },
     prixUni: { type: Number, required: true },
+    montantEnEspece: { type: Number },
+    montantDeCheque: { type: Number },
+    numCheque: { type: String },
+    unitOfMeasure: { type: String, required: true },
   },
   {
     timestamps: true,

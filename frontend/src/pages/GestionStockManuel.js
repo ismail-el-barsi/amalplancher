@@ -13,12 +13,14 @@ const DuplicatedProduct = ({
   const [quantity, setQuantity] = useState(0);
   const [action, setAction] = useState("");
   const [isRadioSelected, setIsRadioSelected] = useState(false);
+  const [actionDate, setActionDate] = useState("");
 
   const clearFormFields = () => {
     setSelectedProduct("");
     setQuantity(0);
     setAction("");
     setIsRadioSelected(false);
+    setActionDate("");
   };
 
   const handleUpdateStock = async () => {
@@ -28,7 +30,12 @@ const DuplicatedProduct = ({
     }
 
     try {
-      await updateStockForProduct(selectedProduct, quantity, action);
+      await updateStockForProduct(
+        selectedProduct,
+        quantity,
+        action,
+        actionDate
+      );
       clearFormFields();
       toast.success("Stock updated successfully!");
     } catch (error) {
@@ -57,6 +64,18 @@ const DuplicatedProduct = ({
             </option>
           ))}
         </select>
+      </div>
+      <div className="mb-3">
+        <label htmlFor={`newDateInput${index}`} className="form-label">
+          Select Date: {/* Label for the date input */}
+        </label>
+        <input
+          type="date"
+          className="form-control"
+          id={`newDateInput${index}`}
+          value={actionDate}
+          onChange={(e) => setActionDate(e.target.value)}
+        />
       </div>
       <div className="mb-3">
         <label htmlFor={`newQuantityInput${index}`} className="form-label">
@@ -123,7 +142,7 @@ const App = () => {
   const [quantity, setQuantity] = useState(0);
   const [action, setAction] = useState("");
   const [isRadioSelected, setIsRadioSelected] = useState(false);
-
+  const [actionDate, setActionDate] = useState("");
   const [newProductIndex, setNewProductIndex] = useState(1);
   const [newProducts, setNewProducts] = useState([]);
 
@@ -144,7 +163,9 @@ const App = () => {
   const updateStockForProduct = async (
     productName,
     updatedQuantity,
-    updatedAction
+    updatedAction,
+    updatedDate,
+    quantityInBatch
   ) => {
     const selectedProductObject = products.find(
       (product) => product.name === productName
@@ -175,6 +196,8 @@ const App = () => {
           body: JSON.stringify({
             quantity: adjustedQuantity,
             action: updatedAction,
+            manufacturingDate: updatedDate,
+            quantityInBatch: adjustedQuantity,
           }),
         }
       );
@@ -239,6 +262,16 @@ const App = () => {
         <div className="col-md-8">
           {selectedProduct && (
             <div className="mb-3">
+              <label htmlFor="dateInput" className="form-label">
+                Select Date:
+              </label>
+              <input
+                type="date"
+                className="form-control"
+                id="dateInput"
+                value={actionDate}
+                onChange={(e) => setActionDate(e.target.value)}
+              />
               <label htmlFor="quantityInput" className="form-label">
                 Enter Quantity:
               </label>
@@ -282,7 +315,12 @@ const App = () => {
               <button
                 className="btn btn-primary mt-2"
                 onClick={() =>
-                  updateStockForProduct(selectedProduct, quantity, action)
+                  updateStockForProduct(
+                    selectedProduct,
+                    quantity,
+                    action,
+                    actionDate
+                  )
                 }
                 disabled={!isRadioSelected}
               >

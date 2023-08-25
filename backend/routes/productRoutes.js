@@ -56,12 +56,20 @@ productRouter.put("/updateQuantity/:id", async (req, res) => {
 });
 productRouter.put("/updateQuantity2/:id", async (req, res) => {
   const productId = req.params.id;
-  const { quantity, action } = req.body; // Receive both quantity and action
+  const { quantity, action, manufacturingDate } = req.body;
 
   try {
     const product = await Product.findById(productId);
 
     if (product) {
+      const newHistoricalData = {
+        manufacturingDate: manufacturingDate,
+        quantityInBatch: quantity,
+        typedachat: action,
+      };
+
+      product.historicalData.push(newHistoricalData);
+
       if (action === "achat") {
         product.countInStock += quantity; // Increment stock for "achat"
       } else if (action === "vente") {
@@ -69,6 +77,7 @@ productRouter.put("/updateQuantity2/:id", async (req, res) => {
       }
 
       await product.save();
+
       res.send(product);
     } else {
       res.status(404).send({ message: "Product Not Found" });
