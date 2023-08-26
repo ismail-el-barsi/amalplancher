@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import LoadingBox from "../component/Loading";
 import MessageBox from "../component/MessageError";
@@ -41,12 +41,16 @@ const reducer = (state, action) => {
 
 export default function UserListScreen() {
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of items to display per page
+
   const [{ loading, error, users, loadingDelete, successDelete }, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: "",
       loadingDelete: false,
       successDelete: false,
+      users: [],
     });
 
   const { etat } = useContext(Shop);
@@ -67,6 +71,7 @@ export default function UserListScreen() {
         });
       }
     };
+
     if (successDelete) {
       dispatch({ type: "DELETE_RESET" });
     } else {
@@ -91,7 +96,15 @@ export default function UserListScreen() {
       }
     }
   };
+  const numPages = Math.ceil(users.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedUsers = users.slice(startIndex, endIndex);
 
+  const goToPage = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+  const pageNumbers = Array.from({ length: numPages }, (_, index) => index + 1);
   return (
     <div>
       <Helmet>
@@ -118,7 +131,7 @@ export default function UserListScreen() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {paginatedUsers.map((user) => (
                 <tr key={user._id}>
                   <td>{user._id}</td>
                   <td>{user.name}</td>
@@ -148,6 +161,17 @@ export default function UserListScreen() {
               ))}
             </tbody>
           </table>
+          <div className="pagination">
+            {pageNumbers.map((pageNumber) => (
+              <Button
+                key={pageNumber}
+                variant={currentPage === pageNumber ? "primary" : "light"}
+                onClick={() => goToPage(pageNumber)}
+              >
+                {pageNumber}
+              </Button>
+            ))}
+          </div>
         </div>
       )}
     </div>

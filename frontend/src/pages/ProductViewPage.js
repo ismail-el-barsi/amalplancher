@@ -5,6 +5,7 @@ import { getError } from "../Utils";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
+import Pagination from "react-bootstrap/Pagination"; // Import Pagination component
 import { Helmet } from "react-helmet-async";
 import LoadingBox from "../component/Loading";
 import MessageBox from "../component/MessageError";
@@ -34,6 +35,10 @@ export default function ProductViewScreen() {
 
   const [historicalData, setHistoricalData] = useState([]);
   const [productName, setProductName] = useState("");
+  const [currentStockCount, setCurrentStockCount] = useState(0);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Number of items to display per page
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,6 +47,7 @@ export default function ProductViewScreen() {
         const { data } = await axios.get(`/api/products/${productId}`);
         setProductName(data.name);
         setHistoricalData(data.historicalData || []);
+        setCurrentStockCount(data.countInStock || 0);
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -52,6 +58,16 @@ export default function ProductViewScreen() {
     };
     fetchData();
   }, [productId]);
+
+  // Calculate the indexes for the current page
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = historicalData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <Container className="small-container">
@@ -65,26 +81,42 @@ export default function ProductViewScreen() {
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Quantite</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {historicalData.map((data, index) => (
-              <tr key={index}>
-                <td>
-                  {format(new Date(data.manufacturingDate), "dd/MM/yyyy")}
-                </td>
-                <td>{data.quantityInBatch}</td>
-                <td>{data.typedachat}</td>
+        <>
+          <p>Quantité en stock actuelle : {currentStockCount}</p>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Quantité</th>
+                <th>Type</th>
               </tr>
+            </thead>
+            <tbody>
+              {currentItems.map((data, index) => (
+                <tr key={index}>
+                  <td>
+                    {format(new Date(data.manufacturingDate), "dd/MM/yyyy")}
+                  </td>
+                  <td>{data.quantityInBatch}</td>
+                  <td>{data.typedachat}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          <Pagination>
+            {Array.from({
+              length: Math.ceil(historicalData.length / itemsPerPage),
+            }).map((_, index) => (
+              <Pagination.Item
+                key={index}
+                active={index + 1 === currentPage}
+                onClick={() => paginate(index + 1)}
+              >
+                {index + 1}
+              </Pagination.Item>
             ))}
-          </tbody>
-        </Table>
+          </Pagination>
+        </>
       )}
     </Container>
   );

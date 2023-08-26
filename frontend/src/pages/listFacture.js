@@ -131,6 +131,14 @@ export default function FactureListScreen() {
       </nav>
     );
   }
+  // Define this function above your component
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 
   return (
     <div className="table-responsive">
@@ -180,7 +188,7 @@ export default function FactureListScreen() {
                 <th>ID</th>
                 <th>Client</th>
                 <th>Date</th>
-                <th>Montant</th>
+                <th>Total T.T.C</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -207,8 +215,15 @@ export default function FactureListScreen() {
                     <tr key={facture._id}>
                       <td>{facture._id}</td>
                       <td>{facture.client}</td>
-                      <td>{facture.date}</td>
-                      <td>{facture.montant}</td>
+                      <td>{formatDate(facture.date)}</td>
+                      <td>
+                        {facture.designations
+                          .reduce(
+                            (sum, designation) => sum + designation.totalTtc,
+                            0
+                          )
+                          .toFixed(2)}
+                      </td>
                       <td>
                         <div className="d-grid gap-2">
                           <div className="d-flex gap-2">

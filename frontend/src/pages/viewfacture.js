@@ -36,6 +36,13 @@ const reducer = (state, action) => {
 export default function ViewInvoicePage() {
   const params = useParams();
   const { id: invoiceId } = params;
+  const calculateTotalTtcSum = () => {
+    const totalTtcSum = designations.reduce(
+      (sum, des) => sum + des.totalTtc,
+      0
+    );
+    return totalTtcSum;
+  };
 
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
@@ -61,6 +68,7 @@ export default function ViewInvoicePage() {
   const [montantDeCheque, setMontantDeCheque] = useState(0);
   const [numCheque, setNumCheque] = useState("");
   const [unitOfMeasure, setUnitOfMeasure] = useState("");
+  const [designations, setDesignations] = useState([]); // Add this line
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
@@ -88,6 +96,7 @@ export default function ViewInvoicePage() {
         setMontantEnEspece(data.montantEnEspece);
         setNumCheque(data.numCheque);
         setUnitOfMeasure(data.unitOfMeasure);
+        setDesignations(data.designations); // Set designations data
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -99,7 +108,7 @@ export default function ViewInvoicePage() {
     fetchInvoice();
   }, [invoiceId]);
   const generatePDF = async () => {
-    const pdfWidth = 190; // A4 width in mm
+    const pdfWidth = 175; // A4 width in mm
     const pdfHeight = 297; // A4 height in mm
     const input = invoiceRef.current;
     const scale = 7;
@@ -109,8 +118,8 @@ export default function ViewInvoicePage() {
     const imgData = canvas.toDataURL("image/jpeg", 1.0);
     const pdf = new jsPDF("p", "mm", "a4"); // Create an A4 size PDF
 
-    const xOffset = 10; // Adjust this value to move the PDF left
-    const yOffset = 5; // You can adjust this value if needed
+    const xOffset = 15; // Adjust this value to move the PDF left
+    const yOffset = 10; // You can adjust this value if needed
 
     pdf.addImage(
       imgData,
@@ -174,13 +183,13 @@ export default function ViewInvoicePage() {
         ref={invoiceRef}
         className="p-3 mobile-container"
         style={{
-          width: "190mm",
-          height: "285mm",
+          width: "175mm",
+          height: "100%",
           border: "1px solid black",
           padding: 0,
           margin: "auto",
           boxSizing: "border-box",
-          transform: window.innerWidth <= 767 ? "scale(0.455)" : "none",
+          transform: window.innerWidth <= 767 ? "scale(0.55)" : "none",
           transformOrigin: "top left",
           userSelect: "none",
           position: "relative",
@@ -230,13 +239,22 @@ export default function ViewInvoicePage() {
                   }}
                 ></div>
                 <div className="company-info">
-                  <h1 className="mb-0 fs-2">SOCIETE AMAL PLANCHER S.A.R.L</h1>
+                  <h1 className="mb-0 fs-2">
+                    <span className="fs-4">
+                      <strong>SOCIETE</strong>
+                    </span>{" "}
+                    AMAL PLANCHER{" "}
+                    <span className="fs-6">
+                      <strong>S.A.R.L</strong>
+                    </span>
+                  </h1>
+
                   <p className="mb-2">Au capital de 120000,OO DH</p>
                   <p>AGGLOMERIE-POUTRELLE-VENTE DE MATERIAUX DE CONSTRUCTION</p>
                 </div>
               </div>
             </Card>
-            <Card border="dark" style={{ height: "140px" }}>
+            <Card border="dark" style={{ height: "130px" }}>
               <h2 className="text-primary text-center2 text-decoration-underline fs-2">
                 FACTURE
               </h2>
@@ -268,40 +286,36 @@ export default function ViewInvoicePage() {
                     <p>
                       <strong>MODE DE REGLEMENT:</strong>
                     </p>
-                    {modeReglement === "chèque" && (
-                      <>
-                        <p>Chèque {numCheque}</p>
-                      </>
-                    )}
-                    {modeReglement === "espèce" && (
-                      <>
-                        <p>Espèce:</p>
-                      </>
-                    )}
-                    {modeReglement === "chèque et espèce" && (
-                      <>
-                        <p>Chèque {numCheque}</p>
-                        <p>Espèce</p>
-                      </>
-                    )}
+                    {designations.map((designation, index) => (
+                      <React.Fragment key={index}>
+                        {designation.modeReglement === "chèque" && (
+                          <>
+                            <p>Chèque {designation.numCheque}</p>
+                          </>
+                        )}
+                        {designation.modeReglement === "espèce" && (
+                          <>
+                            <p>Espèce:</p>
+                          </>
+                        )}
+                      </React.Fragment>
+                    ))}
                   </div>
                   <div className="info-cell">
                     <p>
                       <strong>MONTANT:</strong>
                     </p>
                     {/* Display montantDeCheque or montantEnEspece based on modeReglement */}
-                    {modeReglement === "chèque" && (
-                      <p>{montantDeCheque.toFixed(2)}</p>
-                    )}
-                    {modeReglement === "espèce" && (
-                      <p>{montantEnEspece.toFixed(2)}</p>
-                    )}
-                    {modeReglement === "chèque et espèce" && (
-                      <>
-                        <p>{montantDeCheque.toFixed(2)}</p>
-                        <p>{montantEnEspece.toFixed(2)}</p>
-                      </>
-                    )}
+                    {designations.map((designation, index) => (
+                      <React.Fragment key={index}>
+                        {designation.modeReglement === "chèque" && (
+                          <p>{designation.montantDeCheque.toFixed(2)}</p>
+                        )}
+                        {designation.modeReglement === "espèce" && (
+                          <p>{designation.montantEnEspece.toFixed(2)}</p>
+                        )}
+                      </React.Fragment>
+                    ))}
                   </div>
                 </div>
               </Card.Body>
@@ -310,37 +324,36 @@ export default function ViewInvoicePage() {
             <Card.Body>
               <Card className="mt-4 reduce-font-size" border="dark">
                 <Card.Body>
-                  <div className="info-row" style={{ minHeight: "160px" }}>
+                  <div className="info-row">
                     <div className="info-cell" style={{ flex: "3.5" }}>
-                      <p>
-                        <strong>Designation:</strong>
-                      </p>
-                      <br></br>
-                      <p>{designation}</p>
+                      <strong>Designation</strong>
                     </div>
                     <div className="info-cell">
-                      <p>
-                        <strong>Quantité:</strong>
-                      </p>
-                      <br></br>
-                      <p>
-                        {quantite} {unitOfMeasure}
-                      </p>
+                      <strong>Quantité</strong>
                     </div>
                     <div className="info-cell">
-                      <p>
-                        <strong>Prix Uni T.T.C:</strong>
-                      </p>
-                      <p>{prixUni.toFixed(2)}</p>
+                      <strong>Prix Uni T.T.C</strong>
                     </div>
                     <div className="info-cell">
-                      <p>
-                        <strong>Total T.T.C:</strong>
-                      </p>
-                      <br></br>
-                      <p>{totalTtc.toFixed(2)}</p>
+                      <strong>Total T.T.C</strong>
                     </div>
                   </div>
+                  {designations.map((designation, index) => (
+                    <div key={index} className="info-row">
+                      <div className="info-cell" style={{ flex: "3.5" }}>
+                        {designation.designation}
+                      </div>
+                      <div className="info-cell">
+                        {designation.quantite} {designation.unitOfMeasure}
+                      </div>
+                      <div className="info-cell">
+                        {designation.prixUni.toFixed(2)}
+                      </div>
+                      <div className="info-cell">
+                        {designation.totalTtc.toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
                 </Card.Body>
               </Card>
             </Card.Body>
@@ -349,25 +362,47 @@ export default function ViewInvoicePage() {
                 <div className="info-row">
                   <div className="info-cell">
                     <p>
-                      <strong>Total H.T:</strong>
+                      <strong>Total H.T :</strong>
                     </p>
-                    <p>{totalHt.toFixed(2)}</p>
+                    <p>
+                      {designations
+                        .reduce(
+                          (sum, designation) => sum + designation.totalHt,
+                          0
+                        )
+                        .toFixed(2)}
+                    </p>
                   </div>
                   <div className="info-cell">
                     <p>
-                      <strong>Total TVA:</strong>
+                      <strong>Total TVA :</strong>
                     </p>
-                    <p>{totalTva.toFixed(2)}</p>
+                    <p>
+                      {designations
+                        .reduce(
+                          (sum, designation) => sum + designation.totalTva,
+                          0
+                        )
+                        .toFixed(2)}
+                    </p>
                   </div>
                   <div className="info-cell">
                     <p>
-                      <strong>Total T.T.C:</strong>
+                      <strong>Total T.T.C :</strong>
                     </p>
-                    <p>{totalTtc.toFixed(2)}</p>
+                    <p>
+                      {designations
+                        .reduce(
+                          (sum, designation) => sum + designation.totalTtc,
+                          0
+                        )
+                        .toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </Card.Body>
             </Card>
+
             <div
               className="container text-center2 mt-2"
               style={{ marginBottom: "70px" }}
@@ -376,7 +411,7 @@ export default function ViewInvoicePage() {
                 Arrêtée la présente facture à la somme de (T.T.C):
               </strong>
               <div style={{ fontSize: "16px" }}>
-                <strong>{formatAmountInWords(totalTtc)}</strong>
+                <strong>{formatAmountInWords(calculateTotalTtcSum())}</strong>
               </div>
             </div>
 

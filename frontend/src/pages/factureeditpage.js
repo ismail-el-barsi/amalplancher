@@ -13,33 +13,24 @@ import { toast } from "react-toastify";
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "FETCH_REQUEST":
+    case "CREATE_REQUEST":
       return { ...state, loading: true };
-    case "FETCH_SUCCESS":
+    case "CREATE_SUCCESS":
       return { ...state, loading: false };
-    case "FETCH_FAIL":
+    case "CREATE_FAIL":
       return { ...state, loading: false, error: action.payload };
-    case "UPDATE_REQUEST":
-      return { ...state, loadingUpdate: true };
-    case "UPDATE_SUCCESS":
-      return { ...state, loadingUpdate: false };
-    case "UPDATE_FAIL":
-      return { ...state, loadingUpdate: false };
     default:
       return state;
   }
 };
 
-export default function EditInvoicePage() {
+export default function CreateInvoicePage() {
   const navigate = useNavigate();
-  const params = useParams();
-  const { id: invoiceId } = params;
-
+  const { id } = useParams();
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
-
-  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
-    loading: true,
+  const [{ loading, error }, dispatch] = useReducer(reducer, {
+    loading: false,
     error: "",
   });
 
@@ -49,131 +40,218 @@ export default function EditInvoicePage() {
   const [numero, setNumero] = useState("");
   const [modeReglement, setModeReglement] = useState("");
   const [quantite, setQuantite] = useState(0);
-  const [designation, setDesignation] = useState("");
+  const [montant, setMontant] = useState(0);
+  const [designations, setDesignations] = useState([
+    {
+      designation: "",
+      prixUni: 0,
+      quantite: 0,
+      unitOfMeasure: "",
+    },
+  ]);
+
+  const addNewDesignation = () => {
+    const newDesignation = {
+      designation: "",
+      prixUni: 0,
+      quantite: 0,
+      unitOfMeasure: "",
+      montant: 0, // Initialize montant property
+      modeReglement: "", // Initialize modeReglement property
+    };
+    setDesignations([...designations, newDesignation]);
+  };
+
+  const handleDesignationChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].designation = value;
+    setDesignations(updatedDesignations);
+  };
+  const handleUnitOfMeasureChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].unitOfMeasure = value;
+    setDesignations(updatedDesignations);
+  };
+  const handlePrixUnitChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].prixUni = parseFloat(value);
+
+    // Calculate and set totalHt based on prixUni and quantite
+    const totalHt = parseFloat(value) * updatedDesignations[index].quantite;
+    updatedDesignations[index].totalHt = totalHt;
+
+    setDesignations(updatedDesignations);
+  };
+
+  const handleQuantiteChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].quantite = parseFloat(value);
+
+    // Calculate and set totalHt based on prixUni and quantite
+    const totalHt = updatedDesignations[index].prixUni * parseFloat(value);
+    updatedDesignations[index].totalHt = totalHt;
+
+    setDesignations(updatedDesignations);
+  };
+  const handleMontantEnEspeceChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].montantEnEspece = parseFloat(value);
+    setDesignations(updatedDesignations);
+  };
+
+  const handleMontantDeChequeChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].montantDeCheque = parseFloat(value);
+    setDesignations(updatedDesignations);
+  };
+  const handleNumChequeChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].numCheque = value;
+    setDesignations(updatedDesignations);
+  };
   const [prixUni, setPrixUni] = useState(0);
   const [totalHt, setTotalHt] = useState(0);
   const [totalTva, setTotalTva] = useState(0);
   const [totalTtc, setTotalTtc] = useState(0);
-  const [montant, setMontant] = useState(0);
   const [montantEnEspece, setMontantEnEspece] = useState(0);
   const [montantDeCheque, setMontantDeCheque] = useState(0);
   const [numCheque, setNumCheque] = useState("");
-  const [unitOfMeasure, setUnitOfMeasure] = useState("");
-  const handleModeReglementChange = (selectedMode) => {
-    setModeReglement(selectedMode);
+
+  const calculateDesignationTotals = (des) => {
+    const calculatedTotalTtc = des.quantite * des.prixUni;
+    const calculatedTotalHt = calculatedTotalTtc / 1.2;
+    const calculatedTotalTva = calculatedTotalTtc - calculatedTotalHt;
+
+    return {
+      ...des,
+      totalHt: calculatedTotalHt,
+      totalTva: calculatedTotalTva,
+      totalTtc: calculatedTotalTtc,
+    };
   };
+
   useEffect(() => {
-    const fetchInvoice = async () => {
+    const updatedDesignations = designations.map((des) =>
+      calculateDesignationTotals(des)
+    );
+
+    setDesignations(updatedDesignations);
+  }, [designations]);
+
+  const handleModeReglementChange = (selectedMode, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].modeReglement = selectedMode;
+    setDesignations(updatedDesignations);
+
+    // Reset other payment-related fields when the payment mode changes
+    updatedDesignations[index].montantEnEspece = 0;
+    updatedDesignations[index].montantDeCheque = 0;
+    updatedDesignations[index].numCheque = "";
+    setDesignations(updatedDesignations);
+  };
+
+  const updateInvoiceHandler = async (e) => {
+    e.preventDefault();
+    if (window.confirm("Are you sure you want to update?")) {
       try {
-        dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/factures/${invoiceId}`);
-        setClient(data.client);
-        setIce(data.ice);
+        dispatch({ type: "CREATE_REQUEST" });
 
-        const formattedDate = new Date(data.date)
-          .toISOString()
-          .substring(0, 10);
-        setDate(formattedDate);
+        const formattedDesignations = designations.map((des) => ({
+          designation: des.designation,
+          prixUni: des.prixUni,
+          quantite: des.quantite,
+          unitOfMeasure:
+            des.unitOfMeasure === "Autre" ? des.customUnit : des.unitOfMeasure,
+          totalHt: des.totalHt,
+          modeReglement: des.modeReglement,
+          montant: des.montant,
+          totalTtc: des.totalTtc,
+          totalTva: des.totalTva,
+          montantEnEspece: des.montantEnEspece,
+          montantDeCheque: des.montantDeCheque,
+          numCheque: des.numCheque,
+        }));
 
-        setNumero(data.numero);
-        setModeReglement(data.modeReglement);
-        setQuantite(data.quantite);
-        setDesignation(data.designation);
-        setPrixUni(data.prixUni);
-        setTotalHt(data.totalHt);
-        setTotalTva(data.totalTva);
-        setTotalTtc(data.totalTtc);
-        setMontant(data.montant);
-        setMontantDeCheque(data.montantDeCheque);
-        setMontantEnEspece(data.montantEnEspece);
-        setNumCheque(data.numCheque);
-        setUnitOfMeasure(data.unitOfMeasure);
-        dispatch({ type: "FETCH_SUCCESS" });
+        await axios.put(
+          `/api/factures/${id}`, // Use the ID to update the specific invoice
+          {
+            client,
+            ice,
+            date,
+            numero,
+            designations: formattedDesignations, // Pass the formatted designations
+          },
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        toast.success("Invoice updated successfully");
+        dispatch({ type: "CREATE_SUCCESS" });
+        navigate(`/admin/factures/`);
       } catch (err) {
+        toast.error(getError(err));
         dispatch({
-          type: "FETCH_FAIL",
+          type: "CREATE_FAIL",
           payload: getError(err),
         });
       }
-    };
-    fetchInvoice();
-  }, [invoiceId]);
-
-  const handleQuantityChange = (e) => {
-    setQuantite(parseFloat(e.target.value));
-  };
-
-  const handlePrixUniChange = (e) => {
-    setPrixUni(parseFloat(e.target.value));
-  };
-
-  useEffect(() => {
-    const calculatedTotalTtc = quantite * prixUni;
-    const calculatedTotalHt = calculatedTotalTtc / 1.2;
-    const calculatedTotalTva = calculatedTotalTtc - calculatedTotalHt;
-    setTotalHt(calculatedTotalHt);
-    setTotalTva(calculatedTotalTva);
-    setTotalTtc(calculatedTotalTtc);
-    setMontant(calculatedTotalTtc);
-  }, [quantite, prixUni]);
-
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    try {
-      dispatch({ type: "UPDATE_REQUEST" });
-      await axios.put(
-        `/api/factures/${invoiceId}`,
-        {
-          client,
-          ice,
-          date,
-          numero,
-          totalHt,
-          totalTva,
-          totalTtc,
-          modeReglement,
-          quantite,
-          montant,
-          designation,
-          prixUni,
-          montantEnEspece,
-          montantDeCheque,
-          numCheque,
-          unitOfMeasure,
-        },
-        {
-          headers: { Authorization: `Bearer ${userInfo.token}` },
-        }
-      );
-      dispatch({
-        type: "UPDATE_SUCCESS",
-      });
-      toast.success("Invoice updated successfully");
-      navigate("/admin/factures");
-    } catch (err) {
-      toast.error(getError(err));
-      dispatch({ type: "UPDATE_FAIL" });
     }
   };
+  useEffect(() => {
+    const fetchInvoiceData = async () => {
+      try {
+        const { data } = await axios.get(`/api/factures/${id}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+
+        // Update the state with fetched invoice data
+        setClient(data.client);
+        setIce(data.ice);
+        setDate(data.date);
+        setNumero(data.numero);
+        // ... (update other fields as needed)
+        setDesignations(data.designations);
+      } catch (err) {
+        // Handle error
+      }
+    };
+
+    // Fetch invoice data when the component mounts
+    fetchInvoiceData();
+  }, [id, userInfo.token]);
+  const removeDesignation = (indexToRemove) => {
+    if (indexToRemove > 0) {
+      const updatedDesignations = designations.filter(
+        (_, index) => index !== indexToRemove
+      );
+      setDesignations(updatedDesignations);
+    }
+  };
+  const handleCustomUnitChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].customUnit = value;
+    setDesignations(updatedDesignations);
+  };
+
   const paymentOptions = [
     { value: "chèque", label: "Chèque" },
     { value: "espèce", label: "Espèce" },
-    { value: "chèque et espèce", label: "Chèque et Espèce" },
   ];
+  const [unitOfMeasure, setUnitOfMeasure] = useState("");
 
   return (
     <Container className="small-container">
       <Helmet>
-        <title>Edit Invoice {invoiceId}</title>
+        <title>modifier facture</title>
       </Helmet>
-      <h1>Edit Invoice {invoiceId}</h1>
+      <h1>modifier facture</h1>
 
       {loading ? (
-        <LoadingBox />
+        <LoadingBox></LoadingBox>
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
-        <Form onSubmit={submitHandler}>
+        <Form onSubmit={updateInvoiceHandler}>
           <Form.Group className="mb-3" controlId="client">
             <Form.Label>Client</Form.Label>
             <Form.Control
@@ -207,176 +285,177 @@ export default function EditInvoicePage() {
               required
             />
           </Form.Group>
-          {modeReglement === "espèce" && (
-            <Form.Group className="mb-3" controlId="montantEnEspece">
-              <Form.Label>Montant en Espèce</Form.Label>
-              <Form.Control
-                type="number"
-                value={montantEnEspece}
-                onChange={(e) => setMontantEnEspece(parseFloat(e.target.value))}
-                required
-              />
-            </Form.Group>
-          )}
 
-          {modeReglement === "chèque" && (
-            <Form.Group className="mb-3" controlId="montantDeCheque">
-              <Form.Label>Montant de Chèque</Form.Label>
-              <Form.Control
-                type="number"
-                value={montantDeCheque}
-                onChange={(e) => setMontantDeCheque(parseFloat(e.target.value))}
-                required
-              />
-            </Form.Group>
-          )}
-
-          {modeReglement === "chèque et espèce" && (
-            <>
-              <Form.Group className="mb-3" controlId="montantEnEspece">
-                <Form.Label>Montant en Espèce</Form.Label>
+          {designations.map((des, index) => (
+            <div key={index}>
+              <Form.Group className="mb-3" controlId={`designation${index}`}>
+                <Form.Label>Designation {index + 1}</Form.Label>
                 <Form.Control
-                  type="number"
-                  value={montantEnEspece}
+                  value={des.designation}
                   onChange={(e) =>
-                    setMontantEnEspece(parseFloat(e.target.value))
+                    handleDesignationChange(e.target.value, index)
                   }
                   required
                 />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="montantDeCheque">
-                <Form.Label>Montant de Chèque</Form.Label>
+              <Form.Group className="mb-3" controlId="prixUni">
+                <Form.Label>Prix Unitaire</Form.Label>
                 <Form.Control
                   type="number"
-                  value={montantDeCheque}
-                  onChange={(e) =>
-                    setMontantDeCheque(parseFloat(e.target.value))
-                  }
+                  value={des.prixUni}
+                  onChange={(e) => handlePrixUnitChange(e.target.value, index)}
                   required
                 />
               </Form.Group>
-            </>
-          )}
-          {modeReglement === "chèque" && (
-            <Form.Group className="mb-3" controlId="numCheque">
-              <Form.Label>Numéro de Chèque</Form.Label>
-              <Form.Control
-                type="text"
-                value={numCheque}
-                onChange={(e) => setNumCheque(e.target.value)}
-                required
-              />
-            </Form.Group>
-          )}
-          {modeReglement === "chèque et espèce" && (
-            <Form.Group className="mb-3" controlId="numCheque">
-              <Form.Label>Numéro de Chèque</Form.Label>
-              <Form.Control
-                type="text"
-                value={numCheque}
-                onChange={(e) => setNumCheque(e.target.value)}
-                required
-              />
-            </Form.Group>
-          )}
-          <Form.Group className="mb-3" controlId="designation">
-            <Form.Label>Designation</Form.Label>
-            <Form.Control
-              value={designation}
-              onChange={(e) => setDesignation(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="prixUni">
-            <Form.Label>Prix Unitaire</Form.Label>
-            <Form.Control
-              type="number"
-              value={prixUni}
-              onChange={(e) => setPrixUni(parseFloat(e.target.value))}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="quantite">
-            <Form.Label>Quantite</Form.Label>
-            <div className="d-flex align-items-center">
-              <Form.Control
-                type="number"
-                value={quantite}
-                onChange={(e) => setQuantite(parseFloat(e.target.value))}
-                required
-              />
-              <Form.Control
-                as="select"
-                className="ms-2"
-                value={unitOfMeasure}
-                onChange={(e) => setUnitOfMeasure(e.target.value)}
-                required
-              >
-                <option value="">Unité</option>
-                <option value="M²">M²</option>
-                <option value="U">U</option>
-                {/* Add other unit options */}
-              </Form.Control>
+              <Form.Group className="mb-3" controlId="quantite">
+                <Form.Label>Quantite</Form.Label>
+                <div className="d-flex align-items-center">
+                  <Form.Control
+                    type="number"
+                    value={des.quantite}
+                    onChange={(e) =>
+                      handleQuantiteChange(e.target.value, index)
+                    }
+                    required
+                  />
+                  <Form.Control
+                    as="select"
+                    className="ms-2"
+                    value={des.unitOfMeasure}
+                    onChange={(e) =>
+                      handleUnitOfMeasureChange(e.target.value, index)
+                    }
+                    required
+                  >
+                    <option value="">Unité</option>
+                    <option value="M²">M²</option>
+                    <option value="U">U</option>
+                    <option value="Autre">Autre</option>
+                  </Form.Control>
+                </div>
+              </Form.Group>
+              {des.unitOfMeasure === "Autre" && (
+                <Form.Control
+                  type="text"
+                  value={des.customUnit}
+                  onChange={(e) =>
+                    handleCustomUnitChange(e.target.value, index)
+                  }
+                  placeholder="Saisir une autre unité"
+                  required
+                />
+              )}
+
+              {des.modeReglement === "espèce" && (
+                <Form.Group className="mb-3" controlId="montantEnEspece">
+                  <Form.Label>Montant en Espèce</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={des.montantEnEspece}
+                    onChange={(e) =>
+                      handleMontantEnEspeceChange(e.target.value, index)
+                    }
+                  />
+                </Form.Group>
+              )}
+
+              {des.modeReglement === "chèque" && (
+                <Form.Group className="mb-3" controlId="montantDeCheque">
+                  <Form.Label>Montant de Chèque</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={des.montantDeCheque}
+                    onChange={(e) =>
+                      handleMontantDeChequeChange(e.target.value, index)
+                    }
+                    required
+                  />
+                </Form.Group>
+              )}
+
+              {des.modeReglement === "chèque" && (
+                <Form.Group className="mb-3" controlId="numCheque">
+                  <Form.Label>Numéro de Chèque</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={des.numCheque}
+                    onChange={(e) =>
+                      handleNumChequeChange(e.target.value, index)
+                    }
+                    required
+                  />
+                </Form.Group>
+              )}
+              <Form.Group className="mb-3" controlId="totalHt">
+                <Form.Label>Total HT</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={des.totalHt}
+                  onChange={(e) => setTotalHt(parseFloat(e.target.value))}
+                  readOnly
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="totalTva">
+                <Form.Label>Total TVA</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={des.totalTva}
+                  onChange={(e) => setTotalTva(parseFloat(e.target.value))}
+                  readOnly
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="totalTtc">
+                <Form.Label>Total TTC</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={des.totalTtc}
+                  onChange={(e) => setTotalTtc(parseFloat(e.target.value))}
+                  readOnly
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="montant">
+                <Form.Label>Montant</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={des.totalTtc}
+                  onChange={(e) => setMontant(parseFloat(e.target.value))}
+                  readOnly
+                />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="modeReglement">
+                <Form.Label>Mode de Paiement</Form.Label>
+                <Form.Select
+                  value={des.modeReglement}
+                  onChange={(e) =>
+                    handleModeReglementChange(e.target.value, index)
+                  }
+                  required
+                >
+                  <option value="">Sélectionner un mode de paiement</option>
+                  {paymentOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+              {index > 0 && ( // Only show the delete button for indices greater than 0
+                <Button
+                  type="button"
+                  variant="danger"
+                  onClick={() => removeDesignation(index)}
+                >
+                  Supprimer Designation
+                </Button>
+              )}
             </div>
-          </Form.Group>
-
-          <Form.Group className="mb-3" controlId="totalHt">
-            <Form.Label>Total HT</Form.Label>
-            <Form.Control
-              type="number"
-              value={totalHt.toFixed(2)}
-              onChange={(e) => setTotalHt(parseFloat(e.target.value))}
-              readOnly
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="totalTva">
-            <Form.Label>Total TVA</Form.Label>
-            <Form.Control
-              type="number"
-              value={totalTva.toFixed(2)}
-              onChange={(e) => setTotalTva(parseFloat(e.target.value))}
-              readOnly
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="totalTtc">
-            <Form.Label>Total TTC</Form.Label>
-            <Form.Control
-              type="number"
-              value={totalTtc}
-              onChange={(e) => setTotalTtc(parseFloat(e.target.value))}
-              readOnly
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="montant">
-            <Form.Label>Montant</Form.Label>
-            <Form.Control
-              type="number"
-              value={montant.toFixed(2)}
-              onChange={(e) => setMontant(parseFloat(e.target.value))}
-              readOnly
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="modeReglement">
-            <Form.Label>Mode de Payement</Form.Label>
-            <Form.Select
-              value={modeReglement}
-              onChange={(e) => handleModeReglementChange(e.target.value)}
-              required
-            >
-              <option value="">Sélectionner un mode de payement</option>
-              {paymentOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+          ))}
+          <Button type="button" onClick={addNewDesignation}>
+            Ajouer une Nouvelle Designation
+          </Button>
 
           <div className="mb-3">
-            <Button disabled={loadingUpdate} type="submit">
-              Update
-            </Button>
-            {loadingUpdate && <LoadingBox />}
+            <Button type="submit">update</Button>
           </div>
         </Form>
       )}

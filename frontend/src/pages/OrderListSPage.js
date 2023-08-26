@@ -150,6 +150,11 @@ const OrderListScreen = () => {
     setFilter(e.target.value);
     setDateFilter(""); // Reset date filter when changing the filter
   };
+  const ITEMS_PER_PAGE = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const ordersToDisplay = filteredOrders?.slice(startIndex, endIndex);
 
   return (
     <div>
@@ -203,150 +208,78 @@ const OrderListScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {filter === "newest"
-                ? sortOrdersByNewest().map((order) => {
-                    return (
-                      <tr key={order._id}>
-                        <td>{order._id}</td>
-                        <td>{order.user ? order.user.name : "DELETED USER"}</td>
-                        <td>{order.createdAt.substring(0, 10)}</td>
-                        <td>{order.totalPrice.toFixed(2)}</td>
-                        <td>
-                          {order.isPaid ? order.paidAt.substring(0, 10) : "No"}
-                        </td>
-                        <td>
-                          {order.isDelivered
-                            ? order.deliveredAt.substring(0, 10)
-                            : "No"}
-                        </td>
-                        <td>{order.pendingPayment ? "yes" : "no"}</td>
-                        <td>
-                          <div className="d-flex gap-2">
-                            <Button
-                              type="button"
-                              variant="light"
-                              onClick={() => {
-                                navigate(`/order/${order._id}`);
-                              }}
-                            >
-                              <FaEye /> Details
-                            </Button>
-                            {userInfo.isAdmin && (
-                              <Button
-                                type="button"
-                                variant="light"
-                                onClick={() => deleteHandler(order)}
-                                disabled={loadingDelete}
-                              >
-                                <FaTrash /> Delete
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                : filter === "oldest"
-                ? sortOrdersByOldest().map((order) => {
-                    return (
-                      <tr key={order._id}>
-                        <td>{order._id}</td>
-                        <td>{order.user ? order.user.name : "DELETED USER"}</td>
-                        <td>{order.createdAt.substring(0, 10)}</td>
-                        <td>{order.totalPrice.toFixed(2)}</td>
-                        <td>
-                          {order.isPaid ? order.paidAt.substring(0, 10) : "No"}
-                        </td>
-                        <td>
-                          {order.isDelivered
-                            ? order.deliveredAt.substring(0, 10)
-                            : "No"}
-                        </td>
-                        <td>{order.pendingPayment ? "yes" : "no"}</td>
-                        <td>
-                          <div className="d-flex gap-2">
-                            <Button
-                              type="button"
-                              variant="light"
-                              onClick={() => {
-                                navigate(`/order/${order._id}`);
-                              }}
-                            >
-                              <FaEye /> Details
-                            </Button>
-                            {userInfo.isAdmin && (
-                              <Button
-                                type="button"
-                                variant="light"
-                                onClick={() => deleteHandler(order)}
-                                disabled={loadingDelete}
-                              >
-                                <FaTrash /> Delete
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                : filteredOrders.map((order) => {
-                    const isPaid = order.isPaid;
-                    const isConducteur = userInfo.isConducteur;
-                    const isSecretaire = userInfo.isSecretaire;
-                    const pendingPayment = order.pendingPayment;
-                    if (isSecretaire && !pendingPayment) {
-                      return null;
-                    }
-                    if (isConducteur && !isPaid && !order.confimerCommande) {
-                      return null;
-                    }
-                    return (
-                      <tr key={order._id}>
-                        <td>{order._id}</td>
-                        <td>{order.user ? order.user.name : "DELETED USER"}</td>
-                        <td>{order.createdAt.substring(0, 10)}</td>
-                        <td>{order.totalPrice.toFixed(2)}</td>
-                        <td>
-                          {order.isPaid ? order.paidAt.substring(0, 10) : "No"}
-                        </td>
-                        <td>
-                          {order.isDelivered
-                            ? order.deliveredAt.substring(0, 10)
-                            : "No"}
-                        </td>
-                        <td>{order.pendingPayment ? "yes" : "no"}</td>
-                        <td>
-                          <div className="d-flex gap-2">
-                            <Button
-                              type="button"
-                              variant="light"
-                              onClick={() => {
-                                navigate(`/order/${order._id}`);
-                              }}
-                            >
-                              <FaEye /> Details
-                            </Button>
-                            {userInfo.isAdmin && (
-                              <Button
-                                type="button"
-                                variant="light"
-                                onClick={() => deleteHandler(order)}
-                                disabled={loadingDelete}
-                              >
-                                <FaTrash /> Delete
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+              {ordersToDisplay.map((order) => (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>{order.user ? order.user.name : "DELETED USER"}</td>
+                  <td>{order.createdAt.substring(0, 10)}</td>
+                  <td>{order.totalPrice.toFixed(2)}</td>
+                  <td>{order.isPaid ? order.paidAt.substring(0, 10) : "No"}</td>
+                  <td>
+                    {order.isDelivered
+                      ? order.deliveredAt.substring(0, 10)
+                      : "No"}
+                  </td>
+                  <td>{order.pendingPayment ? "yes" : "no"}</td>
+                  <td>
+                    <div className="d-flex gap-2">
+                      <Button
+                        type="button"
+                        variant="light"
+                        onClick={() => {
+                          navigate(`/order/${order._id}`);
+                        }}
+                      >
+                        <FaEye /> Details
+                      </Button>
+                      {userInfo.isAdmin && (
+                        <Button
+                          type="button"
+                          variant="light"
+                          onClick={() => deleteHandler(order)}
+                          disabled={loadingDelete}
+                        >
+                          <FaTrash /> Delete
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
+          <div className="d-flex justify-content-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(orders.length / ITEMS_PER_PAGE)}
+              onChange={(newPage) => setCurrentPage(newPage)}
+            />
+          </div>
         </div>
       )}
     </div>
   );
 };
+function Pagination({ currentPage, totalPages, onChange }) {
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
+  return (
+    <nav>
+      <ul className="pagination">
+        {pageNumbers.map((pageNumber) => (
+          <li
+            key={pageNumber}
+            className={`page-item ${
+              pageNumber === currentPage ? "active" : ""
+            }`}
+          >
+            <button className="page-link" onClick={() => onChange(pageNumber)}>
+              {pageNumber}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
 export default OrderListScreen;

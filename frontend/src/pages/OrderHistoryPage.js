@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +21,8 @@ const reducer = (etat, action) => {
   }
 };
 
+const ITEMS_PER_PAGE = 5; // Number of items per page
+
 export default function OrderHistoryScreen() {
   const { etat } = useContext(Shop);
   const { userInfo } = etat;
@@ -30,6 +32,8 @@ export default function OrderHistoryScreen() {
     loading: true,
     error: "",
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +53,9 @@ export default function OrderHistoryScreen() {
 
     fetchData();
   }, [userInfo]);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
 
   return (
     <div className="container">
@@ -76,7 +83,7 @@ export default function OrderHistoryScreen() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {orders.slice(startIndex, endIndex).map((order) => (
                 <tr key={order._id}>
                   <td>{order._id}</td>
                   <td>{order.createdAt.substring(0, 10)}</td>
@@ -103,8 +110,38 @@ export default function OrderHistoryScreen() {
               ))}
             </tbody>
           </table>
+          <div className="d-flex justify-content-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(orders.length / ITEMS_PER_PAGE)}
+              onChange={(newPage) => setCurrentPage(newPage)}
+            />
+          </div>
         </div>
       )}
     </div>
+  );
+}
+
+function Pagination({ currentPage, totalPages, onChange }) {
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  return (
+    <nav>
+      <ul className="pagination">
+        {pageNumbers.map((pageNumber) => (
+          <li
+            key={pageNumber}
+            className={`page-item ${
+              pageNumber === currentPage ? "active" : ""
+            }`}
+          >
+            <button className="page-link" onClick={() => onChange(pageNumber)}>
+              {pageNumber}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }
