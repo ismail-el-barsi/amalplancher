@@ -96,7 +96,7 @@ const SignupPage = () => {
 
         <div className="mb-3">
           Already have an account?{" "}
-          <Link to={`/signin?redirect=${redirect}`}>Sign-In</Link>
+          <Link to={`/login?redirect=${redirect}`}>Sign-In</Link>
         </div>
       </Form>
     </Container>

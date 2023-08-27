@@ -22,22 +22,26 @@ export default function Login() {
   const { etat, dispatch: ctxDispatch } = useContext(Shop);
   const { userInfo } = etat;
   const submitHandler = async (e) => {
-    e.preventDefault(); //prevent refresshing page
+    e.preventDefault();
     try {
-      //send ajax request to backend to get login api
       const { data } = await Axios.post("/api/users/login", {
-        //pass email and password as a post request to this api
         email,
         password,
       });
-      ctxDispatch({ type: "USER_LOGIN", payload: data });
-      localStorage.setItem("userInfo", JSON.stringify(data)); //localstrorage to save userinfo in browser storage
-      //json.stringify convert data to string cause local storage accept string type
-      navigate(redirect || "/"); //if redirect url does not exist redirict to root
+
+      if (!data.isConfirmed) {
+        toast.success("Please confirm your email");
+        navigate(`/confirm-email/${data._id}`);
+      } else {
+        ctxDispatch({ type: "USER_LOGIN", payload: data });
+        localStorage.setItem("userInfo", JSON.stringify(data));
+        navigate(redirect || "/");
+      }
     } catch (error) {
       toast.error(getError(error));
     }
   };
+
   //if user already logged in can t redirect to loginpage
   useEffect(() => {
     if (userInfo) {

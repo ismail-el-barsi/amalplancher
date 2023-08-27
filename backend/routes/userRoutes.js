@@ -168,10 +168,10 @@ userRouter.post(
       return;
     }
 
-    if (!user.isConfirmed) {
-      res.status(401).send({ message: "Please confirm your email to login" });
-      return;
-    }
+    // if (!user.isConfirmed) {
+    //   res.status(401).send({ message: "Please confirm your email to login" });
+    //   return;
+    // }
 
     if (bcrypt.compareSync(password, user.password)) {
       res.send({
@@ -247,7 +247,52 @@ userRouter.post("/signup", async (req, res) => {
     res.status(500).send({ message: "Error creating user" });
   }
 });
+userRouter.post(
+  "/resend-confirmation/:userId",
+  expressAsyncHandler(async (req, res) => {
+    const { userId } = req.params;
 
+    try {
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).send({ message: "User not found" });
+      }
+
+      const confirmationCode = Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+
+      user.confirmationCode = confirmationCode;
+      await user.save();
+
+      const sgMail = sendGrid();
+      const msg = {
+        to: `${user.name} <${user.email}>`,
+        from: "amal plancher <luciferelbarsi@gmail.com>",
+        subject: "Email Confirmation",
+        html: `
+          <p>Hi ${user.name},</p>
+          <p>Here is your new confirmation code: ${confirmationCode}</p>
+        `,
+      };
+
+      try {
+        await sgMail.send(msg);
+        console.log("Resent confirmation email sent");
+        res.send({ message: "We resent a confirmation code to your email." });
+      } catch (error) {
+        console.error("Error resending confirmation email:", error);
+        return res
+          .status(500)
+          .send({ message: "Error resending confirmation email" });
+      }
+    } catch (err) {
+      console.error("Error resending confirmation code:", err);
+      res.status(500).send({ message: "Error resending confirmation code" });
+    }
+  })
+);
 userRouter.post("/confirm-email/:userId", async (req, res) => {
   const { userId } = req.params;
   const { confirmationCode } = req.body;
