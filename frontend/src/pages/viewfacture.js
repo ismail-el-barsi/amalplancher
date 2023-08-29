@@ -418,24 +418,22 @@ export default function ViewInvoicePage() {
             {/* Footer */}
             <Card className="mt-3" border="dark">
               <Card.Body className="text-center2" style={{ fontSize: "14px" }}>
-                <p style={{ margin: "1px 0" }}>
+                <p style={{ margin: "4px 0" }}>
                   <strong>-R.C :</strong> 24915- <strong>IF :</strong> 30715018-{" "}
                   <strong>-Patente :</strong> 22270237- <strong>CNSS :</strong>{" "}
                   7445457- <strong>Tel :</strong> 0661928486
                 </p>
-                <p style={{ margin: "1px 0" }}>
+                <p style={{ margin: "4px 0" }}>
                   <strong>l.C.E:</strong> 000090460000040
                 </p>
-                <p style={{ margin: "1px 0" }}>
+                <p style={{ margin: "4px 0" }}>
                   <strong>-Banque Populaire Souk el arbaâ du Gharb :</strong>{" "}
                   Compte N° :21211 9359664 001 4
                 </p>
-                <p>
-                  <p>
-                    <strong>-Siège social:</strong> Km 143, Route Rabat Tanger,
-                    Province de Kenitra{" "}
-                    <span className="text-decoration-underline">ARBAOUA</span>
-                  </p>
+                <p style={{ margin: "4px 0" }}>
+                  <strong>-Siège social:</strong> Km 143, Route Rabat Tanger,
+                  Province de Kenitra{" "}
+                  <span className="text-decoration-underline">ARBAOUA</span>
                 </p>
               </Card.Body>
             </Card>

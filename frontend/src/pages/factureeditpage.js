@@ -24,7 +24,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function CreateInvoicePage() {
+export default function EditInvoicePage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { etat } = useContext(Shop);
@@ -43,10 +43,10 @@ export default function CreateInvoicePage() {
   const [montant, setMontant] = useState(0);
   const [designations, setDesignations] = useState([
     {
-      designation: "",
-      prixUni: 0,
-      quantite: 0,
-      unitOfMeasure: "",
+      // designation: "",
+      // prixUni: 0,
+      // quantite: 0,
+      // unitOfMeasure: "",
     },
   ]);
 
@@ -204,13 +204,16 @@ export default function CreateInvoicePage() {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
 
+        // Format the fetched date to match the required format
+        const formattedDate = new Date(data.date).toISOString().split("T")[0];
+
         // Update the state with fetched invoice data
         setClient(data.client);
         setIce(data.ice);
-        setDate(data.date);
+        setDate(formattedDate);
         setNumero(data.numero);
+        setDesignations(data.designations); // Set initial designations state
         // ... (update other fields as needed)
-        setDesignations(data.designations);
       } catch (err) {
         // Handle error
       }
@@ -219,6 +222,7 @@ export default function CreateInvoicePage() {
     // Fetch invoice data when the component mounts
     fetchInvoiceData();
   }, [id, userInfo.token]);
+
   const removeDesignation = (indexToRemove) => {
     if (indexToRemove > 0) {
       const updatedDesignations = designations.filter(
