@@ -183,6 +183,7 @@ export default function ViewInvoicePage() {
         ref={invoiceRef}
         className="p-3 mobile-container"
         style={{
+          background: "white",
           width: "175mm",
           height: "100%",
           border: "1px solid black",
@@ -217,7 +218,11 @@ export default function ViewInvoicePage() {
           <MessageBox variant="danger">{error}</MessageBox>
         ) : (
           <Form>
-            <Card border="dark" style={{ height: "148px" }}>
+            <Card
+              bg="white"
+              border="dark"
+              style={{ height: "148px", color: "black" }}
+            >
               <div className="invoice-header text-center2 mb-4 d-flex align-items-center">
                 <div className="logo">
                   <img
@@ -254,7 +259,11 @@ export default function ViewInvoicePage() {
                 </div>
               </div>
             </Card>
-            <Card border="dark" style={{ height: "130px" }}>
+            <Card
+              bg="white"
+              border="dark"
+              style={{ height: "130px", color: "black" }}
+            >
               <h2 className="text-primary text-center2 text-decoration-underline fs-2">
                 FACTURE
               </h2>
@@ -267,7 +276,12 @@ export default function ViewInvoicePage() {
                 </p>
               </Card.Body>
             </Card>
-            <Card className="mt-4 reduce-font-size" border="dark">
+            <Card
+              bg="white"
+              className="mt-4 reduce-font-size"
+              border="dark"
+              style={{ color: "black" }}
+            >
               <Card.Body>
                 <div className="info-row">
                   <div className="info-cell">
@@ -322,7 +336,12 @@ export default function ViewInvoicePage() {
             </Card>
 
             <Card.Body>
-              <Card className="mt-4 reduce-font-size" border="dark">
+              <Card
+                bg="white"
+                className="mt-4 reduce-font-size"
+                border="dark"
+                style={{ color: "black" }}
+              >
                 <Card.Body>
                   <div className="info-row">
                     <div className="info-cell" style={{ flex: "3.5" }}>
@@ -357,7 +376,12 @@ export default function ViewInvoicePage() {
                 </Card.Body>
               </Card>
             </Card.Body>
-            <Card className="mt-4 reduce-font-size text-center3" border="dark">
+            <Card
+              bg="white"
+              className="mt-4 reduce-font-size text-center3"
+              border="dark"
+              style={{ color: "black" }}
+            >
               <Card.Body>
                 <div className="info-row">
                   <div className="info-cell">
@@ -405,7 +429,7 @@ export default function ViewInvoicePage() {
 
             <div
               className="container text-center2 mt-2"
-              style={{ marginBottom: "70px" }}
+              style={{ marginBottom: "70px", color: "black" }}
             >
               <strong style={{ fontSize: "16px", textDecoration: "underline" }}>
                 Arrêtée la présente facture à la somme de (T.T.C):
@@ -416,7 +440,12 @@ export default function ViewInvoicePage() {
             </div>
 
             {/* Footer */}
-            <Card className="mt-3" border="dark">
+            <Card
+              bg="white"
+              className="mt-3"
+              border="dark"
+              style={{ color: "black" }}
+            >
               <Card.Body className="text-center2" style={{ fontSize: "14px" }}>
                 <p style={{ margin: "4px 0" }}>
                   <strong>-R.C :</strong> 24915- <strong>IF :</strong> 30715018-{" "}
