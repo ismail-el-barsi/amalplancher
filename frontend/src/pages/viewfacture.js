@@ -312,6 +312,12 @@ export default function ViewInvoicePage() {
                             <p>Espèce:</p>
                           </>
                         )}
+                        {designation.modeReglement === "chèque et espèce" && (
+                          <>
+                            <p>Chèque {designation.numCheque}</p>
+                            <p>Espèce:</p>
+                          </>
+                        )}
                       </React.Fragment>
                     ))}
                   </div>
@@ -327,6 +333,12 @@ export default function ViewInvoicePage() {
                         )}
                         {designation.modeReglement === "espèce" && (
                           <p>{designation.montantEnEspece.toFixed(2)}</p>
+                        )}
+                        {designation.modeReglement === "chèque et espèce" && (
+                          <>
+                            <p>{designation.montantDeCheque.toFixed(2)}</p>
+                            <p>{designation.montantEnEspece.toFixed(2)}</p>
+                          </>
                         )}
                       </React.Fragment>
                     ))}

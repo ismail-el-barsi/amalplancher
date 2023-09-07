@@ -240,6 +240,7 @@ export default function EditInvoicePage() {
   const paymentOptions = [
     { value: "chèque", label: "Chèque" },
     { value: "espèce", label: "Espèce" },
+    { value: "chèque et espèce", label: "Chèque et Espèce" },
   ];
   const [unitOfMeasure, setUnitOfMeasure] = useState("");
 
@@ -389,6 +390,43 @@ export default function EditInvoicePage() {
                     required
                   />
                 </Form.Group>
+              )}
+              {des.modeReglement === "chèque et espèce" && (
+                <>
+                  <Form.Group className="mb-3" controlId="montantEnEspece">
+                    <Form.Label>Montant en Espèce</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={des.montantEnEspece}
+                      onChange={(e) =>
+                        handleMontantEnEspeceChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="montantDeCheque">
+                    <Form.Label>Montant de Chèque</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={des.montantDeCheque}
+                      onChange={(e) =>
+                        handleMontantDeChequeChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="numCheque">
+                    <Form.Label>Numéro de Chèque</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={des.numCheque}
+                      onChange={(e) =>
+                        handleNumChequeChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+                </>
               )}
               <Form.Group className="mb-3" controlId="totalHt">
                 <Form.Label>Total HT</Form.Label>

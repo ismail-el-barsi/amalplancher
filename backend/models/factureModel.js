@@ -21,7 +21,7 @@ const designationSchema = new mongoose.Schema(
 const invoiceSchema = new mongoose.Schema(
   {
     client: { type: String, required: true },
-    ice: { type: String, required: true },
+    ice: { type: String },
     date: { type: Date, required: true },
     numero: { type: String, required: true },
     designations: [designationSchema], // Array of subdocuments
