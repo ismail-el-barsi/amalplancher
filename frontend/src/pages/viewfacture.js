@@ -130,7 +130,11 @@ export default function ViewInvoicePage() {
       (canvas.height * pdfWidth) / canvas.width
     );
 
-    pdf.save("invoice.pdf");
+    const clientName = client.replace(/\s+/g, "_"); // Replace spaces with underscores for the file name
+
+    const fileName = `${clientName}.pdf`;
+
+    pdf.save(fileName);
   };
 
   const numberToFrenchWords = (number) => {
@@ -286,19 +290,19 @@ export default function ViewInvoicePage() {
                 <div className="info-row">
                   <div className="info-cell">
                     <p>
-                      <strong>NUMERO:</strong>
+                      <strong>NUMERO</strong>
                     </p>
                     <p>{numero}</p>
                   </div>
                   <div className="info-cell">
                     <p>
-                      <strong>Date:</strong>
+                      <strong>Date</strong>
                     </p>
                     <p>{date}</p>
                   </div>
                   <div className="info-cell text-center3" style={{ flex: "3" }}>
                     <p>
-                      <strong>MODE DE REGLEMENT:</strong>
+                      <strong>MODE DE REGLEMENT</strong>
                     </p>
                     {designations.map((designation, index) => (
                       <React.Fragment key={index}>
@@ -309,13 +313,13 @@ export default function ViewInvoicePage() {
                         )}
                         {designation.modeReglement === "espèce" && (
                           <>
-                            <p>Espèce:</p>
+                            <p>Espèce</p>
                           </>
                         )}
                         {designation.modeReglement === "chèque et espèce" && (
                           <>
                             <p>Chèque {designation.numCheque}</p>
-                            <p>Espèce:</p>
+                            <p>Espèce</p>
                           </>
                         )}
                       </React.Fragment>
@@ -323,7 +327,7 @@ export default function ViewInvoicePage() {
                   </div>
                   <div className="info-cell">
                     <p>
-                      <strong>MONTANT:</strong>
+                      <strong>MONTANT</strong>
                     </p>
                     {/* Display montantDeCheque or montantEnEspece based on modeReglement */}
                     {designations.map((designation, index) => (
@@ -398,7 +402,7 @@ export default function ViewInvoicePage() {
                 <div className="info-row">
                   <div className="info-cell">
                     <p>
-                      <strong>Total H.T :</strong>
+                      <strong>Total H.T</strong>
                     </p>
                     <p>
                       {designations
@@ -411,7 +415,7 @@ export default function ViewInvoicePage() {
                   </div>
                   <div className="info-cell">
                     <p>
-                      <strong>Total TVA :</strong>
+                      <strong>Total TVA </strong>
                     </p>
                     <p>
                       {designations
@@ -424,7 +428,7 @@ export default function ViewInvoicePage() {
                   </div>
                   <div className="info-cell">
                     <p>
-                      <strong>Total T.T.C :</strong>
+                      <strong>Total T.T.C </strong>
                     </p>
                     <p>
                       {designations
