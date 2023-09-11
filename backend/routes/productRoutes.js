@@ -287,4 +287,51 @@ productRouter.get("/:id", async (req, res) => {
   }
 });
 
+productRouter.delete(
+  "/:id/historicalData/:historicalDataId",
+  // isAuth,
+  // isAdmin,
+  expressAsyncHandler(async (req, res) => {
+    const productId = req.params.id;
+    const historicalDataId = req.params.historicalDataId;
+
+    try {
+      const product = await Product.findById(productId);
+
+      if (product) {
+        // Find the historical data entry by its ID
+        const historicalDataToDelete = product.historicalData.find(
+          (data) => data._id.toString() === historicalDataId
+        );
+
+        if (historicalDataToDelete) {
+          if (historicalDataToDelete.typedachat === "achat") {
+            // If it's an "achat," subtract the quantity from the stock
+            product.countInStock -= historicalDataToDelete.quantityInBatch;
+          } else if (historicalDataToDelete.typedachat === "vente") {
+            // If it's a "vente," add the quantity back to the stock
+            product.countInStock += historicalDataToDelete.quantityInBatch;
+          }
+
+          // Remove the historical data entry from the array
+          product.historicalData = product.historicalData.filter(
+            (data) => data._id.toString() !== historicalDataId
+          );
+
+          // Save the updated product
+          await product.save();
+
+          res.send({ message: "Historical data deleted successfully" });
+        } else {
+          res.status(404).send({ message: "Historical Data Not Found" });
+        }
+      } else {
+        res.status(404).send({ message: "Product Not Found" });
+      }
+    } catch (error) {
+      res.status(500).send({ message: "Error deleting historical data" });
+    }
+  })
+);
+
 export default productRouter;

@@ -68,6 +68,41 @@ export default function ProductViewScreen() {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+  const handleDeleteHistoricalData = async (historicalDataId) => {
+    if (
+      window.confirm("Are you sure you want to delete this historical data?")
+    ) {
+      try {
+        // Send a DELETE request to the backend API
+        await axios.delete(
+          `/api/products/${productId}/historicalData/${historicalDataId}`
+        );
+
+        // Calculate the updated currentStockCount
+        const updatedStockCount = historicalData.reduce((count, data) => {
+          if (data._id === historicalDataId) {
+            // Adjust count based on the type of data (achat or vente)
+            if (data.typedachat === "achat") {
+              return count - data.quantityInBatch;
+            } else if (data.typedachat === "vente") {
+              return count + data.quantityInBatch;
+            }
+          }
+          return count;
+        }, currentStockCount);
+
+        // Update the local historicalData state after successful deletion
+        setHistoricalData((prevData) =>
+          prevData.filter((data) => data._id !== historicalDataId)
+        );
+
+        // Update the currentStockCount state
+        setCurrentStockCount(updatedStockCount);
+      } catch (err) {
+        console.error("Error deleting historical data:", err);
+      }
+    }
+  };
 
   return (
     <Container className="small-container">
@@ -89,6 +124,7 @@ export default function ProductViewScreen() {
                 <th>Date</th>
                 <th>Quantité</th>
                 <th>Type</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -99,6 +135,14 @@ export default function ProductViewScreen() {
                   </td>
                   <td>{data.quantityInBatch}</td>
                   <td>{data.typedachat}</td>
+                  <td>
+                    <button
+                      onClick={() => handleDeleteHistoricalData(data._id)}
+                      className="btn btn-danger"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
