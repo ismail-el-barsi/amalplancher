@@ -23,6 +23,7 @@ import {
   FaShoppingCart,
   FaMoneyBillAlt,
   FaUserTie,
+  FaMoneyBill,
 } from "react-icons/fa";
 import { Col, Row } from "react-bootstrap";
 
@@ -141,7 +142,20 @@ export default function DashboardScreen() {
                   </Card.Body>
                 </Card>
               </Col>
-              {/* Add more columns here if needed */}
+              <Col xs={6} sm={6} md={4}>
+                <Card>
+                  <Card.Body>
+                    <Card.Title className="dashboard-card-title">
+                      <FaMoneyBill size={30} />{" "}
+                      {summary.employees && summary.employees.length > 0
+                        ? summary.employees[0].totalSalary.toFixed(2)
+                        : 0}{" "}
+                      MAD
+                    </Card.Title>
+                    <Card.Text>Total Salary</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
             </Row>
           </div>
 
