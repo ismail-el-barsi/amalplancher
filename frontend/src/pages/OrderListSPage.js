@@ -159,9 +159,9 @@ const OrderListScreen = () => {
   return (
     <div>
       <Helmet>
-        <title>Orders</title>
+        <title>Commandes</title>
       </Helmet>
-      <h1>Orders</h1>
+      <h1>Commandes</h1>
       {loading ? (
         <LoadingBox />
       ) : error ? (
@@ -239,7 +239,7 @@ const OrderListScreen = () => {
                           onClick={() => deleteHandler(order)}
                           disabled={loadingDelete}
                         >
-                          <FaTrash /> Delete
+                          <FaTrash /> Supprimer
                         </Button>
                       )}
                     </div>

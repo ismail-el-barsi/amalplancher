@@ -201,16 +201,16 @@ function App() {
                         <NavDropdown.Item>Dashboard</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/products">
-                        <NavDropdown.Item>Products</NavDropdown.Item>
+                        <NavDropdown.Item>Produits</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/orders">
-                        <NavDropdown.Item>Orders</NavDropdown.Item>
+                        <NavDropdown.Item>Commandes</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/users">
-                        <NavDropdown.Item>Users</NavDropdown.Item>
+                        <NavDropdown.Item>Utilisateurs</NavDropdown.Item>
                       </LinkContainer>
                       <LinkContainer to="/admin/employees">
-                        <NavDropdown.Item>employees</NavDropdown.Item>
+                        <NavDropdown.Item>Employers</NavDropdown.Item>
                       </LinkContainer>
                     </NavDropdown>
                   )}
@@ -268,22 +268,22 @@ function App() {
               </LinkContainer>
               <LinkContainer to="/admin/products">
                 <Nav.Link className="mb-3">
-                  <FaBox className="mr-2" /> Products
+                  <FaBox className="mr-2" /> Produits
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/admin/orders">
                 <Nav.Link className="mb-3">
-                  <FaShoppingCart className="mr-2" /> Orders
+                  <FaShoppingCart className="mr-2" /> Commandes
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/admin/users">
                 <Nav.Link className="mb-3">
-                  <FaUsersCog className="mr-2" /> Users
+                  <FaUsersCog className="mr-2" /> Utilisateurs
                 </Nav.Link>
               </LinkContainer>
               <LinkContainer to="/admin/employees">
                 <Nav.Link className="mb-3">
-                  <FaUser className="mr-2" /> Employees
+                  <FaUser className="mr-2" /> Employers
                 </Nav.Link>
               </LinkContainer>
             </Nav.Item>

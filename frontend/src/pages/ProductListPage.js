@@ -113,7 +113,7 @@ export default function ProductListScreen() {
     <div>
       <Row>
         <Col>
-          <h1>Products</h1>
+          <h1>Produits</h1>
         </Col>
         <div>
           <Button
@@ -122,7 +122,7 @@ export default function ProductListScreen() {
             onClick={() => navigate(`/admin/product/`)}
           >
             <FaEdit className="me-2" />
-            Create
+            Créer
           </Button>
         </div>
       </Row>
@@ -173,14 +173,14 @@ export default function ProductListScreen() {
                             navigate(`/admin/product/${product._id}`)
                           }
                         >
-                          <FaEdit /> Edit
+                          <FaEdit /> Modifier
                         </Button>{" "}
                         <Button
                           type="button"
                           variant="light"
                           onClick={() => deleteHandler(product)}
                         >
-                          <FaTrashAlt /> Delete
+                          <FaTrashAlt /> Supprimer
                         </Button>
                       </div>
                     </td>

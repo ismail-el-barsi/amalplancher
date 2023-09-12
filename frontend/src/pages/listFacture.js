@@ -180,7 +180,7 @@ export default function FactureListScreen() {
             onClick={() => navigate(`/admin/facture/`)}
           >
             <FaEdit className="me-2" />
-            Create
+            Créer
           </Button>
           <table className="table table-striped">
             <thead>

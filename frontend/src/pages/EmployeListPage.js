@@ -95,9 +95,9 @@ export default function EmployeeListScreen() {
   return (
     <div className="table-responsive">
       <Helmet>
-        <title>Employees</title>
+        <title>Employer</title>
       </Helmet>
-      <h1>Employees</h1>
+      <h1>Employer</h1>
       {loadingDelete && <LoadingBox />}
       {loading ? (
         <LoadingBox />
@@ -111,7 +111,7 @@ export default function EmployeeListScreen() {
             onClick={() => navigate(`/admin/employee/`)}
           >
             <FaEdit className="me-2" />
-            Create
+            Créer
           </Button>
           <table className="table table-striped">
             <thead>
@@ -152,7 +152,7 @@ export default function EmployeeListScreen() {
                         }
                       >
                         <FaEdit className="me-2" />
-                        Edit
+                        Modifier
                       </Button>
                       <Button
                         type="button"
@@ -160,7 +160,7 @@ export default function EmployeeListScreen() {
                         onClick={() => deleteHandler(employee)}
                       >
                         <FaTrash className="me-2" />
-                        Delete
+                        Supprimer
                       </Button>
                     </div>
                   </td>
