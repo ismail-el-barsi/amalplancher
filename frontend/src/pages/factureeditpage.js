@@ -270,7 +270,6 @@ export default function EditInvoicePage() {
             <Form.Control
               value={ice}
               onChange={(e) => setIce(e.target.value)}
-              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="date">
