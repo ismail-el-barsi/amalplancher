@@ -69,6 +69,8 @@ export default function ViewInvoicePage() {
   const [numCheque, setNumCheque] = useState("");
   const [unitOfMeasure, setUnitOfMeasure] = useState("");
   const [designations, setDesignations] = useState([]); // Add this line
+  const [numEffet, setNumEffet] = useState("");
+  const [montantEffet, setMontantEffet] = useState(0);
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
@@ -97,6 +99,8 @@ export default function ViewInvoicePage() {
         setNumCheque(data.numCheque);
         setUnitOfMeasure(data.unitOfMeasure);
         setDesignations(data.designations); // Set designations data
+        setNumEffet(data.numEffet); // Add this line
+        setMontantEffet(data.montantEffet); // Add this line
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -273,7 +277,8 @@ export default function ViewInvoicePage() {
               </h2>
               <Card.Body>
                 <p>
-                  <strong>Client(e):</strong> {client}
+                  <strong>Client(e):</strong>{" "}
+                  <span class="client-name">{client}</span>
                 </p>
                 <p>
                   <strong>ICE:</strong> {ice}
@@ -322,6 +327,17 @@ export default function ViewInvoicePage() {
                             <p>Espèce</p>
                           </>
                         )}
+                        {designation.modeReglement === "effet" && (
+                          <>
+                            <p>effet {designation.numEffet}</p>
+                          </>
+                        )}
+                        {designation.modeReglement === "effet et espèce" && (
+                          <>
+                            <p>effet {designation.numEffet}</p>
+                            <p>Espèce</p>
+                          </>
+                        )}
                       </React.Fragment>
                     ))}
                   </div>
@@ -337,6 +353,15 @@ export default function ViewInvoicePage() {
                         )}
                         {designation.modeReglement === "espèce" && (
                           <p>{designation.montantEnEspece.toFixed(2)}</p>
+                        )}
+                        {designation.modeReglement === "effet et espèce" && (
+                          <>
+                            <p>{designation.montantEffet.toFixed(2)}</p>
+                            <p>{designation.montantEnEspece.toFixed(2)}</p>
+                          </>
+                        )}
+                        {designation.modeReglement === "effet" && (
+                          <p>{designation.montantEffet.toFixed(2)}</p>
                         )}
                         {designation.modeReglement === "chèque et espèce" && (
                           <>

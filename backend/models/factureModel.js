@@ -14,6 +14,8 @@ const designationSchema = new mongoose.Schema(
     montantEnEspece: { type: Number },
     montantDeCheque: { type: Number },
     numCheque: { type: String },
+    numEffet: { type: String },
+    montantEffet: { type: Number },
   },
   { _id: false } // We don't want Mongoose to automatically generate IDs for subdocuments
 );
