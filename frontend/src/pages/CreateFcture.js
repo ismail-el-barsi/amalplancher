@@ -87,7 +87,6 @@ export default function CreateInvoicePage() {
     const updatedDesignations = [...designations];
     updatedDesignations[index].quantite = parseFloat(value);
 
-    // Calculate and set totalHt based on prixUni and quantite
     const totalHt = updatedDesignations[index].prixUni * parseFloat(value);
     updatedDesignations[index].totalHt = totalHt;
 
@@ -162,6 +161,7 @@ export default function CreateInvoicePage() {
     updatedDesignations[index].numCheque = "";
     updatedDesignations[index].numEffet = "";
     updatedDesignations[index].montantEffet = 0;
+    updatedDesignations[index].montantOrdreDeVirement = 0;
     setDesignations(updatedDesignations);
   };
 
@@ -187,6 +187,7 @@ export default function CreateInvoicePage() {
           numCheque: des.numCheque,
           numEffet: des.numEffet,
           montantEffet: des.montantEffet,
+          montantOrdreDeVirement: des.montantOrdreDeVirement,
         }));
 
         const { data } = await axios.post(
@@ -230,6 +231,11 @@ export default function CreateInvoicePage() {
     updatedDesignations[index].customUnit = value;
     setDesignations(updatedDesignations);
   };
+  const handleMontantOrdreDeVirementChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].montantOrdreDeVirement = parseFloat(value);
+    setDesignations(updatedDesignations);
+  };
 
   const paymentOptions = [
     { value: "chèque", label: "Chèque" },
@@ -237,6 +243,7 @@ export default function CreateInvoicePage() {
     { value: "chèque et espèce", label: "Chèque et Espèce" },
     { value: "effet et espèce", label: "Effet et Espèce" },
     { value: "effet", label: "Effet" },
+    { value: "ordre de virement", label: "Ordre de virement" },
   ];
   const [unitOfMeasure, setUnitOfMeasure] = useState("");
 
@@ -502,6 +509,19 @@ export default function CreateInvoicePage() {
                     />
                   </Form.Group>
                 </>
+              )}
+              {des.modeReglement === "ordre de virement" && (
+                <Form.Group className="mb-3" controlId="montantOrdreDeVirement">
+                  <Form.Label>Montant Ordre de Virement</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={des.montantOrdreDeVirement}
+                    onChange={(e) =>
+                      handleMontantOrdreDeVirementChange(e.target.value, index)
+                    }
+                    required
+                  />
+                </Form.Group>
               )}
 
               <Form.Group className="mb-3" controlId="totalHt">

@@ -71,6 +71,8 @@ export default function ViewInvoicePage() {
   const [designations, setDesignations] = useState([]); // Add this line
   const [numEffet, setNumEffet] = useState("");
   const [montantEffet, setMontantEffet] = useState(0);
+  const [montantOrdreDeVirement, setMontantOrdreDeVirement] = useState(0);
+
   useEffect(() => {
     const fetchInvoice = async () => {
       try {
@@ -98,9 +100,10 @@ export default function ViewInvoicePage() {
         setMontantEnEspece(data.montantEnEspece);
         setNumCheque(data.numCheque);
         setUnitOfMeasure(data.unitOfMeasure);
-        setDesignations(data.designations); // Set designations data
-        setNumEffet(data.numEffet); // Add this line
-        setMontantEffet(data.montantEffet); // Add this line
+        setDesignations(data.designations);
+        setNumEffet(data.numEffet);
+        setMontantEffet(data.montantEffet);
+        setMontantOrdreDeVirement(data.montantOrdreDeVirement);
         dispatch({ type: "FETCH_SUCCESS" });
       } catch (err) {
         dispatch({
@@ -338,6 +341,11 @@ export default function ViewInvoicePage() {
                             <p>Espèce</p>
                           </>
                         )}
+                        {designation.modeReglement === "ordre de virement" && (
+                          <>
+                            <p>Ordre de Virement</p>
+                          </>
+                        )}
                       </React.Fragment>
                     ))}
                   </div>
@@ -345,7 +353,7 @@ export default function ViewInvoicePage() {
                     <p>
                       <strong>MONTANT</strong>
                     </p>
-                    {/* Display montantDeCheque or montantEnEspece based on modeReglement */}
+
                     {designations.map((designation, index) => (
                       <React.Fragment key={index}>
                         {designation.modeReglement === "chèque" && (
@@ -368,6 +376,10 @@ export default function ViewInvoicePage() {
                             <p>{designation.montantDeCheque.toFixed(2)}</p>
                             <p>{designation.montantEnEspece.toFixed(2)}</p>
                           </>
+                        )}
+
+                        {designation.modeReglement === "ordre de virement" && (
+                          <>{designation.montantOrdreDeVirement.toFixed(2)}</>
                         )}
                       </React.Fragment>
                     ))}

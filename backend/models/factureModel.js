@@ -16,8 +16,9 @@ const designationSchema = new mongoose.Schema(
     numCheque: { type: String },
     numEffet: { type: String },
     montantEffet: { type: Number },
+    montantOrdreDeVirement: { type: Number },
   },
-  { _id: false } // We don't want Mongoose to automatically generate IDs for subdocuments
+  { _id: false }
 );
 
 const invoiceSchema = new mongoose.Schema(
@@ -26,7 +27,7 @@ const invoiceSchema = new mongoose.Schema(
     ice: { type: String },
     date: { type: Date, required: true },
     numero: { type: String, required: true },
-    designations: [designationSchema], // Array of subdocuments
+    designations: [designationSchema],
   },
   {
     timestamps: true,

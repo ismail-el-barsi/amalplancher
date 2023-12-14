@@ -41,6 +41,7 @@ export default function EditInvoicePage() {
   const [modeReglement, setModeReglement] = useState("");
   const [quantite, setQuantite] = useState(0);
   const [montant, setMontant] = useState(0);
+  const [ordreDeVirement, setOrdreDeVirement] = useState("");
   const [designations, setDesignations] = useState([
     {
       // designation: "",
@@ -147,6 +148,14 @@ export default function EditInvoicePage() {
     updatedDesignations[index].montantEnEspece = 0;
     updatedDesignations[index].montantDeCheque = 0;
     updatedDesignations[index].numCheque = "";
+    updatedDesignations[index].numEffet = "";
+    updatedDesignations[index].montantEffet = 0;
+    updatedDesignations[index].montantOrdreDeVirement = 0;
+    setDesignations(updatedDesignations);
+  };
+  const handleNumEffetChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].numEffet = value;
     setDesignations(updatedDesignations);
   };
 
@@ -203,20 +212,13 @@ export default function EditInvoicePage() {
         const { data } = await axios.get(`/api/factures/${id}`, {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
-
-        // Format the fetched date to match the required format
         const formattedDate = new Date(data.date).toISOString().split("T")[0];
-
-        // Update the state with fetched invoice data
         setClient(data.client);
         setIce(data.ice);
         setDate(formattedDate);
         setNumero(data.numero);
-        setDesignations(data.designations); // Set initial designations state
-        // ... (update other fields as needed)
-      } catch (err) {
-        // Handle error
-      }
+        setDesignations(data.designations);
+      } catch (err) {}
     };
 
     // Fetch invoice data when the component mounts
@@ -236,11 +238,23 @@ export default function EditInvoicePage() {
     updatedDesignations[index].customUnit = value;
     setDesignations(updatedDesignations);
   };
-
+  const handleMontantOrdreDeVirementChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].montantOrdreDeVirement = parseFloat(value);
+    setDesignations(updatedDesignations);
+  };
+  const handleMontantEffetChange = (value, index) => {
+    const updatedDesignations = [...designations];
+    updatedDesignations[index].montantEffet = parseFloat(value);
+    setDesignations(updatedDesignations);
+  };
   const paymentOptions = [
     { value: "chèque", label: "Chèque" },
     { value: "espèce", label: "Espèce" },
     { value: "chèque et espèce", label: "Chèque et Espèce" },
+    { value: "effet et espèce", label: "Effet et Espèce" },
+    { value: "effet", label: "Effet" },
+    { value: "ordre de virement", label: "Ordre de virement" },
   ];
   const [unitOfMeasure, setUnitOfMeasure] = useState("");
 
@@ -362,6 +376,69 @@ export default function EditInvoicePage() {
                   />
                 </Form.Group>
               )}
+              {des.modeReglement === "effet" && (
+                <>
+                  <Form.Group className="mb-3" controlId="numEffet">
+                    <Form.Label>Numéro d'Effet</Form.Label>
+                    <Form.Control
+                      value={des.numEffet}
+                      onChange={(e) =>
+                        handleNumEffetChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3" controlId="montantEffet">
+                    <Form.Label>Montant d'Effet</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={des.montantEffet}
+                      onChange={(e) =>
+                        handleMontantEffetChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+                </>
+              )}
+              {des.modeReglement === "effet et espèce" && (
+                <>
+                  <Form.Group className="mb-3" controlId="numEffet">
+                    <Form.Label>Numéro d'Effet</Form.Label>
+                    <Form.Control
+                      value={des.numEffet}
+                      onChange={(e) =>
+                        handleNumEffetChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-3" controlId="montantEffet">
+                    <Form.Label>Montant d'Effet</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={des.montantEffet}
+                      onChange={(e) =>
+                        handleMontantEffetChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="montantEnEspece">
+                    <Form.Label>Montant en Espèce</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={des.montantEnEspece}
+                      onChange={(e) =>
+                        handleMontantEnEspeceChange(e.target.value, index)
+                      }
+                      required
+                    />
+                  </Form.Group>
+                </>
+              )}
 
               {des.modeReglement === "chèque" && (
                 <Form.Group className="mb-3" controlId="montantDeCheque">
@@ -426,6 +503,19 @@ export default function EditInvoicePage() {
                     />
                   </Form.Group>
                 </>
+              )}
+              {des.modeReglement === "ordre de virement" && (
+                <Form.Group className="mb-3" controlId="montantOrdreDeVirement">
+                  <Form.Label>Montant Ordre de Virement</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={des.montantOrdreDeVirement}
+                    onChange={(e) =>
+                      handleMontantOrdreDeVirementChange(e.target.value, index)
+                    }
+                    required
+                  />
+                </Form.Group>
               )}
               <Form.Group className="mb-3" controlId="totalHt">
                 <Form.Label>Total HT</Form.Label>
