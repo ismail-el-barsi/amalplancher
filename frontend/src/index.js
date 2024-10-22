@@ -1,11 +1,11 @@
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
 import { createRoot } from "react-dom/client";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./index.css";
-import App from "./App";
 import { HelmetProvider } from "react-helmet-async";
+import App from "./App";
 import { ShopProvider } from "./Shop";
-import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import "./index.css";
 
 const root = createRoot(document.getElementById("root"));
 root.render(

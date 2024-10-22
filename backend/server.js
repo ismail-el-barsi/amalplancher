@@ -1,15 +1,15 @@
+import cors from "cors";
+import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
-import seedRouter from "./routes/seedRoutes.js";
-import productRouter from "./routes/productRoutes.js";
-import userRouter from "./routes/userRoutes.js";
-import orderRouter from "./routes/OrderRoutes.js";
-import uploadRouter from "./routes/uploadRoutes.js";
-import employeRouter from "./routes/EmployeRoute.js";
 import path from "path";
-import cors from "cors";
+import employeRouter from "./routes/EmployeRoute.js";
 import factureRouter from "./routes/FactureRoute.js";
+import orderRouter from "./routes/OrderRoutes.js";
+import productRouter from "./routes/productRoutes.js";
+import seedRouter from "./routes/seedRoutes.js";
+import uploadRouter from "./routes/uploadRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 dotenv.config();
 

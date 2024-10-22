@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
 import Axios from "axios";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet-async";
-import { useContext } from "react"; // Remove this line
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Shop } from "../Shop";
 import { getError } from "../Utils";
-import { toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();

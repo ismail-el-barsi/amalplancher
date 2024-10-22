@@ -1,10 +1,10 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
+import { isAdmin, isAuth, payOrderEmailTemplate, sendGrid } from "../Utils.js";
 import Order from "../models/OrderModel.js";
-import User from "../models/userModel.js";
-import Product from "../models/productModel.js";
-import { isAuth, isAdmin, sendGrid, payOrderEmailTemplate } from "../Utils.js";
 import Employee from "../models/employeeModel.js";
+import Product from "../models/productModel.js";
+import User from "../models/userModel.js";
 
 const orderRouter = express.Router();
 orderRouter.get(

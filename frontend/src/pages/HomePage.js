@@ -1,10 +1,10 @@
-import React, { useEffect, useReducer, useState } from "react";
-import { Helmet } from "react-helmet-async";
 import axios from "axios";
-import { Container, Row, Col, Button } from "react-bootstrap";
+import React, { useEffect, useReducer, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { Helmet } from "react-helmet-async";
+import { Link } from "react-router-dom";
 import Loading from "../component/Loading";
 import MessageError from "../component/MessageError";
-import { Link } from "react-router-dom";
 import homeImage from "../logo/home.jpg"; // Import the home image
 
 const reducer = (state, action) => {

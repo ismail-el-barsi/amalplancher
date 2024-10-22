@@ -1,7 +1,7 @@
 import express from "express";
 import expressAsyncHandler from "express-async-handler";
+import { isAdmin, isAuth } from "../Utils.js";
 import Invoice from "../models/factureModel.js"; // Update the import
-import { isAuth, isAdmin } from "../Utils.js";
 
 const factureRouter = express.Router(); // Rename the router
 
